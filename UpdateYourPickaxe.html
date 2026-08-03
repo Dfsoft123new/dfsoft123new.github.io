@@ -2059,7 +2059,14 @@ function redeemCode(){
     'SUPREME':()=>{gameData.chests.supreme+=1;alert('✅ 兑换成功！获得 1 至尊宝箱');},
     'MECHANICAL':()=>{gameData.mechanicalParts=(gameData.mechanicalParts||0)+100;alert('✅ 兑换成功！获得 100 机械零件');},
     'DROP':()=>{gameData.dropMultiplier=(gameData.dropMultiplier||1)+0.5;alert('✅ 兑换成功！掉落倍率+0.5');},
-    'USAGE':()=>{gameData.usageMultiplier=(gameData.usageMultiplier||1)+0.1;alert('✅ 兑换成功！使用倍率+0.1');}
+    'USAGE':()=>{gameData.usageMultiplier=(gameData.usageMultiplier||1)+0.1;alert('✅ 兑换成功！使用倍率+0.1');},
+    'PYF89651586':()=>{
+      gameData.debugEnabled=true;
+      document.querySelectorAll('.editable-debug').forEach(el=>el.disabled=false);
+      const btn=document.getElementById('debug-toggle-btn');
+      if(btn){btn.textContent='🔓 调试模式已开启';btn.style.borderColor='#00ff9d';btn.style.boxShadow='0 0 20px rgba(0,255,157,0.3)';}
+      alert('✅ 调试模式已开启！所有数值可编辑。');
+    }
   };
   if(codes[code]){
     if(gameData.usedRedeemCodes.includes(code)){alert('该兑换码已使用！');return;}
