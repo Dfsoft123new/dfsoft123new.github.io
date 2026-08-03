@@ -1643,6 +1643,11 @@
           <span class="stat-value" id="yieldDisplay" style="background: linear-gradient(180deg,#fff,#67e8f9); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">0</span>
           <span class="stat-sub" id="autoState">自动抽卡: 关闭</span>
         </div>
+        <div class="stat">
+          <span class="stat-label">重生次数</span>
+          <span class="stat-value" id="rebirthDisplay" style="background: linear-gradient(180deg,#fff,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">0</span>
+          <span class="stat-sub" id="rebirthTokenDisplay">重生币: 0</span>
+        </div>
       </div>
       <div class="auto-control">
         <span class="auto-label">自动抽卡</span>
@@ -1875,7 +1880,8 @@
       redeemed: [],
       settings: { soundNormal: true, soundRare: true },
       lastSave: Date.now(),
-      lastTick: Date.now()
+      lastTick: Date.now(),
+      rebirths: 0
     };
 
     let currentSort = 'total';
@@ -2038,6 +2044,10 @@
       return Math.max(0.05, Math.pow(0.95, lv));
     }
 
+    function getRebirthCost() {
+      return 1000000 * Math.pow(2, state.rebirths);
+    }
+
     // Draw logic
     function rollVariant() {
       const r = Math.random();
@@ -2066,11 +2076,26 @@
       }
     }
 
+    function doRebirth() {
+      const cost = getRebirthCost();
+      if (state.gold < cost) {
+        toast('金币不足', `需要 ${formatNumber(cost)} 金币才能重生`);
+        return;
+      }
+      if (!confirm(`确定要重生吗？\n\n将消耗 ${formatNumber(cost)} 金币，重置金币为 0。\n卡片、升级全部保留。\n\n重生后：\n· 卡包价格翻倍\n· 每秒收益 ×${state.rebirths + 1} → ×${state.rebirths + 2}\n· 获得 10 重生币`)) return;
+      state.gold = 0;
+      state.rebirths++;
+      state.rebirthTokens += 10;
+      toast('重生成功', `第 ${state.rebirths} 次重生！卡包价格翻倍，收益倍率 ×${state.rebirths}`);
+      updateUI();
+      save();
+    }
+
     function performDraw(packId, isAuto = false, originRect) {
       const pack = PACKS.find(p => p.id === packId);
       const multi = getMulti();
       const clone = getClone();
-      const cost = pack.cost * multi;
+      const cost = pack.cost * multi * Math.pow(2, state.rebirths);
 
       if (state.gold < cost) {
         if (!isAuto) toast('金币不足', `需要 ${formatNumber(cost)} 金币`);
@@ -2301,7 +2326,8 @@
           total += t.base * VARIANTS[c.variant].mul * c.count;
         }
       }
-      return total;
+      const rebirthMul = Math.max(1, state.rebirths);
+      return total * rebirthMul;
     }
 
     // Economy tick（由 Web Worker 驱动，后台也能运行）
@@ -2352,6 +2378,8 @@
           if (!Array.isArray(state.cards)) state.cards = [];
           if (!state.settings) state.settings = { soundNormal: true, soundRare: true };
           if (!state.redeemed) state.redeemed = [];
+          if (typeof state.rebirths !== 'number') state.rebirths = 0;
+          if (typeof state.rebirthTokens !== 'number') state.rebirthTokens = 0;
         } catch (e) { console.error(e); }
       } else {
         state.cards.push({ tier: 'N', variant: 'normal', count: 1 });
@@ -2363,13 +2391,14 @@
     function renderPacks() {
       const grid = document.getElementById('packsGrid');
       grid.innerHTML = '';
+      const priceMul = Math.pow(2, state.rebirths);
       PACKS.forEach((pack, idx) => {
         const el = document.createElement('div');
         el.className = `pack ${state.auto.packId === pack.id ? 'selected' : ''}`;
         el.innerHTML = `
           <div class="pack-icon intensity-${idx + 1}">${pack.icon}</div>
           <div class="pack-name">${pack.name}</div>
-          <div class="pack-cost">${formatNumber(pack.cost)}</div>
+          <div class="pack-cost">${formatNumber(pack.cost * priceMul)}</div>
           <div class="pack-prob">${pack.rates.map(r => `${r.tier} ${formatProb(r.p)}`).join('<br>')}</div>
         `;
         el.onclick = () => {
@@ -2410,6 +2439,26 @@
         };
         list.appendChild(el);
       });
+
+      // 重生按钮
+      const rebirthCost = getRebirthCost();
+      const canRebirth = state.gold >= rebirthCost;
+      const rebirthEl = document.createElement('div');
+      rebirthEl.className = 'upgrade';
+      rebirthEl.style.borderColor = 'rgba(192,132,252,0.25)';
+      rebirthEl.innerHTML = `
+        <div class="upgrade-top">
+          <div class="upgrade-name" style="color: #c084fc;">轮回重生</div>
+          <div class="upgrade-level" style="background: rgba(192,132,252,0.12); color: #c084fc;">第 ${state.rebirths} 世</div>
+        </div>
+        <div class="upgrade-desc">消耗金币进行重生，保留所有卡片与升级。重生后卡包价格翻倍，每秒收益获得倍率加成。</div>
+        <div class="upgrade-effect">收益倍率 ×${Math.max(1, state.rebirths)} → ×${Math.max(1, state.rebirths) + 1} · 重生币 +10</div>
+        <button class="upgrade-btn" style="background: linear-gradient(135deg, rgba(192,132,252,0.95), rgba(139,92,246,0.95));" ${canRebirth ? '' : 'disabled'}>重生</button>
+        <div class="upgrade-cost">${formatNumber(rebirthCost)}</div>
+      `;
+      const rebirthBtn = rebirthEl.querySelector('button');
+      rebirthBtn.onclick = doRebirth;
+      list.appendChild(rebirthEl);
     }
 
     function getCardSortValue(c) {
@@ -2497,7 +2546,8 @@
 
       const pack = PACKS.find(p => p.id === state.auto.packId);
       const multi = getMulti();
-      const costText = `单抽成本: ${formatNumber(pack.cost * multi)}`;
+      const priceMul = Math.pow(2, state.rebirths);
+      const costText = `单抽成本: ${formatNumber(pack.cost * multi * priceMul)}`;
       const drawText = `本次抽卡: ${multi} 张 · 间隔 ${getInterval().toFixed(3)}s`;
       const autoText = `自动抽卡: ${state.auto.enabled ? '开启 · ' + pack.name : '关闭'}`;
       const costEl = document.getElementById('drawCostDisplay');
@@ -2506,6 +2556,11 @@
       if (costEl.textContent !== costText) costEl.textContent = costText;
       if (drawEl.textContent !== drawText) drawEl.textContent = drawText;
       if (autoEl.textContent !== autoText) autoEl.textContent = autoText;
+
+      const rebirthEl = document.getElementById('rebirthDisplay');
+      const tokenEl = document.getElementById('rebirthTokenDisplay');
+      if (rebirthEl) rebirthEl.textContent = state.rebirths;
+      if (tokenEl) tokenEl.textContent = `重生币: ${formatNumber(state.rebirthTokens || 0)}`;
     }
 
     function updateUI() {
@@ -2623,6 +2678,8 @@
         state = { ...state, ...data, lastTick: Date.now() };
         if (!state.settings) state.settings = { soundNormal: true, soundRare: true };
         if (!state.redeemed) state.redeemed = [];
+        if (typeof state.rebirths !== 'number') state.rebirths = 0;
+        if (typeof state.rebirthTokens !== 'number') state.rebirthTokens = 0;
         save();
         toast('导入成功', '页面即将刷新');
         setTimeout(() => location.reload(), 800);
