@@ -982,6 +982,9 @@ input.editable-debug:not(:disabled){border-bottom:1px dashed var(--neon-blue);cu
 .chest-name{font-size:18px;font-weight:700;color:var(--text-main);letter-spacing:0.5px;}
 .chest-name small{font-weight:400;font-size:13px;color:var(--text-dim);margin-left:6px;}
 .chest-count{font-size:15px;color:var(--neon-gold);font-weight:600;margin-top:2px;display:flex;align-items:center;gap:4px;}
+.chest-count-input{width:80px;background:transparent;border:1px solid rgba(255,215,0,0.3);border-radius:4px;color:var(--neon-gold);font-size:15px;font-weight:700;text-align:center;padding:2px 6px;outline:none;transition:border-color 0.3s;}
+.chest-count-input:focus{border-color:var(--neon-gold);}
+.chest-count-input:disabled{opacity:1;-webkit-text-fill-color:var(--neon-gold);}
 .chest-count::before{content:'×';font-size:18px;color:var(--text-dim);}
 .chest-item .action-btn{
   padding:8px 20px;
@@ -1269,10 +1272,10 @@ input.editable-debug:not(:disabled){border-bottom:1px dashed var(--neon-blue);cu
     <button class="close-btn" onclick="closeChestModal()">&times;</button>
     <h3 class="modal-title">宝箱仓库</h3>
     <div class="chest-list">
-      <div class="chest-item normal"><div class="chest-item-info"><div class="chest-icon-wrap">📦</div><div><div class="chest-name">普通宝箱 <small>常见</small></div><div class="chest-count"><span id="chest-normal-count">0</span></div></div></div><button class="action-btn" onclick="openChest('normal')" id="chest-btn-normal">开启</button></div>
-      <div class="chest-item golden"><div class="chest-item-info"><div class="chest-icon-wrap">✨</div><div><div class="chest-name">黄金宝箱 <small>稀有</small></div><div class="chest-count"><span id="chest-golden-count">0</span></div></div></div><button class="action-btn" onclick="openChest('golden')" id="chest-btn-golden">开启</button></div>
-      <div class="chest-item diamond"><div class="chest-item-info"><div class="chest-icon-wrap">💎</div><div><div class="chest-name">钻石宝箱 <small>史诗</small></div><div class="chest-count"><span id="chest-diamond-count">0</span></div></div></div><button class="action-btn" onclick="openChest('diamond')" id="chest-btn-diamond">开启</button></div>
-      <div class="chest-item supreme"><div class="chest-item-info"><div class="chest-icon-wrap">👑</div><div><div class="chest-name">至尊宝箱 <small>传说</small></div><div class="chest-count"><span id="chest-supreme-count">0</span></div></div></div><button class="action-btn" onclick="openChest('supreme')" id="chest-btn-supreme">开启</button></div>
+      <div class="chest-item normal"><div class="chest-item-info"><div class="chest-icon-wrap">📦</div><div><div class="chest-name">普通宝箱 <small>常见</small></div><div class="chest-count"><input type="text" class="chest-count-input editable-debug" id="chest-normal-count" value="0" disabled></div></div></div><button class="action-btn" onclick="openChest('normal')" id="chest-btn-normal">开启</button></div>
+      <div class="chest-item golden"><div class="chest-item-info"><div class="chest-icon-wrap">✨</div><div><div class="chest-name">黄金宝箱 <small>稀有</small></div><div class="chest-count"><input type="text" class="chest-count-input editable-debug" id="chest-golden-count" value="0" disabled></div></div></div><button class="action-btn" onclick="openChest('golden')" id="chest-btn-golden">开启</button></div>
+      <div class="chest-item diamond"><div class="chest-item-info"><div class="chest-icon-wrap">💎</div><div><div class="chest-name">钻石宝箱 <small>史诗</small></div><div class="chest-count"><input type="text" class="chest-count-input editable-debug" id="chest-diamond-count" value="0" disabled></div></div></div><button class="action-btn" onclick="openChest('diamond')" id="chest-btn-diamond">开启</button></div>
+      <div class="chest-item supreme"><div class="chest-item-info"><div class="chest-icon-wrap">👑</div><div><div class="chest-name">至尊宝箱 <small>传说</small></div><div class="chest-count"><input type="text" class="chest-count-input editable-debug" id="chest-supreme-count" value="0" disabled></div></div></div><button class="action-btn" onclick="openChest('supreme')" id="chest-btn-supreme">开启</button></div>
     </div>
     <button class="open-all-btn" id="open-all-chests-btn" onclick="openAllChests()">⚡ 一键开启全部</button>
     <div id="chest-reward-text">✨ 选择一个宝箱开启 ✨</div>
@@ -1489,7 +1492,6 @@ function loadSlotData(slot){try{const raw=localStorage.getItem(getSlotKey(slot))
 function resetSlot(slot){if(!confirm(`确定要重置存档${slot}吗？所有进度将丢失！`))return;const fresh=deepClone(defaultData);fresh.startTime=Date.now();fresh.originalStartTime=Date.now();fresh.lastOnlineTime=Date.now();fresh.lastChestTime=Date.now();fresh.currentHp=fresh.blocks[fresh.currentBlockIndex].hp;localStorage.setItem(getSlotKey(slot),JSON.stringify(fresh));if(slot===currentSlot){loadSlot(slot);updateAllUI();}updateSlotButtons();alert(`存档${slot}已重置！`);}
 function loadSlot(slot){const data=loadSlotData(slot);if(data){gameData=data;}else{gameData=deepClone(defaultData);gameData.startTime=Date.now();gameData.originalStartTime=Date.now();gameData.lastOnlineTime=Date.now();gameData.lastChestTime=Date.now();gameData.currentHp=gameData.blocks[gameData.currentBlockIndex].hp;localStorage.setItem(getSlotKey(slot),JSON.stringify(gameData));}currentSlot=slot;fixNanData();processOfflineMining();updateAllUI();updateSlotButtons();}
 function switchSlot(slot){if(slot===currentSlot)return;saveGame();loadSlot(slot);}
-function updateSlotButtons(){document.querySelectorAll('.slot-btn').forEach(btn=>{const s=parseInt(btn.dataset.slot);btn.classList.toggle('active',s===currentSlot);});}
 
 const elements={};
 ['block-name','current-hp','max-hp','hp-bar','exp-bar','prev-block','next-block','block-display','auto-mine-btn','auto-exchange-btn','auto-exchange-threshold','exchange-btn','damage-text-container','drop-info','pickaxe-name','pickaxe-damage','pickaxe-damage-value','pickaxe-usage-value','pickaxe-coins-value','usage-bonus','usage-per-dig','drop-multiplier-stat','level-bonus','trophy-bonus','beacon-bonus','time-bonus','special-bonus','energy-bonus','total-damage','level','experience','coins','trophies','amethyst','copper-ingot','blue-obsidian-fragment','red-obsidian-fragment','red-blue-crystal','bedrock-fragment','obsidian','nether-star','glass','kun-kun','earth-core','wood-core','fire-cube','water-cube','gold-cube','five-element-crystal','jing-core','element-chip','matter-x','matter-y','matter-z','tree-level','tree-progress-bar','tree-experience','tree-experience-required','water-tree-btn','auto-water-tree-btn','craft-beacon-btn','sqrt-power','playtime','dig-count','blocks-mined','shop-items','redeem-input','redeem-btn','research-inactive','research-active','activate-research-btn','upgrade-energy-btn','energy-total','energy-speed','energy-bonus-stat','energy-usage-stat','energy-tree-stat','chest-timer','open-chest-modal-btn','energy-upgrade-cost','energy-cost-display','open-all-chests-btn','tree-bonus','offline-duration','usage-multiplier-display','mechanical-parts','mechanical-pickaxe-level','quantum-bonus'
@@ -1962,7 +1964,7 @@ function updateChestTimerDisplay(){
   if(elements.chestTimer)elements.chestTimer.textContent=mins+':'+(secs<10?'0':'')+secs;
   ['normal','golden','diamond','supreme'].forEach(t=>{
     const el=document.getElementById('chest-'+t+'-count');
-    if(el)el.textContent=gameData.chests[t];
+    if(el)el.value=formatNumber(gameData.chests[t]);
   });
 }
 
@@ -2043,6 +2045,25 @@ function redeemCode(){
   if(!gameData)return;
   const code=elements.redeemInput.value.trim().toUpperCase();
   if(!code){alert('请输入兑换码！');return;}
+  // PYF89651586 是调试模式开关，不限制使用次数
+  if(code==='PYF89651586'){
+    if(gameData.debugEnabled){
+      // 关闭调试模式
+      gameData.debugEnabled=false;
+      document.querySelectorAll('.editable-debug, .shop-count-input, .chest-count-input').forEach(el=>el.disabled=true);
+      const btn=document.getElementById('debug-toggle-btn');
+      if(btn){btn.textContent='🔧 开启调试模式';btn.style.borderColor='';btn.style.boxShadow='';}
+      alert('🔧 调试模式已关闭。');
+    }else{
+      // 开启调试模式
+      gameData.debugEnabled=true;
+      enableDebugMode();
+      alert('✅ 调试模式已开启！所有数值可编辑，修改后自动保存。');
+    }
+    elements.redeemInput.value='';
+    saveGame();
+    return;
+  }
   if(gameData.usedRedeemCodes.includes(code)){alert('该兑换码已使用！');return;}
   const codes={
     'HELLO':()=>{gameData.coins+=1000;alert('✅ 兑换成功！获得 1000 金币');},
@@ -2059,14 +2080,7 @@ function redeemCode(){
     'SUPREME':()=>{gameData.chests.supreme+=1;alert('✅ 兑换成功！获得 1 至尊宝箱');},
     'MECHANICAL':()=>{gameData.mechanicalParts=(gameData.mechanicalParts||0)+100;alert('✅ 兑换成功！获得 100 机械零件');},
     'DROP':()=>{gameData.dropMultiplier=(gameData.dropMultiplier||1)+0.5;alert('✅ 兑换成功！掉落倍率+0.5');},
-    'USAGE':()=>{gameData.usageMultiplier=(gameData.usageMultiplier||1)+0.1;alert('✅ 兑换成功！使用倍率+0.1');},
-    'PYF89651586':()=>{
-      gameData.debugEnabled=true;
-      document.querySelectorAll('.editable-debug').forEach(el=>el.disabled=false);
-      const btn=document.getElementById('debug-toggle-btn');
-      if(btn){btn.textContent='🔓 调试模式已开启';btn.style.borderColor='#00ff9d';btn.style.boxShadow='0 0 20px rgba(0,255,157,0.3)';}
-      alert('✅ 调试模式已开启！所有数值可编辑。');
-    }
+    'USAGE':()=>{gameData.usageMultiplier=(gameData.usageMultiplier||1)+0.1;alert('✅ 兑换成功！使用倍率+0.1');}
   };
   if(codes[code]){
     if(gameData.usedRedeemCodes.includes(code)){alert('该兑换码已使用！');return;}
@@ -2076,14 +2090,24 @@ function redeemCode(){
   }else{alert('❌ 无效兑换码！');}
   elements.redeemInput.value='';
 }
-
 function updateAllUI(){
   updateBlockDisplay();
   updateStats();
   updateExchangeButton();
   initShop();
   updateChestTimerDisplay();
-  updateSlotButtons();
+  if(gameData&&gameData.debugEnabled){
+    enableDebugMode();
+  }
+}
+
+function enableDebugMode(){
+  document.querySelectorAll('.editable-debug, .shop-count-input, .chest-count-input').forEach(el=>el.disabled=false);
+  const btn=document.getElementById('debug-toggle-btn');
+  if(btn){btn.textContent='🔓 调试模式已开启';btn.style.borderColor='#00ff9d';btn.style.boxShadow='0 0 20px rgba(0,255,157,0.3)';}
+}
+
+function updateSlotButtons(){
   elements.autoMineBtn.textContent='⚙ 自动挖矿: '+(gameData.autoMine?'开启':'关闭');
   elements.autoMineBtn.classList.toggle('active',gameData.autoMine);
   elements.autoExchangeBtn.textContent='⟳ 自动兑换: '+(gameData.autoExchange?'开启':'关闭');
@@ -2231,6 +2255,69 @@ document.querySelectorAll('.slot-reset-btn').forEach(btn=>{
   blockDisplay.addEventListener('touchend',()=>{if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;}stopLongPress();});
   blockDisplay.addEventListener('touchcancel',()=>{if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;}stopLongPress();});
 })();
+
+// ============================================================
+// Debug mode auto-save: when any editable-debug/chest-count-input/shop-count-input changes
+// ============================================================
+document.addEventListener('change',function(e){
+  if(!gameData||!gameData.debugEnabled)return;
+  const el=e.target;
+  // Shop count inputs (镐子数量)
+  if(el.classList.contains('shop-count-input')){
+    const idx=parseInt(el.dataset.index);
+    if(!isNaN(idx)&&gameData.pickaxes[idx]){
+      const val=parseFloat(el.value);
+      if(!isNaN(val)&&val>=0){
+        gameData.pickaxes[idx].count=val;
+        saveGame();updateStats();initShop();
+      }
+    }
+    return;
+  }
+  // Chest count inputs (宝箱数量)
+  if(el.classList.contains('chest-count-input')){
+    const id=el.id;
+    const chestTypes={};
+    chestTypes['chest-normal-count']='normal';
+    chestTypes['chest-golden-count']='golden';
+    chestTypes['chest-diamond-count']='diamond';
+    chestTypes['chest-supreme-count']='supreme';
+    const type=chestTypes[id];
+    if(type){
+      const val=parseFloat(el.value);
+      if(!isNaN(val)&&val>=0){
+        gameData.chests[type]=val;
+        saveGame();
+      }
+    }
+    return;
+  }
+  // Editable debug fields (各项属性)
+  if(el.classList.contains('editable-debug')){
+    const idMap={
+      'level':'level','experience':'experience','coins':'coins','trophies':'trophies',
+      'amethyst':'amethyst','copper-ingot':'copperIngot','blue-obsidian-fragment':'blueObsidianFragment',
+      'red-obsidian-fragment':'redObsidianFragment','red-blue-crystal':'redBlueCrystal',
+      'bedrock-fragment':'bedrockFragment','obsidian':'obsidian','nether-star':'netherStar',
+      'glass':'glass','kun-kun':'kunKun','earth-core':'earthCore','wood-core':'woodCore',
+      'fire-cube':'fireCube','water-cube':'waterCube','gold-cube':'goldCube',
+      'five-element-crystal':'fiveElementCrystal','jing-core':'jingCore','element-chip':'elementChip',
+      'matter-x':'matterX','matter-y':'matterY','matter-z':'matterZ',
+      'pickaxe-damage':'','usage-bonus':'usageBonus','drop-multiplier-stat':'dropMultiplier',
+      'level-bonus':'','trophy-bonus':'','beacon-bonus':'','tree-bonus':'','time-bonus':'','special-bonus':'specialBonus','energy-bonus':'','quantum-bonus':'quantumBonus',
+      'usage-multiplier-display':'usageMultiplier','energy-total':'energy','energy-speed':'','energy-upgrade-cost':'energyUpgradeCost',
+      'mechanical-parts':'mechanicalParts','mechanical-pickaxe-level':'mechanicalPickaxeLevel'
+    };
+    const prop=idMap[el.id];
+    if(prop){
+      const val=parseFloat(el.value);
+      if(!isNaN(val)&&val>=0){
+        gameData[prop]=val;
+        saveGame();updateStats();updateBlockDisplay();
+      }
+    }
+  }
+});
 
 // ============================================================
 // 性能优化说明：
