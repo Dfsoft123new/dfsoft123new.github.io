@@ -1607,6 +1607,142 @@
     ::-webkit-scrollbar-track { background: rgba(255,255,255,0.02); }
     ::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.12); border-radius: 4px; }
     ::-webkit-scrollbar-thumb:hover { background: rgba(255,255,255,0.2); }
+
+    /* Confirm Modal */
+    .confirm-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 270;
+      background: rgba(0,0,0,0.75);
+      backdrop-filter: blur(14px) saturate(140%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.35s cubic-bezier(0.4,0,0.2,1);
+    }
+    .confirm-overlay.active { opacity: 1; pointer-events: auto; }
+    .confirm-panel {
+      width: min(440px, 90vw);
+      background: linear-gradient(180deg, rgba(255,255,255,0.07), rgba(255,255,255,0.02)), rgba(8,8,18,0.92);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 26px;
+      box-shadow: 0 40px 100px rgba(0,0,0,0.65), inset 0 1px 0 rgba(255,255,255,0.08);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transform: translateY(20px) scale(0.96);
+      transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+    .confirm-overlay.active .confirm-panel { transform: translateY(0) scale(1); }
+    .confirm-panel::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      padding: 1px;
+      background: linear-gradient(135deg, rgba(192,132,252,0.35), transparent 40%, transparent 60%, rgba(103,232,249,0.2));
+      -webkit-mask: linear-gradient(#000 0 0) content-box, linear-gradient(#000 0 0);
+      -webkit-mask-composite: xor;
+      mask-composite: exclude;
+      pointer-events: none;
+    }
+    .confirm-panel::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at 50% 0%, rgba(192,132,252,0.08), transparent 55%);
+      pointer-events: none;
+      opacity: 0.6;
+    }
+    .confirm-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .confirm-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      background: linear-gradient(135deg, rgba(192,132,252,0.2), rgba(103,232,249,0.15));
+      border: 1px solid rgba(192,132,252,0.3);
+      display: grid;
+      place-items: center;
+      box-shadow: 0 0 24px rgba(192,132,252,0.15);
+    }
+    .confirm-icon svg { width: 22px; height: 22px; stroke: #c084fc; stroke-width: 2; fill: none; }
+    .confirm-title { margin: 0; font-size: 20px; font-weight: 900; letter-spacing: 0.5px; }
+    .confirm-desc {
+      font-size: 14px;
+      color: rgba(255,255,255,0.75);
+      line-height: 1.7;
+      margin-bottom: 18px;
+      position: relative;
+      z-index: 1;
+    }
+    .confirm-details {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 24px;
+      position: relative;
+      z-index: 1;
+    }
+    .confirm-detail {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 13px;
+      color: rgba(255,255,255,0.65);
+      padding: 10px 14px;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.03);
+      border: 1px solid rgba(255,255,255,0.05);
+    }
+    .confirm-detail::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--accent), #c084fc);
+      box-shadow: 0 0 8px rgba(103,232,249,0.4);
+      flex-shrink: 0;
+    }
+    .confirm-actions {
+      display: flex;
+      gap: 12px;
+      position: relative;
+      z-index: 1;
+    }
+    .confirm-btn {
+      flex: 1;
+      padding: 14px 20px;
+      border-radius: 14px;
+      border: none;
+      font-size: 14px;
+      font-weight: 900;
+      cursor: pointer;
+      transition: 0.18s;
+      letter-spacing: 0.5px;
+    }
+    .confirm-btn-cancel {
+      background: rgba(255,255,255,0.06);
+      color: rgba(255,255,255,0.7);
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    .confirm-btn-cancel:hover { background: rgba(255,255,255,0.1); color: #fff; transform: translateY(-2px); }
+    .confirm-btn-confirm {
+      background: linear-gradient(135deg, rgba(192,132,252,0.95), rgba(139,92,246,0.95));
+      color: #fff;
+      box-shadow: 0 4px 24px rgba(192,132,252,0.3), inset 0 1px 0 rgba(255,255,255,0.2);
+    }
+    .confirm-btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(192,132,252,0.45); }
+    .confirm-btn-confirm:active { transform: translateY(0); }
   </style>
 </head>
 <body>
@@ -1789,6 +1925,23 @@
           </div>
           <button class="settings-action danger" id="resetBtn">重置</button>
         </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="confirm-overlay" id="confirmOverlay">
+    <div class="confirm-panel" id="confirmPanel">
+      <div class="confirm-header">
+        <div class="confirm-icon">
+          <svg viewBox="0 0 24 24"><path d="M12 2v4M12 18v4M4.93 4.93l2.83 2.83M16.24 16.24l2.83 2.83M2 12h4M18 12h4M4.93 19.07l2.83-2.83M16.24 7.76l2.83-2.83" stroke-linecap="round"/></svg>
+        </div>
+        <h3 class="confirm-title" id="confirmTitle">确认</h3>
+      </div>
+      <div class="confirm-desc" id="confirmDesc"></div>
+      <div class="confirm-details" id="confirmDetails"></div>
+      <div class="confirm-actions">
+        <button class="confirm-btn confirm-btn-cancel" id="confirmCancel">取消</button>
+        <button class="confirm-btn confirm-btn-confirm" id="confirmConfirm">确认</button>
       </div>
     </div>
   </div>
@@ -2076,26 +2229,69 @@
       }
     }
 
+    let confirmCallback = null;
+    function showConfirmModal(opts) {
+      confirmCallback = opts.onConfirm || null;
+      document.getElementById('confirmTitle').textContent = opts.title || '确认';
+      document.getElementById('confirmDesc').innerHTML = opts.desc || '';
+      document.getElementById('confirmConfirm').textContent = opts.confirmText || '确认';
+      document.getElementById('confirmCancel').textContent = opts.cancelText || '取消';
+      const detailsEl = document.getElementById('confirmDetails');
+      detailsEl.innerHTML = '';
+      if (opts.details && opts.details.length) {
+        opts.details.forEach(d => {
+          const div = document.createElement('div');
+          div.className = 'confirm-detail';
+          div.textContent = d;
+          detailsEl.appendChild(div);
+        });
+      }
+      document.getElementById('confirmOverlay').classList.add('active');
+    }
+    function closeConfirmModal() {
+      document.getElementById('confirmOverlay').classList.remove('active');
+      confirmCallback = null;
+    }
+    document.getElementById('confirmCancel').onclick = closeConfirmModal;
+    document.getElementById('confirmConfirm').onclick = () => {
+      if (confirmCallback) confirmCallback();
+      closeConfirmModal();
+    };
+    document.getElementById('confirmOverlay').onclick = (e) => {
+      if (e.target.id === 'confirmOverlay') closeConfirmModal();
+    };
+
     function doRebirth() {
       const cost = getRebirthCost();
       if (state.gold < cost) {
         toast('金币不足', `需要 ${formatNumber(cost)} 金币才能重生`);
         return;
       }
-      if (!confirm(`确定要重生吗？\n\n将消耗 ${formatNumber(cost)} 金币，重置金币为 0。\n卡片、升级全部保留。\n\n重生后：\n· 卡包价格翻倍\n· 每秒收益 ×${state.rebirths + 1} → ×${state.rebirths + 2}\n· 获得 10 重生币`)) return;
-      state.gold = 0;
-      state.rebirths++;
-      state.rebirthTokens += 10;
-      toast('重生成功', `第 ${state.rebirths} 次重生！卡包价格翻倍，收益倍率 ×${state.rebirths}`);
-      updateUI();
-      save();
+      showConfirmModal({
+        title: '轮回重生',
+        desc: `将消耗 <strong style="color:var(--gold-2)">${formatNumber(cost)}</strong> 金币，重置金币为 0。<br>卡片、升级全部保留。`,
+        details: [
+          `每秒收益 ×${state.rebirths + 1} → ×${state.rebirths + 2}`,
+          '获得 10 重生币'
+        ],
+        confirmText: '确认重生',
+        cancelText: '取消',
+        onConfirm: () => {
+          state.gold = 0;
+          state.rebirths++;
+          state.rebirthTokens += 10;
+          toast('重生成功', `第 ${state.rebirths} 次重生！收益倍率 ×${state.rebirths + 1}`);
+          updateUI();
+          save();
+        }
+      });
     }
 
     function performDraw(packId, isAuto = false, originRect) {
       const pack = PACKS.find(p => p.id === packId);
       const multi = getMulti();
       const clone = getClone();
-      const cost = pack.cost * multi * Math.pow(2, state.rebirths);
+      const cost = pack.cost * multi;
 
       if (state.gold < cost) {
         if (!isAuto) toast('金币不足', `需要 ${formatNumber(cost)} 金币`);
@@ -2326,7 +2522,7 @@
           total += t.base * VARIANTS[c.variant].mul * c.count;
         }
       }
-      const rebirthMul = Math.max(1, state.rebirths);
+      const rebirthMul = state.rebirths + 1;
       return total * rebirthMul;
     }
 
@@ -2391,14 +2587,13 @@
     function renderPacks() {
       const grid = document.getElementById('packsGrid');
       grid.innerHTML = '';
-      const priceMul = Math.pow(2, state.rebirths);
       PACKS.forEach((pack, idx) => {
         const el = document.createElement('div');
         el.className = `pack ${state.auto.packId === pack.id ? 'selected' : ''}`;
         el.innerHTML = `
           <div class="pack-icon intensity-${idx + 1}">${pack.icon}</div>
           <div class="pack-name">${pack.name}</div>
-          <div class="pack-cost">${formatNumber(pack.cost * priceMul)}</div>
+          <div class="pack-cost">${formatNumber(pack.cost)}</div>
           <div class="pack-prob">${pack.rates.map(r => `${r.tier} ${formatProb(r.p)}`).join('<br>')}</div>
         `;
         el.onclick = () => {
@@ -2451,8 +2646,8 @@
           <div class="upgrade-name" style="color: #c084fc;">轮回重生</div>
           <div class="upgrade-level" style="background: rgba(192,132,252,0.12); color: #c084fc;">第 ${state.rebirths} 世</div>
         </div>
-        <div class="upgrade-desc">消耗金币进行重生，保留所有卡片与升级。重生后卡包价格翻倍，每秒收益获得倍率加成。</div>
-        <div class="upgrade-effect">收益倍率 ×${Math.max(1, state.rebirths)} → ×${Math.max(1, state.rebirths) + 1} · 重生币 +10</div>
+        <div class="upgrade-desc">消耗金币进行重生，保留所有卡片与升级。重生后每秒收益获得倍率加成。</div>
+        <div class="upgrade-effect">收益倍率 ×${state.rebirths + 1} → ×${state.rebirths + 2} · 重生币 +10</div>
         <button class="upgrade-btn" style="background: linear-gradient(135deg, rgba(192,132,252,0.95), rgba(139,92,246,0.95));" ${canRebirth ? '' : 'disabled'}>重生</button>
         <div class="upgrade-cost">${formatNumber(rebirthCost)}</div>
       `;
@@ -2546,8 +2741,7 @@
 
       const pack = PACKS.find(p => p.id === state.auto.packId);
       const multi = getMulti();
-      const priceMul = Math.pow(2, state.rebirths);
-      const costText = `单抽成本: ${formatNumber(pack.cost * multi * priceMul)}`;
+      const costText = `单抽成本: ${formatNumber(pack.cost * multi)}`;
       const drawText = `本次抽卡: ${multi} 张 · 间隔 ${getInterval().toFixed(3)}s`;
       const autoText = `自动抽卡: ${state.auto.enabled ? '开启 · ' + pack.name : '关闭'}`;
       const costEl = document.getElementById('drawCostDisplay');
