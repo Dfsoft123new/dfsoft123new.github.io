@@ -2365,7 +2365,12 @@
       { id: 'SSP+', name: 'SSP+', base: 30000, color: '#c4b5fd' },
       { id: 'SSP++', name: 'SSP++', base: 100000, color: '#fb7185' },
       { id: 'SRP', name: 'SRP', base: 320000, color: '#fbbf24' },
-      { id: 'SRP+', name: 'SRP+', base: 1000000, color: '#f59e0b' }
+      { id: 'SRP+', name: 'SRP+', base: 1000000, color: '#f59e0b' },
+      { id: 'SRP++', name: 'SRP++', base: 4000000, color: '#f97316' },
+      { id: 'SUP', name: 'SUP', base: 15000000, color: '#ef4444' },
+      { id: 'SUP+', name: 'SUP+', base: 60000000, color: '#dc2626' },
+      { id: 'SUP++', name: 'SUP++', base: 250000000, color: '#b91c1c' },
+      { id: 'EX', name: 'EX', base: 1000000000, color: '#ffffff' }
     ];
 
     const PACK_ICONS = [
@@ -2380,7 +2385,11 @@
       // 传说：燃烧宝珠
       `<svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 5c0 0-4 3-4 7s4 7 4 7" fill="none" stroke="currentColor" stroke-width="1.5"/><path d="M12 5c0 0 4 3 4 7s-4 7-4 7" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="2.5" fill="currentColor"/></svg>`,
       // 神话：神之眼
-      `<svg viewBox="0 0 24 24"><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`
+      `<svg viewBox="0 0 24 24"><path d="M2 12s4-8 10-8 10 8 10 8-4 8-10 8-10-8-10-8z" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="1.5" fill="currentColor"/><path d="M12 2v2M12 20v2M2 12h2M20 12h2" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>`,
+      // 神圣：圣光十字
+      `<svg viewBox="0 0 24 24"><path d="M12 2v20M2 12h20" stroke="currentColor" stroke-width="2" stroke-linecap="round"/><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="12" cy="12" r="3" fill="currentColor"/></svg>`,
+      // 至尊：王座之冠
+      `<svg viewBox="0 0 24 24"><path d="M2 8l4 10h12l4-10-6 3-4-6-4 6-6-3z" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/><path d="M4 6l2 2M20 6l-2 2M12 2v4" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/><circle cx="12" cy="14" r="2" fill="currentColor"/></svg>`
     ];
 
     const PACKS = [
@@ -2401,6 +2410,12 @@
       ]},
       { id: 6, name: '神话卡包', cost: 1000000000000, rates: [
         { tier: 'SP+', p: 0.30 }, { tier: 'SP++', p: 0.25 }, { tier: 'SSP', p: 0.20 }, { tier: 'SSP+', p: 0.15 }, { tier: 'SSP++', p: 0.075 }, { tier: 'SRP', p: 0.024 }, { tier: 'SRP+', p: 0.001 }
+      ]},
+      { id: 7, name: '神圣卡包', cost: 1000000000000000, rates: [
+        { tier: 'SSP', p: 0.30 }, { tier: 'SSP+', p: 0.25 }, { tier: 'SSP++', p: 0.20 }, { tier: 'SRP', p: 0.15 }, { tier: 'SRP+', p: 0.075 }, { tier: 'SRP++', p: 0.024 }, { tier: 'SUP', p: 0.001 }
+      ]},
+      { id: 8, name: '至尊卡包', cost: 10000000000000000000, rates: [
+        { tier: 'SSP++', p: 0.30 }, { tier: 'SRP', p: 0.25 }, { tier: 'SRP+', p: 0.20 }, { tier: 'SRP++', p: 0.15 }, { tier: 'SUP', p: 0.075 }, { tier: 'SUP+', p: 0.0239 }, { tier: 'SUP++', p: 0.001 }, { tier: 'EX', p: 0.0001 }
       ]}
     ].map((p, i) => ({ ...p, icon: PACK_ICONS[i] }));
 
@@ -2731,7 +2746,7 @@
           showCinematic(best);
         } else {
           playNormalSound();
-          if (best.variant !== 'normal' || ['SP','SP+','SP++','SSP','SSP+','SSP++','SRP','SRP+'].includes(best.tier)) {
+          if (best.variant !== 'normal' || ['SP','SP+','SP++','SSP','SSP+','SSP++','SRP','SRP+','SRP++','SUP','SUP+','SUP++','EX'].includes(best.tier)) {
             const title = `获得 ${VARIANTS[best.variant].name}${best.tier}`;
             toast(title, `数量 ×${formatNumber(best.count)}`);
           }
