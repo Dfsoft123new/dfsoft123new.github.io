@@ -1,0 +1,1438 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ABSOLUTE POWER</title>
+<style>
+:root {
+  --bg:#030305; --surf:rgba(255,255,255,0.025); --surf-h:rgba(255,255,255,0.05);
+  --bord:rgba(255,255,255,0.05); --bord-s:rgba(255,255,255,0.1);
+  --txt:#e8e8ec; --txt-s:rgba(255,255,255,0.5); --txt-t:rgba(255,255,255,0.25);
+  --ac:#00d4aa; --ac-dim:rgba(0,212,170,0.12); --ac-glow:rgba(0,212,170,0.35);
+  --warn:#f0a500; --r:6px; --r2:12px; --r3:16px; --ease:cubic-bezier(0.4,0,0.2,1);
+}
+* { margin:0; padding:0; box-sizing:border-box; }
+html { scroll-behavior:smooth; }
+body { background:var(--bg); color:var(--txt); font-family:-apple-system,BlinkMacSystemFont,'Segoe UI','PingFang SC',sans-serif; font-size:14px; line-height:1.6; overflow-x:hidden; min-height:100vh; -webkit-font-smoothing:antialiased; }
+::-webkit-scrollbar { width:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--bord-s); border-radius:3px; }
+
+.nav { position:fixed; top:0; left:0; right:0; z-index:1000; background:rgba(3,3,5,0.85); backdrop-filter:blur(24px) saturate(1.8); border-bottom:1px solid var(--bord); display:flex; justify-content:center; gap:3px; padding:12px 16px; flex-wrap:wrap; }
+.nav-link { color:var(--txt-s); text-decoration:none; font-size:11px; font-weight:600; letter-spacing:1.5px; padding:7px 12px; border-radius:var(--r); text-transform:uppercase; transition:all 0.3s var(--ease); border:1px solid transparent; cursor:pointer; position:relative; overflow:hidden; }
+.nav-link::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(0,212,170,0.1),transparent); transition:left 0.5s; }
+.nav-link:hover::before { left:100%; }
+.nav-link:hover,.nav-link.active { color:var(--ac); border-color:var(--ac-dim); background:var(--ac-dim); box-shadow:0 0 16px var(--ac-glow); transform:translateY(-1px); }
+
+.section { position:relative; z-index:10; padding:100px 20px; max-width:1200px; margin:0 auto; }
+.sec-head { margin-bottom:48px; }
+.sec-label { font-size:10px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--ac); margin-bottom:8px; }
+.sec-title { font-size:clamp(22px,4vw,38px); font-weight:300; letter-spacing:-0.5px; line-height:1.15; }
+.sec-desc { font-size:14px; color:var(--txt-s); margin-top:10px; max-width:550px; line-height:1.7; }
+
+.glass { background:var(--surf); backdrop-filter:blur(20px); border:1px solid var(--bord); border-radius:var(--r3); transition:all 0.4s var(--ease); }
+.glass:hover { border-color:var(--bord-s); background:var(--surf-h); }
+
+.btn-wrap { display:inline-block; perspective:800px; }
+.btn { display:inline-flex; align-items:center; gap:8px; padding:12px 28px; border-radius:var(--r2); font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; cursor:pointer; border:none; background:var(--ac); color:#000; transition:all 0.3s var(--ease); position:relative; overflow:hidden; text-decoration:none; transform-style:preserve-3d; }
+.btn::before { content:''; position:absolute; top:0; left:-100%; width:100%; height:100%; background:linear-gradient(90deg,transparent,rgba(255,255,255,0.4),transparent); transition:left 0.6s; }
+.btn:hover { transform:translateY(-3px) rotateX(8deg) scale(1.02); box-shadow:0 16px 48px var(--ac-glow); }
+.btn:hover::before { left:100%; }
+.btn:active { transform:translateY(-1px) rotateX(3deg); }
+.btn.secondary { background:transparent; color:var(--txt); border:1px solid var(--bord-s); }
+.btn.secondary:hover { border-color:var(--ac); color:var(--ac); background:var(--ac-dim); }
+
+.hero { position:relative; min-height:100vh; display:flex; flex-direction:column; align-items:center; justify-content:center; text-align:center; padding:140px 20px 80px; overflow:hidden; }
+#hero-canvas { position:absolute; top:0; left:0; width:100%; height:100%; z-index:0; pointer-events:none; }
+.hero-content { position:relative; z-index:2; }
+.hero-title { font-size:clamp(36px,9vw,90px); font-weight:200; letter-spacing:12px; line-height:1.05; text-transform:uppercase; }
+.hero-title span { display:inline-block; opacity:0; transform:translateY(40px); animation:charReveal 0.7s var(--ease) forwards; }
+@keyframes charReveal { to { opacity:1; transform:translateY(0); } }
+.hero-sub { font-size:clamp(12px,1.8vw,15px); color:var(--txt-s); margin-top:20px; letter-spacing:4px; text-transform:uppercase; min-height:22px; }
+.hero-cta { margin-top:40px; display:flex; gap:16px; justify-content:center; flex-wrap:wrap; }
+.scroll-hint { position:absolute; bottom:36px; left:50%; transform:translateX(-50%); display:flex; flex-direction:column; align-items:center; gap:6px; color:var(--txt-t); font-size:10px; letter-spacing:2px; text-transform:uppercase; animation:bounce 2.5s infinite; }
+@keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(10px);} }
+.scroll-line { width:1px; height:36px; background:linear-gradient(to bottom,var(--ac),transparent); }
+
+.card-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:16px; perspective:1200px; }
+.flip-card { height:170px; perspective:1000px; cursor:pointer; }
+.flip-card-inner { position:relative; width:100%; height:100%; transition:transform 0.8s cubic-bezier(0.175,0.885,0.32,1.275); transform-style:preserve-3d; }
+.flip-card:hover .flip-card-inner { transform:rotateY(180deg); }
+.flip-card-front,.flip-card-back { position:absolute; width:100%; height:100%; backface-visibility:hidden; border-radius:var(--r3); display:flex; flex-direction:column; align-items:center; justify-content:center; padding:20px; border:1px solid var(--bord); background:var(--surf); }
+.flip-card-back { background:linear-gradient(135deg,rgba(0,212,170,0.06),rgba(240,165,0,0.04)); transform:rotateY(180deg); }
+.card-icon { width:44px; height:44px; border-radius:50%; background:var(--ac-dim); display:flex; align-items:center; justify-content:center; margin-bottom:10px; color:var(--ac); font-size:16px; font-weight:700; }
+.flip-card-front h3 { font-size:14px; font-weight:600; letter-spacing:1px; text-transform:uppercase; }
+.flip-card-back p { font-size:12px; color:var(--txt-s); text-align:center; line-height:1.6; }
+
+.particle-text-wrap { display:flex; justify-content:center; align-items:center; min-height:300px; }
+#particle-text-canvas { cursor:crosshair; }
+
+.synth-panel { padding:24px; }
+.synth-displays { display:flex; gap:12px; margin-bottom:20px; flex-wrap:wrap; }
+.synth-display { flex:1; min-width:200px; height:120px; background:#000; border-radius:var(--r2); border:1px solid var(--bord); overflow:hidden; }
+.synth-display canvas { width:100%; height:100%; }
+.synth-keyboard { display:flex; justify-content:center; gap:3px; flex-wrap:wrap; }
+.synth-key { width:40px; height:130px; border-radius:var(--r); background:linear-gradient(180deg,#1a1a22 0%,#0d0d12 100%); border:1px solid var(--bord); cursor:pointer; display:flex; align-items:flex-end; justify-content:center; padding-bottom:8px; font-size:9px; color:var(--txt-t); transition:all 0.06s; position:relative; user-select:none; }
+.synth-key:hover { background:linear-gradient(180deg,#22222c 0%,#141418 100%); }
+.synth-key.active { background:linear-gradient(180deg,var(--ac-dim) 0%,rgba(0,212,170,0.03) 100%); border-color:var(--ac); color:var(--ac); transform:translateY(2px); box-shadow:0 0 16px var(--ac-glow); }
+.synth-key.black { width:26px; height:85px; margin:0 -14px; z-index:2; background:linear-gradient(180deg,#08080c 0%,#030305 100%); }
+.synth-key.black.active { background:linear-gradient(180deg,rgba(0,212,170,0.25) 0%,rgba(0,212,170,0.03) 100%); }
+.synth-controls { display:flex; gap:16px; margin-bottom:16px; flex-wrap:wrap; justify-content:center; }
+.synth-control { display:flex; flex-direction:column; gap:4px; align-items:center; }
+.synth-control label { font-size:9px; text-transform:uppercase; letter-spacing:1.5px; color:var(--txt-t); }
+.synth-control select,.synth-control input[type="range"] { background:var(--surf); border:1px solid var(--bord); color:var(--txt); padding:5px 10px; border-radius:var(--r); font-size:11px; outline:none; min-width:90px; }
+.synth-control input[type="range"] { min-width:110px; accent-color:var(--ac); }
+
+.canvas-wrap { display:flex; justify-content:center; }
+.canvas-wrap canvas { border-radius:var(--r3); border:1px solid var(--bord); background:#000; }
+.hint { text-align:center; margin-top:10px; font-size:11px; color:var(--txt-t); letter-spacing:1px; }
+
+.fractal-wrap,.sort-wrap,.lsys-wrap,.life-wrap { display:flex; flex-direction:column; align-items:center; gap:14px; }
+.fractal-controls,.lsys-controls { display:flex; gap:14px; flex-wrap:wrap; justify-content:center; }
+.fractal-control { display:flex; flex-direction:column; gap:3px; align-items:center; }
+.fractal-control label { font-size:9px; text-transform:uppercase; letter-spacing:1.5px; color:var(--txt-t); }
+.fractal-control input[type="range"] { width:110px; accent-color:var(--ac); }
+.fractal-control span { font-family:'SF Mono',monospace; font-size:11px; color:var(--ac); }
+
+.life-controls,.sort-controls { display:flex; gap:10px; flex-wrap:wrap; justify-content:center; }
+
+.clock-wrap { display:flex; justify-content:center; align-items:center; gap:40px; flex-wrap:wrap; }
+.digital-clock { font-size:clamp(24px,5vw,52px); font-family:'SF Mono',Monaco,monospace; color:var(--txt); letter-spacing:5px; font-variant-numeric:tabular-nums; text-shadow:0 0 30px rgba(0,212,170,0.12); }
+.digital-clock .ms { font-size:0.45em; color:var(--txt-t); letter-spacing:2px; }
+.analog-clock { width:190px; height:190px; border-radius:50%; border:1px solid var(--bord-s); position:relative; background:var(--surf); }
+.analog-clock .hand { position:absolute; bottom:50%; left:50%; transform-origin:bottom center; border-radius:2px; }
+.analog-clock .hour-hand { width:3px; height:48px; background:var(--txt); margin-left:-1.5px; }
+.analog-clock .min-hand { width:2px; height:72px; background:var(--txt-s); margin-left:-1px; }
+.analog-clock .sec-hand { width:1px; height:86px; background:var(--ac); margin-left:-0.5px; }
+.analog-clock .center-dot { position:absolute; top:50%; left:50%; width:7px; height:7px; background:var(--ac); border-radius:50%; transform:translate(-50%,-50%); box-shadow:0 0 10px var(--ac-glow); }
+.analog-clock .tick { position:absolute; width:1px; background:var(--bord-s); top:6px; left:50%; margin-left:-0.5px; transform-origin:50% 89px; }
+.analog-clock .tick.major { height:9px; background:var(--txt-s); }
+.analog-clock .tick.minor { height:4px; }
+
+.counter-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(160px,1fr)); gap:16px; }
+.counter-card { padding:28px 20px; background:var(--surf); border:1px solid var(--bord); border-radius:var(--r3); text-align:center; transition:all 0.4s var(--ease); }
+.counter-card:hover { border-color:var(--bord-s); transform:translateY(-4px); }
+.counter-num { font-size:36px; font-weight:200; color:var(--ac); font-family:'SF Mono',monospace; letter-spacing:2px; }
+.counter-label { font-size:10px; color:var(--txt-t); text-transform:uppercase; letter-spacing:2px; margin-top:8px; }
+
+.skills-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:12px; }
+.skill-card { padding:18px; background:var(--surf); border:1px solid var(--bord); border-radius:var(--r2); transition:all 0.4s var(--ease); }
+.skill-card:hover { border-color:var(--bord-s); transform:translateY(-3px); background:var(--surf-h); }
+.skill-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; }
+.skill-name { font-size:12px; font-weight:600; letter-spacing:0.5px; text-transform:uppercase; }
+.skill-value { font-family:'SF Mono',monospace; font-size:12px; color:var(--ac); }
+.skill-bar { height:3px; background:rgba(255,255,255,0.04); border-radius:2px; overflow:hidden; }
+.skill-fill { height:100%; background:linear-gradient(90deg,var(--ac),var(--warn)); border-radius:2px; transition:width 1.5s var(--ease); width:0; }
+
+.footer { text-align:center; padding:50px 20px; border-top:1px solid var(--bord); }
+.footer-text { font-size:10px; color:var(--txt-t); letter-spacing:2px; text-transform:uppercase; }
+
+@media(max-width:768px) { .nav { padding:8px 8px; gap:2px; } .nav-link { padding:5px 7px; font-size:9px; letter-spacing:1px; } .section { padding:70px 16px; } .hero-title { letter-spacing:4px; } .clock-wrap { gap:24px; } }
+.reveal { opacity:0; transform:translateY(20px); transition:all 0.7s var(--ease); }
+.reveal.visible { opacity:1; transform:translateY(0); }
+</style>
+</head>
+<body>
+
+<nav class="nav" id="main-nav">
+  <a class="nav-link" href="#hero">首页</a>
+  <a class="nav-link" href="#particle-text">粒子文字</a>
+  <a class="nav-link" href="#cards">3D卡片</a>
+  <a class="nav-link" href="#synth">合成器</a>
+  <a class="nav-link" href="#physics">物理弹球</a>
+  <a class="nav-link" href="#fluid">流体</a>
+  <a class="nav-link" href="#ray">光线</a>
+  <a class="nav-link" href="#cloth">布料</a>
+  <a class="nav-link" href="#fractal">分形</a>
+  <a class="nav-link" href="#matrix">代码雨</a>
+  <a class="nav-link" href="#firework">烟花</a>
+  <a class="nav-link" href="#sort">排序</a>
+  <a class="nav-link" href="#bezier">贝塞尔</a>
+  <a class="nav-link" href="#lsys">L-System</a>
+  <a class="nav-link" href="#fib">螺旋</a>
+  <a class="nav-link" href="#life">生命</a>
+  <a class="nav-link" href="#clock">时钟</a>
+  <a class="nav-link" href="#counters">数据</a>
+  <a class="nav-link" href="#skills">技能</a>
+</nav>
+
+<section class="hero" id="hero">
+  <canvas id="hero-canvas"></canvas>
+  <div class="hero-content">
+    <h1 class="hero-title" id="hero-title">ABSOLUTE POWER</h1>
+    <p class="hero-sub" id="hero-sub"></p>
+    <div class="hero-cta">
+      <div class="btn-wrap"><a class="btn" href="#particle-text">开始探索</a></div>
+      <div class="btn-wrap"><a class="btn secondary" href="#skills">查看实力</a></div>
+    </div>
+  </div>
+  <div class="scroll-hint"><span>向下滚动</span><div class="scroll-line"></div></div>
+</section>
+
+<section class="section" id="particle-text">
+  <div class="sec-head reveal">
+    <div class="sec-label">Interactive Typography</div>
+    <h2 class="sec-title">粒子文字重组</h2>
+    <p class="sec-desc">数千独立粒子组成文字，鼠标靠近产生斥力场，离开后基于弹簧阻尼系统平滑重组。</p>
+  </div>
+  <div class="particle-text-wrap reveal"><canvas id="particle-text-canvas" width="900" height="260"></canvas></div>
+</section>
+
+<section class="section" id="cards">
+  <div class="sec-head reveal">
+    <div class="sec-label">3D Interaction</div>
+    <h2 class="sec-title">3D 翻转卡片墙</h2>
+    <p class="sec-desc">CSS3 preserve-3d 实现的真三维翻转效果，悬停触发 180 度 Y 轴旋转。</p>
+  </div>
+  <div class="card-grid reveal" id="card-grid"></div>
+</section>
+
+<section class="section" id="synth">
+  <div class="sec-head reveal">
+    <div class="sec-label">Web Audio Synthesizer</div>
+    <h2 class="sec-title">虚拟模拟合成器</h2>
+    <p class="sec-desc">基于 Web Audio API 的物理建模合成器。25键双八度（C3-C5），点击琴键或按键盘演奏。多谐波叠加、ADSR 包络、混响与力度感应，音色更饱满更干脆。</p>
+  </div>
+  <div class="glass synth-panel reveal">
+    <div class="synth-displays">
+      <div class="synth-display"><canvas id="synth-scope"></canvas></div>
+      <div class="synth-display"><canvas id="synth-spectrum"></canvas></div>
+    </div>
+    <div class="synth-controls">
+      <div class="synth-control"><label>波形</label><select id="waveform"><option value="sine">正弦波</option><option value="square">方波</option><option value="sawtooth">锯齿波</option><option value="triangle">三角波</option></select></div>
+      <div class="synth-control"><label>Attack</label><input type="range" id="attack" min="0" max="100" value="10"></div>
+      <div class="synth-control"><label>Release</label><input type="range" id="release" min="0" max="100" value="30"></div>
+      <div class="synth-control"><label>Filter</label><input type="range" id="filter" min="100" max="5000" value="2000"></div>
+    </div>
+    <div class="synth-keyboard" id="synth-keys"></div>
+  </div>
+</section>
+
+<section class="section" id="physics">
+  <div class="sec-head reveal">
+    <div class="sec-label">Physics Simulation</div>
+    <h2 class="sec-title">物理弹球模拟器</h2>
+    <p class="sec-desc">重力、弹性碰撞、摩擦力与轨迹拖尾。点击画布发射弹球，观察球体间的真实物理交互。</p>
+  </div>
+  <div class="canvas-wrap reveal"><canvas id="physics-canvas" width="800" height="400"></canvas></div>
+  <p class="hint">点击画布发射弹球</p>
+</section>
+
+<section class="section" id="fluid">
+  <div class="sec-head reveal">
+    <div class="sec-label">Particle Fluid</div>
+    <h2 class="sec-title">SPH 流体粒子模拟</h2>
+    <p class="sec-desc">800 个粒子受鼠标力场驱动，展现流体聚集、扩散与涡旋行为。点击鼠标反转力场。</p>
+  </div>
+  <div class="canvas-wrap reveal"><canvas id="fluid-canvas" width="800" height="400"></canvas></div>
+  <p class="hint">移动鼠标产生力场扰动，点击反转</p>
+</section>
+
+<section class="section" id="ray">
+  <div class="sec-head reveal">
+    <div class="sec-label">Ray Casting</div>
+    <h2 class="sec-title">2D 光线投射引擎</h2>
+    <p class="sec-desc">从光源发射 720 条光线，实时计算与障碍物的精确交点，生成动态阴影与光照效果。</p>
+  </div>
+  <div class="canvas-wrap reveal"><canvas id="ray-canvas" width="800" height="400"></canvas></div>
+  <p class="hint">移动鼠标控制光源位置</p>
+</section>
+
+<section class="section" id="cloth">
+  <div class="sec-head reveal">
+    <div class="sec-label">Verlet Integration</div>
+    <h2 class="sec-title">Verlet 积分布料模拟</h2>
+    <p class="sec-desc">24x16 网格质点弹簧系统，支持拖拽交互、风力扰动与重力模拟。红色点为固定锚点。</p>
+  </div>
+  <div class="canvas-wrap reveal"><canvas id="cloth-canvas" width="800" height="400"></canvas></div>
+  <p class="hint">拖拽布料任意位置进行交互</p>
+</section>
+
+<section class="section" id="fractal">
+  <div class="sec-head reveal">
+    <div class="sec-label">Fractal Explorer</div>
+    <h2 class="sec-title">Mandelbrot 分形浏览器</h2>
+    <p class="sec-desc">逐像素 CPU 渲染 Mandelbrot 集合。支持滚轮缩放、拖拽平移、迭代深度与颜色偏移调节。</p>
+  </div>
+  <div class="fractal-wrap reveal">
+    <canvas id="fractal-canvas" width="700" height="460"></canvas>
+    <div class="fractal-controls">
+      <div class="fractal-control"><label>迭代深度</label><input type="range" id="fractal-iter" min="50" max="500" value="150"><span id="fractal-iter-val">150</span></div>
+      <div class="fractal-control"><label>颜色偏移</label><input type="range" id="fractal-hue" min="0" max="360" value="200"><span id="fractal-hue-val">200</span></div>
+      <div class="fractal-control"><label>缩放</label><input type="range" id="fractal-zoom" min="50" max="400" value="200"><span id="fractal-zoom-val">1.0x</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="matrix">
+  <div class="sec-head reveal">
+    <div class="sec-label">Digital Rain</div>
+    <h2 class="sec-title">黑客帝国代码雨</h2>
+    <p class="sec-desc">经典的矩阵数字雨效果。日文假名与十六进制字符从屏幕顶部下落，形成赛博朋克视觉。</p>
+  </div>
+  <div class="canvas-wrap reveal"><canvas id="matrix-canvas" width="900" height="260"></canvas></div>
+</section>
+
+<section class="section" id="firework">
+  <div class="sec-head reveal">
+    <div class="sec-label">Particle Fireworks</div>
+    <h2 class="sec-title">粒子烟花引擎</h2>
+    <p class="sec-desc">基于粒子的烟花发射与爆炸系统。点击画布发射烟花，粒子受重力影响下落并产生拖尾。</p>
+  </div>
+  <div class="canvas-wrap reveal"><canvas id="firework-canvas" width="800" height="400"></canvas></div>
+  <p class="hint">点击画布发射烟花</p>
+</section>
+
+<section class="section" id="sort">
+  <div class="sec-head reveal">
+    <div class="sec-label">Algorithm Visualization</div>
+    <h2 class="sec-title">排序算法可视化</h2>
+    <p class="sec-desc">实时可视化冒泡排序、快速排序与随机打乱过程。彩色柱状图动态展示数据交换。</p>
+  </div>
+  <div class="sort-wrap reveal">
+    <canvas id="sort-canvas" width="800" height="260"></canvas>
+    <div class="sort-controls">
+      <button class="btn" id="sort-bubble">冒泡排序</button>
+      <button class="btn secondary" id="sort-quick">快速排序</button>
+      <button class="btn secondary" id="sort-shuffle">随机打乱</button>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="bezier">
+  <div class="sec-head reveal">
+    <div class="sec-label">Curve Drawing</div>
+    <h2 class="sec-title">贝塞尔曲线绘制器</h2>
+    <p class="sec-desc">三次贝塞尔曲线实时绘制。拖拽四个控制点改变曲线形状，实时显示控制多边形与切线。</p>
+  </div>
+  <div class="canvas-wrap reveal"><canvas id="bezier-canvas" width="800" height="400"></canvas></div>
+  <p class="hint">拖拽控制点改变曲线形状</p>
+</section>
+
+<section class="section" id="lsys">
+  <div class="sec-head reveal">
+    <div class="sec-label">L-System Fractal</div>
+    <h2 class="sec-title">L-System 分形生成器</h2>
+    <p class="sec-desc">6种预设分形形态，支持生长动画、随机扰动与实时参数调节。观察复杂自然形态从简单规则中涌现。</p>
+  </div>
+  <div class="lsys-wrap reveal">
+    <canvas id="lsys-canvas" width="700" height="460"></canvas>
+    <div class="lsys-controls">
+      <div class="fractal-control"><label>预设形态</label>
+        <select id="lsys-preset" style="background:var(--surf);border:1px solid var(--bord);color:var(--txt);padding:5px 10px;border-radius:var(--r);font-size:11px;outline:none;min-width:100px;">
+          <option value="tree1">自然树</option>
+          <option value="tree2">二叉树</option>
+          <option value="fern">蕨类植物</option>
+          <option value="bush">灌木丛</option>
+          <option value="dragon">龙形曲线</option>
+          <option value="koch">科赫雪花</option>
+        </select>
+      </div>
+      <div class="fractal-control"><label>迭代次数</label><input type="range" id="lsys-iter" min="1" max="7" value="5"><span id="lsys-iter-val">5</span></div>
+      <div class="fractal-control"><label>分支角度</label><input type="range" id="lsys-angle" min="10" max="90" value="25"><span id="lsys-angle-val">25</span></div>
+      <div class="fractal-control"><label>长度</label><input type="range" id="lsys-len" min="2" max="10" value="5"><span id="lsys-len-val">5</span></div>
+      <div class="fractal-control"><label>随机扰动</label><input type="range" id="lsys-rand" min="0" max="20" value="0"><span id="lsys-rand-val">0</span></div>
+      <button class="btn" id="lsys-replay" style="padding:8px 20px;font-size:11px;">重播生长</button>
+    </div>
+  </div>
+</section><section class="section" id="fib">
+  <div class="sec-head reveal">
+    <div class="sec-label">Golden Spiral</div>
+    <h2 class="sec-title">黄金比例斐波那契螺旋</h2>
+    <p class="sec-desc">基于斐波那契数列的黄金螺旋绘制。每个方块边长遵循黄金比例，螺旋线无限趋近完美比例。</p>
+  </div>
+  <div class="canvas-wrap reveal"><canvas id="fib-canvas" width="700" height="460"></canvas></div>
+</section>
+
+<section class="section" id="life">
+  <div class="sec-head reveal">
+    <div class="sec-label">Cellular Automata</div>
+    <h2 class="sec-title">康威生命游戏</h2>
+    <p class="sec-desc">经典细胞自动机。点击画布绘制活细胞，观察复杂模式从简单规则中涌现。支持暂停、单步、清空与随机。</p>
+  </div>
+  <div class="life-wrap reveal">
+    <canvas id="life-canvas" width="700" height="360"></canvas>
+    <div class="life-controls">
+      <button class="btn" id="life-play">暂停</button>
+      <button class="btn secondary" id="life-clear">清空</button>
+      <button class="btn secondary" id="life-random">随机</button>
+      <button class="btn secondary" id="life-step">单步</button>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="clock">
+  <div class="sec-head reveal">
+    <div class="sec-label">Precision Time</div>
+    <h2 class="sec-title">原子精密时钟</h2>
+    <p class="sec-desc">毫秒级精度的数字时钟与模拟表盘。requestAnimationFrame 实现无跳帧丝滑动画。</p>
+  </div>
+  <div class="clock-wrap reveal">
+    <div class="digital-clock"><span id="dc-time">00:00:00</span><span class="ms" id="dc-ms">.000</span></div>
+    <div class="analog-clock" id="analog-clock">
+      <div class="center-dot"></div>
+      <div class="hand hour-hand" id="ah-hour"></div>
+      <div class="hand min-hand" id="ah-min"></div>
+      <div class="hand sec-hand" id="ah-sec"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section" id="counters">
+  <div class="sec-head reveal">
+    <div class="sec-label">Statistics</div>
+    <h2 class="sec-title">实时数据统计</h2>
+    <p class="sec-desc">滚动到视口时触发数字滚动动画，从 0 递增到目标值。</p>
+  </div>
+  <div class="counter-grid reveal" id="counter-grid"></div>
+</section>
+
+<section class="section" id="skills">
+  <div class="sec-head reveal">
+    <div class="sec-label">Capability Matrix</div>
+    <h2 class="sec-title">全栈能力矩阵</h2>
+    <p class="sec-desc">核心技术栈量化评估。滚动进入视口时触发动画填充。</p>
+  </div>
+  <div class="skills-grid" id="skills-grid"></div>
+</section>
+
+<footer class="footer">
+  <p class="footer-text">ABSOLUTE POWER — Pure Native HTML / CSS / JavaScript — Zero Dependencies — Single File</p>
+</footer>
+
+<script>
+/* ================================================================
+   ABSOLUTE POWER — 终极炫技演示
+   纯原生实现 | 零依赖 | 单文件
+   ================================================================ */
+
+const $ = id => document.getElementById(id);
+const rand = (a,b) => Math.random()*(b-a)+a;
+const clamp = (v,a,b) => Math.max(a,Math.min(b,v));
+const randInt = (a,b) => Math.floor(rand(a,b));
+
+/* ========== 可见性控制 ========== */
+const visibleSections = new Set();
+function observeCanvas(canvas, callback) {
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) visibleSections.add(canvas.id); else visibleSections.delete(canvas.id); });
+  }, { threshold: 0.03 });
+  obs.observe(canvas);
+  let raf;
+  function loop() { if (visibleSections.has(canvas.id)) callback(); raf = requestAnimationFrame(loop); }
+  raf = requestAnimationFrame(loop);
+}
+
+/* ========== 导航 + 滚动高亮 + 揭示动画 ========== */
+(function initNav() {
+  const links = document.querySelectorAll('.nav-link');
+  const sections = document.querySelectorAll('.section, .hero');
+  const reveals = document.querySelectorAll('.reveal');
+
+  // 滚动高亮
+  function updateActive() {
+    let cur = 'hero';
+    sections.forEach(s => { if (s.getBoundingClientRect().top <= 100) cur = s.id; });
+    links.forEach(l => l.classList.toggle('active', l.getAttribute('href') === '#' + cur));
+  }
+  window.addEventListener('scroll', updateActive);
+  updateActive();
+
+  // 揭示动画
+  const revObs = new IntersectionObserver(entries => {
+    entries.forEach(e => { if (e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  reveals.forEach(el => revObs.observe(el));
+})();
+
+/* ========== HERO 粒子背景 + 标题动画 ========== */
+(function() {
+  const canvas = $('hero-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let w, h, particles = [];
+  const COUNT = 100;
+  function resize() { w = canvas.width = window.innerWidth; h = canvas.height = window.innerHeight; }
+  resize(); window.addEventListener('resize', resize);
+  class P {
+    constructor() { this.reset(); }
+    reset() { this.x = rand(0,w); this.y = rand(0,h); this.vx = rand(-0.4,0.4); this.vy = rand(-0.4,0.4); this.r = rand(0.8,2.5); this.a = rand(0.08,0.4); }
+    update() { this.x += this.vx; this.y += this.vy; if (this.x<0||this.x>w) this.vx*=-1; if (this.y<0||this.y>h) this.vy*=-1; }
+    draw() { ctx.beginPath(); ctx.arc(this.x,this.y,this.r,0,Math.PI*2); ctx.fillStyle = 'rgba(0,212,170,'+this.a+')'; ctx.fill(); }
+  }
+  for (let i=0;i<COUNT;i++) particles.push(new P());
+  let mx=w/2, my=h/2;
+  document.addEventListener('mousemove', e => { mx=e.clientX; my=e.clientY; });
+  observeCanvas(canvas, () => {
+    ctx.clearRect(0,0,w,h);
+    const g = ctx.createRadialGradient(mx,my,0,mx,my,Math.max(w,h)*0.5);
+    g.addColorStop(0,'rgba(0,212,170,0.025)'); g.addColorStop(1,'transparent');
+    ctx.fillStyle = g; ctx.fillRect(0,0,w,h);
+    particles.forEach(p => { p.update(); p.draw(); });
+    for (let i=0;i<particles.length;i++) {
+      for (let j=i+1;j<particles.length;j++) {
+        const dx=particles[i].x-particles[j].x, dy=particles[i].y-particles[j].y;
+        const d=Math.sqrt(dx*dx+dy*dy);
+        if (d<140) { ctx.beginPath(); ctx.moveTo(particles[i].x,particles[i].y); ctx.lineTo(particles[j].x,particles[j].y); ctx.strokeStyle = 'rgba(0,212,170,'+(0.05*(1-d/140))+')'; ctx.lineWidth=0.5; ctx.stroke(); }
+      }
+    }
+  });
+  // 标题动画
+  const title = $('hero-title');
+  if (title) { const text = title.textContent; title.innerHTML = ''; [...text].forEach((ch,i) => { const span = document.createElement('span'); span.textContent = ch === ' ' ? ' ' : ch; span.style.animationDelay = (0.2+i*0.05)+'s'; title.appendChild(span); }); }
+  // 打字机
+  const sub = $('hero-sub');
+  if (sub) { const subText = '极致前端技术演示 — 纯原生实现 — 零依赖'; let si = 0; function type() { if (si < subText.length) { sub.textContent += subText[si++]; setTimeout(type, rand(30,80)); } } setTimeout(type, 1000); }
+})();
+
+/* ========== 3D 卡片墙 ========== */
+(function() {
+  const grid = $('card-grid');
+  if (!grid) return;
+  const cards = [
+    {icon:'01', title:'极致性能', desc:'60FPS 流畅渲染<br>零依赖零框架<br>硬件加速 CSS3D<br>IntersectionObserver 优化'},
+    {icon:'02', title:'视觉盛宴', desc:'粒子系统与物理模拟<br>光线投射与动态阴影<br>玻璃拟态与渐变流动<br>视差滚动与揭示动画'},
+    {icon:'03', title:'交互魔法', desc:'鼠标轨迹发光粒子<br>斥力场与弹簧系统<br>实时物理碰撞模拟<br>音频合成与可视化'},
+    {icon:'04', title:'算法之美', desc:'递归分形与 L-System<br>Mandelbrot 集合渲染<br>粒子碰撞与 Verlet<br>实时排序可视化'},
+    {icon:'05', title:'前沿技术', desc:'纯原生 JS 实现<br>Canvas 2D 全功能<br>Web Audio API<br>RequestAnimationFrame'},
+    {icon:'06', title:'代码艺术', desc:'单文件全功能演示<br>模块化架构设计<br>极致压缩与优化<br>响应式全设备适配'},
+  ];
+  cards.forEach(c => {
+    const card = document.createElement('div'); card.className = 'flip-card';
+    card.innerHTML = '<div class="flip-card-inner"><div class="flip-card-front"><div class="card-icon">'+c.icon+'</div><h3>'+c.title+'</h3></div><div class="flip-card-back"><p>'+c.desc+'</p></div></div>';
+    grid.appendChild(card);
+  });
+})();
+
+/* ========== 粒子文字 ========== */
+(function() {
+  const canvas = $('particle-text-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const text = 'ABSOLUTE'; const fontSize = 85;
+  let particles = [], mx = -1000, my = -1000;
+  const off = document.createElement('canvas');
+  const octx = off.getContext('2d');
+  off.width = 900; off.height = 260;
+  octx.font = '900 '+fontSize+'px -apple-system, sans-serif';
+  octx.fillStyle = '#fff'; octx.textAlign = 'center'; octx.textBaseline = 'middle';
+  octx.fillText(text, 450, 130);
+  const imgData = octx.getImageData(0,0,900,260);
+  for (let y=0; y<260; y+=4) {
+    for (let x=0; x<900; x+=4) {
+      const i = (y*900+x)*4;
+      if (imgData.data[i+3] > 128) particles.push({ox:x, oy:y, x:rand(0,900), y:rand(0,260), vx:0, vy:0, size:rand(1.5,3)});
+    }
+  }
+  canvas.addEventListener('mousemove', e => { const r = canvas.getBoundingClientRect(); mx = (e.clientX-r.left)*(900/r.width); my = (e.clientY-r.top)*(260/r.height); });
+  canvas.addEventListener('mouseleave', () => { mx = -1000; my = -1000; });
+  observeCanvas(canvas, () => {
+    ctx.fillStyle = 'rgba(3,3,5,0.25)'; ctx.fillRect(0,0,900,260);
+    particles.forEach(p => {
+      const dx = mx-p.x, dy = my-p.y, dist = Math.sqrt(dx*dx+dy*dy);
+      if (dist < 120) { const force = (120-dist)/120*2.5; p.vx -= (dx/dist||0)*force; p.vy -= (dy/dist||0)*force; }
+      p.vx += (p.ox-p.x)*0.035; p.vy += (p.oy-p.y)*0.035; p.vx *= 0.88; p.vy *= 0.88;
+      p.x += p.vx; p.y += p.vy;
+      ctx.beginPath(); ctx.arc(p.x,p.y,p.size,0,Math.PI*2); ctx.fillStyle = 'rgba(0,212,170,'+(0.55+Math.abs(p.vx)*0.12)+')'; ctx.fill();
+    });
+  });
+})();
+
+/* ========== 音频合成器 ========== */
+(function() {
+  let audioCtx = null, analyser = null, dataArray = null, freqArray = null;
+  const activeVoices = new Map();
+  // 扩展为两个八度+：C3 到 C5 (25个白键+黑键)
+  const notes = [
+    {n:'C3',f:130.81,k:'z',b:0},{n:'C#3',f:138.59,k:'s',b:1},{n:'D3',f:146.83,k:'x',b:0},
+    {n:'D#3',f:155.56,k:'d',b:1},{n:'E3',f:164.81,k:'c',b:0},{n:'F3',f:174.61,k:'v',b:0},
+    {n:'F#3',f:185.00,k:'g',b:1},{n:'G3',f:196.00,k:'b',b:0},{n:'G#3',f:207.65,k:'h',b:1},
+    {n:'A3',f:220.00,k:'n',b:0},{n:'A#3',f:233.08,k:'j',b:1},{n:'B3',f:246.94,k:'m',b:0},
+    {n:'C4',f:261.63,k:'q',b:0},{n:'C#4',f:277.18,k:'2',b:1},{n:'D4',f:293.66,k:'w',b:0},
+    {n:'D#4',f:311.13,k:'3',b:1},{n:'E4',f:329.63,k:'e',b:0},{n:'F4',f:349.23,k:'r',b:0},
+    {n:'F#4',f:369.99,k:'5',b:1},{n:'G4',f:392.00,k:'t',b:0},{n:'G#4',f:415.30,k:'6',b:1},
+    {n:'A4',f:440.00,k:'y',b:0},{n:'A#4',f:466.16,k:'7',b:1},{n:'B4',f:493.88,k:'u',b:0},
+    {n:'C5',f:523.25,k:'i',b:0}
+  ];
+
+  function initAudio() {
+    if (audioCtx) return;
+    try {
+      audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+      analyser = audioCtx.createAnalyser();
+      analyser.fftSize = 2048;
+      dataArray = new Uint8Array(analyser.frequencyBinCount);
+      freqArray = new Uint8Array(analyser.frequencyBinCount);
+    } catch(e) { console.log('Web Audio not supported'); }
+  }
+
+  // 创建简单混响脉冲响应
+  function createReverb() {
+    if (!audioCtx) return null;
+    const rate = audioCtx.sampleRate;
+    const length = rate * 1.5;
+    const impulse = audioCtx.createBuffer(2, length, rate);
+    for (let ch = 0; ch < 2; ch++) {
+      const data = impulse.getChannelData(ch);
+      for (let i = 0; i < length; i++) {
+        data[i] = (Math.random() * 2 - 1) * Math.pow(1 - i / length, 2.5);
+      }
+    }
+    const convolver = audioCtx.createConvolver();
+    convolver.buffer = impulse;
+    const reverbGain = audioCtx.createGain();
+    reverbGain.gain.value = 0.25;
+    convolver.connect(reverbGain);
+    return { convolver, reverbGain };
+  }
+  let reverbNode = null;
+
+  const kb = $('synth-keys');
+  if (!kb) return;
+
+  notes.forEach(note => {
+    const key = document.createElement('div');
+    key.className = 'synth-key' + (note.b ? ' black' : '');
+    key.dataset.note = note.n;
+    key.textContent = note.n;
+    kb.appendChild(key);
+
+    const play = (velocity = 0.7) => {
+      initAudio();
+      if (!audioCtx) return;
+      if (audioCtx.state === 'suspended') audioCtx.resume();
+      if (activeVoices.has(note.n)) return;
+
+      const now = audioCtx.currentTime;
+      const wf = $('waveform');
+      const waveform = wf ? wf.value : 'sine';
+
+      // 获取ADSR参数
+      const atkEl = $('attack'), relEl = $('release'), flEl = $('filter');
+      const atk = atkEl ? Math.max(0.005, parseInt(atkEl.value) / 1000) : 0.01;
+      const rel = relEl ? Math.max(0.05, parseInt(relEl.value) / 500) : 0.4;
+      const filterFreq = flEl ? parseInt(flEl.value) : 3000;
+
+      // 创建主增益（ADSR包络）
+      const masterGain = audioCtx.createGain();
+      masterGain.connect(analyser);
+      analyser.connect(audioCtx.destination);
+
+      // 混响
+      if (!reverbNode) {
+        reverbNode = createReverb();
+        if (reverbNode) {
+          reverbNode.reverbGain.connect(analyser);
+        }
+      }
+
+      // 钢琴音色：基频 + 2个泛音 + 滤波器
+      const oscs = [];
+      const harmonics = [1, 2, 3];
+      const harmonicGains = [0.55, 0.18, 0.08];
+
+      harmonics.forEach((h, idx) => {
+        const osc = audioCtx.createOscillator();
+        const gain = audioCtx.createGain();
+        const filter = audioCtx.createBiquadFilter();
+
+        osc.type = waveform;
+        osc.frequency.value = note.f * h;
+
+        filter.type = 'lowpass';
+        filter.frequency.value = filterFreq * (1.2 - idx * 0.15);
+        filter.Q.value = 0.8 + idx * 0.3;
+
+        const vol = harmonicGains[idx] * velocity;
+        gain.gain.setValueAtTime(0, now);
+        gain.gain.linearRampToValueAtTime(vol, now + atk);
+        gain.gain.exponentialRampToValueAtTime(vol * 0.6, now + atk + 0.15);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(masterGain);
+        if (reverbNode) gain.connect(reverbNode.convolver);
+
+        osc.start(now);
+        oscs.push({osc, gain});
+      });
+
+      // 主包络
+      masterGain.gain.setValueAtTime(0, now);
+      masterGain.gain.linearRampToValueAtTime(1, now + atk);
+      masterGain.gain.setTargetAtTime(0.5, now + atk + 0.1, 0.3);
+
+      activeVoices.set(note.n, {oscs, masterGain, rel});
+      key.classList.add('active');
+    };
+
+    const stop = () => {
+      const voice = activeVoices.get(note.n);
+      if (!voice || !audioCtx) return;
+      const now = audioCtx.currentTime;
+      voice.masterGain.gain.cancelScheduledValues(now);
+      voice.masterGain.gain.setValueAtTime(voice.masterGain.gain.value, now);
+      voice.masterGain.gain.exponentialRampToValueAtTime(0.001, now + voice.rel);
+      voice.oscs.forEach(o => {
+        try { o.osc.stop(now + voice.rel + 0.05); } catch(e){}
+      });
+      setTimeout(() => activeVoices.delete(note.n), voice.rel * 1000 + 100);
+      key.classList.remove('active');
+    };
+
+    key.addEventListener('mousedown', e => {
+      // 力度根据点击Y位置：越靠下力度越大
+      const rect = key.getBoundingClientRect();
+      const vel = 0.5 + (1 - (e.clientY - rect.top) / rect.height) * 0.5;
+      play(vel);
+    });
+    key.addEventListener('mouseup', stop);
+    key.addEventListener('mouseleave', stop);
+    key.addEventListener('touchstart', e => { e.preventDefault(); play(0.75); });
+    key.addEventListener('touchend', e => { e.preventDefault(); stop(); });
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.repeat) return;
+    const note = notes.find(n => n.k === e.key.toLowerCase());
+    if (note) { const el = kb.querySelector('[data-note="'+note.n+'"]'); if (el) { const rect = el.getBoundingClientRect(); const vel = 0.5 + Math.random() * 0.4; el.dispatchEvent(new Event('mousedown')); } }
+  });
+  document.addEventListener('keyup', e => {
+    const note = notes.find(n => n.k === e.key.toLowerCase());
+    if (note) { const el = kb.querySelector('[data-note="'+note.n+'"]'); if (el) el.dispatchEvent(new Event('mouseup')); }
+  });
+
+  // 示波器
+  const scope = $('synth-scope');
+  if (scope) {
+    const sctx = scope.getContext('2d'); let sw, sh;
+    function sresize() { const r = scope.parentElement.getBoundingClientRect(); sw = scope.width = r.width; sh = scope.height = r.height; }
+    sresize(); window.addEventListener('resize', sresize);
+    observeCanvas(scope, () => {
+      sctx.fillStyle = '#000'; sctx.fillRect(0,0,sw,sh);
+      if (analyser && dataArray) {
+        analyser.getByteTimeDomainData(dataArray);
+        sctx.beginPath(); sctx.strokeStyle = '#00d4aa'; sctx.lineWidth = 2;
+        const slice = sw / dataArray.length;
+        for (let i=0; i<dataArray.length; i++) { const v = dataArray[i]/128.0; const y = v*sh/2; if (i===0) sctx.moveTo(0,y); else sctx.lineTo(i*slice,y); }
+        sctx.stroke();
+      }
+      sctx.strokeStyle = 'rgba(0,212,170,0.06)'; sctx.lineWidth = 1;
+      for (let i=1; i<5; i++) { sctx.beginPath(); sctx.moveTo(0,sh*i/5); sctx.lineTo(sw,sh*i/5); sctx.stroke(); sctx.beginPath(); sctx.moveTo(sw*i/5,0); sctx.lineTo(sw*i/5,sh); sctx.stroke(); }
+    });
+  }
+
+  // 频谱
+  const spec = $('synth-spectrum');
+  if (spec) {
+    const spctx = spec.getContext('2d'); let spw, sph;
+    function spresize() { const r = spec.parentElement.getBoundingClientRect(); spw = spec.width = r.width; sph = spec.height = r.height; }
+    spresize(); window.addEventListener('resize', spresize);
+    observeCanvas(spec, () => {
+      spctx.fillStyle = '#000'; spctx.fillRect(0,0,spw,sph);
+      if (analyser && freqArray) {
+        analyser.getByteFrequencyData(freqArray);
+        const barW = spw / 64;
+        for (let i=0; i<64; i++) {
+          const barH = (freqArray[i]/255)*sph*0.9;
+          const hue = 160 + (i/64)*60;
+          spctx.fillStyle = 'hsla('+hue+',80%,55%,0.8)';
+          spctx.fillRect(i*barW, sph-barH, barW-1, barH);
+        }
+      }
+    });
+  }
+})();/* ========== 物理弹球 ========== */
+(function() {
+  const canvas = $('physics-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const balls = [];
+  const GRAVITY = 0.35, BOUNCE = 0.82, FRICTION = 0.998, WALL_FRICTION = 0.98;
+  class Ball {
+    constructor(x, y) {
+      this.x = x; this.y = y;
+      this.vx = rand(-8, 8); this.vy = rand(-12, -4);
+      this.r = rand(10, 20); this.hue = randInt(0, 360);
+      this.trail = []; this.mass = this.r * this.r; // 质量与面积成正比
+    }
+    update() {
+      this.trail.push({x: this.x, y: this.y});
+      if (this.trail.length > 15) this.trail.shift();
+      this.vy += GRAVITY; this.vx *= FRICTION; this.vy *= FRICTION;
+      this.x += this.vx; this.y += this.vy;
+      // 边界碰撞（带摩擦）
+      if (this.x - this.r < 0) { this.x = this.r; this.vx *= -BOUNCE; this.vy *= WALL_FRICTION; }
+      if (this.x + this.r > 800) { this.x = 800 - this.r; this.vx *= -BOUNCE; this.vy *= WALL_FRICTION; }
+      if (this.y - this.r < 0) { this.y = this.r; this.vy *= -BOUNCE; }
+      if (this.y + this.r > 400) { this.y = 400 - this.r; this.vy *= -BOUNCE; this.vx *= WALL_FRICTION; }
+      // 防止休眠
+      if (Math.abs(this.vx) < 0.05 && Math.abs(this.vy) < 0.1 && this.y + this.r > 395) {
+        this.vy -= rand(2, 5);
+        this.vx += rand(-2, 2);
+      }
+    }
+    draw() {
+      this.trail.forEach((t, i) => {
+        ctx.beginPath(); ctx.arc(t.x, t.y, this.r * (i / this.trail.length) * 0.35, 0, Math.PI * 2);
+        ctx.fillStyle = 'hsla('+this.hue+',80%,60%,'+(i/this.trail.length*0.2)+')'; ctx.fill();
+      });
+      // 球体渐变
+      const grad = ctx.createRadialGradient(this.x - this.r*0.3, this.y - this.r*0.3, this.r*0.1, this.x, this.y, this.r);
+      grad.addColorStop(0, 'hsla('+this.hue+',60%,85%,1)');
+      grad.addColorStop(0.4, 'hsla('+this.hue+',80%,60%,1)');
+      grad.addColorStop(1, 'hsla('+this.hue+',90%,30%,1)');
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+      ctx.fillStyle = grad; ctx.fill();
+      ctx.strokeStyle = 'hsla('+this.hue+',80%,80%,0.6)'; ctx.lineWidth = 1.5; ctx.stroke();
+    }
+  }
+  canvas.addEventListener('click', e => {
+    const r = canvas.getBoundingClientRect();
+    balls.push(new Ball((e.clientX - r.left) * (800 / r.width), (e.clientY - r.top) * (400 / r.height)));
+    if (balls.length > 20) balls.shift();
+  });
+
+  // 正确的弹性碰撞物理
+  function resolveCollision(b1, b2) {
+    const dx = b2.x - b1.x;
+    const dy = b2.y - b1.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist === 0) return;
+
+    // 位置分离（防止粘连）
+    const overlap = (b1.r + b2.r - dist) / 2;
+    const nx = dx / dist, ny = dy / dist;
+    b1.x -= nx * overlap; b1.y -= ny * overlap;
+    b2.x += nx * overlap; b2.y += ny * overlap;
+
+    // 相对速度在法向的投影
+    const dvx = b2.vx - b1.vx;
+    const dvy = b2.vy - b1.vy;
+    const velAlongNormal = dvx * nx + dvy * ny;
+    if (velAlongNormal > 0) return; // 正在分离
+
+    // 弹性碰撞 + 能量损失
+    const restitution = 0.85;
+    const totalMass = b1.mass + b2.mass;
+    const m1Ratio = (2 * b2.mass) / totalMass;
+    const m2Ratio = (2 * b1.mass) / totalMass;
+
+    const impulse = -(1 + restitution) * velAlongNormal;
+    const j = impulse / totalMass;
+
+    b1.vx -= j * b2.mass * nx;
+    b1.vy -= j * b2.mass * ny;
+    b2.vx += j * b1.mass * nx;
+    b2.vy += j * b1.mass * ny;
+  }
+
+  observeCanvas(canvas, () => {
+    ctx.fillStyle = 'rgba(0,0,0,0.15)'; ctx.fillRect(0, 0, 800, 400);
+    balls.forEach(b => { b.update(); b.draw(); });
+    // 碰撞检测与响应
+    for (let i = 0; i < balls.length; i++) {
+      for (let j = i + 1; j < balls.length; j++) {
+        const dx = balls[j].x - balls[i].x, dy = balls[j].y - balls[i].y;
+        const dist = Math.sqrt(dx * dx + dy * dy);
+        if (dist < balls[i].r + balls[j].r) {
+          resolveCollision(balls[i], balls[j]);
+        }
+      }
+    }
+  });
+})();/* ========== 流体模拟 ========== */
+(function() {
+  const canvas = $('fluid-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const N = 800;
+  const particles = [];
+  for (let i = 0; i < N; i++) particles.push({ x: rand(50, 750), y: rand(50, 350), vx: rand(-1, 1), vy: rand(-1, 1), hue: rand(160, 200) });
+  let mx = 400, my = 200, mdown = false;
+  canvas.addEventListener('mousemove', e => { const r = canvas.getBoundingClientRect(); mx = (e.clientX - r.left) * (800 / r.width); my = (e.clientY - r.top) * (400 / r.height); });
+  canvas.addEventListener('mousedown', () => mdown = true); canvas.addEventListener('mouseup', () => mdown = false);
+  observeCanvas(canvas, () => {
+    ctx.fillStyle = 'rgba(0,0,0,0.12)'; ctx.fillRect(0, 0, 800, 400);
+    particles.forEach(p => {
+      const dx = mx - p.x, dy = my - p.y, d = Math.sqrt(dx * dx + dy * dy);
+      if (d < 150 && d > 1) { const f = mdown ? -0.8 : 0.5; p.vx += (dx / d) * f; p.vy += (dy / d) * f; }
+      p.vx *= 0.96; p.vy *= 0.96; p.x += p.vx; p.y += p.vy;
+      if (p.x < 0 || p.x > 800) p.vx *= -0.8; if (p.y < 0 || p.y > 400) p.vy *= -0.8;
+      p.x = clamp(p.x, 0, 800); p.y = clamp(p.y, 0, 400);
+      ctx.beginPath(); ctx.arc(p.x, p.y, 2.5, 0, Math.PI * 2); ctx.fillStyle = 'hsla('+p.hue+',70%,60%,0.7)'; ctx.fill();
+    });
+  });
+})();
+
+/* ========== 光线追踪 ========== */
+(function() {
+  const canvas = $('ray-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const walls = [
+    {x:100,y:100,w:200,h:20},{x:500,y:80,w:20,h:150},{x:300,y:300,w:150,h:20},
+    {x:600,y:250,w:20,h:200},{x:50,y:350,w:120,h:20},{x:400,y:180,w:100,h:100},
+    {x:700,y:50,w:20,h:120},{x:200,y:200,w:80,h:80}
+  ];
+  let lx = 400, ly = 200;
+  canvas.addEventListener('mousemove', e => { const r = canvas.getBoundingClientRect(); lx = (e.clientX - r.left) * (800 / r.width); ly = (e.clientY - r.top) * (400 / r.height); });
+  function getIntersection(ray, seg) {
+    const r_px = ray.a.x, r_py = ray.a.y, r_dx = ray.b.x - ray.a.x, r_dy = ray.b.y - ray.a.y;
+    const s_px = seg.a.x, s_py = seg.a.y, s_dx = seg.b.x - seg.a.x, s_dy = seg.b.y - seg.a.y;
+    const r_mag = Math.sqrt(r_dx * r_dx + r_dy * r_dy), s_mag = Math.sqrt(s_dx * s_dx + s_dy * s_dy);
+    if (r_dx / r_mag == s_dx / s_mag && r_dy / r_mag == s_dy / s_mag) return null;
+    const T2 = (r_dx * (s_py - r_py) + r_dy * (r_px - s_px)) / (s_dx * r_dy - s_dy * r_dx);
+    const T1 = (s_px + s_dx * T2 - r_px) / r_dx;
+    if (T1 < 0) return null; if (T2 < 0 || T2 > 1) return null;
+    return {x:r_px + r_dx * T1, y:r_py + r_dy * T1, param:T1};
+  }
+  observeCanvas(canvas, () => {
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 800, 400);
+    walls.forEach(w => { ctx.fillStyle = 'rgba(255,255,255,0.07)'; ctx.fillRect(w.x, w.y, w.w, w.h); ctx.strokeStyle = 'rgba(255,255,255,0.12)'; ctx.strokeRect(w.x, w.y, w.w, w.h); });
+    const segments = [];
+    walls.forEach(w => { segments.push({a:{x:w.x,y:w.y},b:{x:w.x+w.w,y:w.y}}); segments.push({a:{x:w.x+w.w,y:w.y},b:{x:w.x+w.w,y:w.y+w.h}}); segments.push({a:{x:w.x+w.w,y:w.y+w.h},b:{x:w.x,y:w.y+w.h}}); segments.push({a:{x:w.x,y:w.y+w.h},b:{x:w.x,y:w.y}}); });
+    segments.push({a:{x:0,y:0},b:{x:800,y:0}}); segments.push({a:{x:800,y:0},b:{x:800,y:400}}); segments.push({a:{x:800,y:400},b:{x:0,y:400}}); segments.push({a:{x:0,y:400},b:{x:0,y:0}});
+    const intersects = [];
+    for (let i = 0; i < 720; i++) {
+      const angle = i * Math.PI / 360;
+      const ray = { a:{x:lx,y:ly}, b:{x:lx+Math.cos(angle)*1000,y:ly+Math.sin(angle)*1000} };
+      let closest = null;
+      segments.forEach(seg => { const inter = getIntersection(ray, seg); if (inter && (!closest || inter.param < closest.param)) closest = inter; });
+      if (closest) intersects.push(closest);
+    }
+    ctx.beginPath(); intersects.forEach((p, i) => { if (i === 0) ctx.moveTo(p.x, p.y); else ctx.lineTo(p.x, p.y); }); ctx.closePath();
+    ctx.fillStyle = 'rgba(0,212,170,0.07)'; ctx.fill();
+    intersects.forEach(p => { ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(p.x, p.y); ctx.strokeStyle = 'rgba(0,212,170,0.1)'; ctx.lineWidth = 0.5; ctx.stroke(); });
+    ctx.beginPath(); ctx.arc(lx, ly, 8, 0, Math.PI * 2); ctx.fillStyle = '#00d4aa'; ctx.fill();
+    ctx.beginPath(); ctx.arc(lx, ly, 18, 0, Math.PI * 2); ctx.strokeStyle = 'rgba(0,212,170,0.25)'; ctx.lineWidth = 1; ctx.stroke();
+  });
+})();
+
+/* ========== Verlet 布料 ========== */
+(function() {
+  const canvas = $('cloth-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cols = 24, rows = 16, spacing = 30;
+  const points = []; const sticks = [];
+  for (let y = 0; y < rows; y++) { for (let x = 0; x < cols; x++) { points.push({ x: 80 + x * spacing, y: 40 + y * spacing, ox: 80 + x * spacing, oy: 40 + y * spacing, pinned: y === 0 && (x % 3 === 0) }); } }
+  for (let y = 0; y < rows; y++) { for (let x = 0; x < cols; x++) { const i = y * cols + x; if (x < cols - 1) sticks.push({ p0: i, p1: i + 1, len: spacing }); if (y < rows - 1) sticks.push({ p0: i, p1: i + cols, len: spacing }); } }
+  let dragPoint = null;
+  canvas.addEventListener('mousedown', e => { const r = canvas.getBoundingClientRect(); const mx = (e.clientX - r.left) * (800 / r.width); const my = (e.clientY - r.top) * (400 / r.height); let best = null, bd = 20; points.forEach((p, i) => { const d = Math.sqrt((mx - p.x) ** 2 + (my - p.y) ** 2); if (d < bd) { bd = d; best = i; } }); dragPoint = best; });
+  canvas.addEventListener('mousemove', e => { if (dragPoint === null) return; const r = canvas.getBoundingClientRect(); points[dragPoint].x = (e.clientX - r.left) * (800 / r.width); points[dragPoint].y = (e.clientY - r.top) * (400 / r.height); });
+  canvas.addEventListener('mouseup', () => dragPoint = null);
+  observeCanvas(canvas, () => {
+    points.forEach(p => { if (p.pinned) return; const vx = (p.x - p.ox) * 0.98, vy = (p.y - p.oy) * 0.98; p.ox = p.x; p.oy = p.y; p.x += vx; p.y += vy; p.y += 0.3; });
+    for (let i = 0; i < 3; i++) { sticks.forEach(s => { const p0 = points[s.p0], p1 = points[s.p1]; const dx = p1.x - p0.x, dy = p1.y - p0.y; const dist = Math.sqrt(dx * dx + dy * dy); if (dist === 0) return; const diff = s.len - dist; const percent = diff / dist / 2; const ox = dx * percent, oy = dy * percent; if (!p0.pinned && dragPoint !== s.p0) { p0.x -= ox; p0.y -= oy; } if (!p1.pinned && dragPoint !== s.p1) { p1.x += ox; p1.y += oy; } }); }
+    ctx.fillStyle = 'rgba(0,0,0,0.25)'; ctx.fillRect(0, 0, 800, 400);
+    sticks.forEach(s => { const p0 = points[s.p0], p1 = points[s.p1]; ctx.beginPath(); ctx.moveTo(p0.x, p0.y); ctx.lineTo(p1.x, p1.y); ctx.strokeStyle = 'rgba(0,212,170,0.22)'; ctx.lineWidth = 1; ctx.stroke(); });
+    points.forEach(p => { ctx.beginPath(); ctx.arc(p.x, p.y, 2, 0, Math.PI * 2); ctx.fillStyle = p.pinned ? '#f0a500' : 'rgba(0,212,170,0.55)'; ctx.fill(); });
+  });
+})();
+
+/* ========== Mandelbrot 分形 ========== */
+(function() {
+  const canvas = $('fractal-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let cx = -0.5, cy = 0, zoom = 200, maxIter = 150, hueOff = 200;
+  let dragging = false, lastX, lastY;
+  function draw() {
+    const img = ctx.createImageData(700, 460);
+    for (let py = 0; py < 460; py++) {
+      for (let px = 0; px < 700; px++) {
+        const x0 = (px - 350) / zoom + cx; const y0 = (py - 230) / zoom + cy;
+        let x = 0, y = 0, iter = 0;
+        while (x * x + y * y <= 4 && iter < maxIter) { const xt = x * x - y * y + x0; y = 2 * x * y + y0; x = xt; iter++; }
+        const i = (py * 700 + px) * 4;
+        if (iter === maxIter) { img.data[i] = img.data[i + 1] = img.data[i + 2] = 0; }
+        else {
+          const h = (iter / maxIter * 360 + hueOff) % 360; const s = 80, l = iter < maxIter * 0.1 ? 8 : 48;
+          const c = hslToRgb(h / 360, s / 100, l / 100);
+          img.data[i] = c[0]; img.data[i + 1] = c[1]; img.data[i + 2] = c[2];
+        }
+        img.data[i + 3] = 255;
+      }
+    }
+    ctx.putImageData(img, 0, 0);
+  }
+  function hslToRgb(h, s, l) { let r, g, b; if (s === 0) { r = g = b = l; } else { const q = l < 0.5 ? l * (1 + s) : l + s - l * s; const p = 2 * l - q; r = hue2rgb(p, q, h + 1 / 3); g = hue2rgb(p, q, h); b = hue2rgb(p, q, h - 1 / 3); } return [Math.round(r * 255), Math.round(g * 255), Math.round(b * 255)]; }
+  function hue2rgb(p, q, t) { if (t < 0) t += 1; if (t > 1) t -= 1; if (t < 1 / 6) return p + (q - p) * 6 * t; if (t < 1 / 2) return q; if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6; return p; }
+  canvas.addEventListener('wheel', e => { e.preventDefault(); const r = canvas.getBoundingClientRect(); const mx = (e.clientX - r.left) * (700 / r.width); const my = (e.clientY - r.top) * (460 / r.height); const factor = e.deltaY > 0 ? 0.8 : 1.25; cx += (mx - 350) / zoom * (1 - 1 / factor); cy += (my - 230) / zoom * (1 - 1 / factor); zoom *= factor; const zel = $('fractal-zoom'); if (zel) { zel.value = Math.min(400, Math.max(50, zoom)); $('fractal-zoom-val').textContent = (zoom / 200).toFixed(1) + 'x'; } draw(); });
+  canvas.addEventListener('mousedown', e => { dragging = true; lastX = e.clientX; lastY = e.clientY; });
+  canvas.addEventListener('mousemove', e => { if (!dragging) return; const dx = e.clientX - lastX, dy = e.clientY - lastY; cx -= dx / zoom; cy -= dy / zoom; lastX = e.clientX; lastY = e.clientY; draw(); });
+  canvas.addEventListener('mouseup', () => dragging = false); canvas.addEventListener('mouseleave', () => dragging = false);
+  const fiter = $('fractal-iter'), fhue = $('fractal-hue'), fzoom = $('fractal-zoom');
+  if (fiter) fiter.addEventListener('input', e => { maxIter = parseInt(e.target.value); const el = $('fractal-iter-val'); if (el) el.textContent = maxIter; draw(); });
+  if (fhue) fhue.addEventListener('input', e => { hueOff = parseInt(e.target.value); const el = $('fractal-hue-val'); if (el) el.textContent = hueOff; draw(); });
+  if (fzoom) fzoom.addEventListener('input', e => { zoom = parseInt(e.target.value); const el = $('fractal-zoom-val'); if (el) el.textContent = (zoom / 200).toFixed(1) + 'x'; draw(); });
+  draw();
+})();
+
+/* ========== 代码雨 ========== */
+(function() {
+  const canvas = $('matrix-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const w = 900, h = 260;
+  const chars = 'アイウエオカキクケコサシスセソタチツテトナニヌネノハヒフヘホマミムメモヤユヨラリルレロワヲン0123456789ABCDEF';
+  const fontSize = 14;
+  const columns = Math.floor(w / fontSize);
+  const drops = Array(columns).fill(1);
+  observeCanvas(canvas, () => {
+    ctx.fillStyle = 'rgba(0,0,0,0.05)'; ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = '#0f0'; ctx.font = fontSize + 'px monospace';
+    for (let i = 0; i < drops.length; i++) {
+      const text = chars[Math.floor(Math.random() * chars.length)];
+      ctx.fillText(text, i * fontSize, drops[i] * fontSize);
+      if (drops[i] * fontSize > h && Math.random() > 0.975) drops[i] = 0;
+      drops[i]++;
+    }
+  });
+})();
+
+/* ========== 粒子烟花 ========== */
+(function() {
+  const canvas = $('firework-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  let particles = [];
+  class Particle {
+    constructor(x, y, hue) {
+      this.x = x; this.y = y;
+      this.vx = rand(-6, 6); this.vy = rand(-9, -2);
+      this.life = 1; this.decay = rand(0.007, 0.018);
+      this.hue = hue; this.size = rand(2, 4);
+      this.gravity = 0.12;
+    }
+    update() { this.x += this.vx; this.y += this.vy; this.vy += this.gravity; this.vx *= 0.98; this.life -= this.decay; }
+    draw() { ctx.beginPath(); ctx.arc(this.x, this.y, this.size * this.life, 0, Math.PI * 2); ctx.fillStyle = 'hsla('+this.hue+',100%,60%,'+this.life+')'; ctx.fill(); }
+  }
+  function explode(x, y) { const hue = randInt(0, 360); for (let i = 0; i < 70; i++) particles.push(new Particle(x, y, hue + randInt(-30, 30))); }
+  canvas.addEventListener('click', e => { const r = canvas.getBoundingClientRect(); explode((e.clientX - r.left) * (800 / r.width), (e.clientY - r.top) * (400 / r.height)); });
+  let autoTimer = 0;
+  observeCanvas(canvas, () => {
+    ctx.fillStyle = 'rgba(0,0,0,0.12)'; ctx.fillRect(0, 0, 800, 400);
+    autoTimer++; if (autoTimer > 100) { explode(rand(100, 700), rand(50, 180)); autoTimer = 0; }
+    particles = particles.filter(p => { p.update(); p.draw(); return p.life > 0; });
+  });
+})();
+
+/* ========== 排序可视化 ========== */
+(function() {
+  const canvas = $('sort-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const n = 80; let arr = []; let sorting = false; let comparing = [-1, -1];
+  function init() { arr = []; for (let i = 0; i < n; i++) arr.push(rand(10, 240)); }
+  init();
+  function draw() {
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 800, 260);
+    const barW = 800 / n;
+    for (let i = 0; i < n; i++) {
+      const h = arr[i];
+      if (i === comparing[0] || i === comparing[1]) ctx.fillStyle = '#ff4757';
+      else ctx.fillStyle = 'hsl('+(160 + h * 0.35)+',70%,55%)';
+      ctx.fillRect(i * barW, 260 - h, barW - 1, h);
+    }
+  }
+  observeCanvas(canvas, draw);
+
+  async function bubbleSort() {
+    if (sorting) return; sorting = true;
+    for (let i = 0; i < n - 1; i++) {
+      for (let j = 0; j < n - i - 1; j++) {
+        comparing = [j, j + 1]; await new Promise(r => setTimeout(r, 12));
+        if (arr[j] > arr[j + 1]) { const t = arr[j]; arr[j] = arr[j + 1]; arr[j + 1] = t; }
+      }
+    }
+    comparing = [-1, -1]; sorting = false;
+  }
+  async function quickSort(start, end) {
+    if (sorting && start !== 0) return;
+    if (start === 0) sorting = true;
+    if (start >= end) { if (start === 0) sorting = false; return; }
+    const pivot = arr[end]; let i = start;
+    for (let j = start; j < end; j++) { comparing = [j, end]; await new Promise(r => setTimeout(r, 25)); if (arr[j] < pivot) { const t = arr[i]; arr[i] = arr[j]; arr[j] = t; i++; } }
+    const t = arr[i]; arr[i] = arr[end]; arr[end] = t;
+    await quickSort(start, i - 1); await quickSort(i + 1, end);
+    if (start === 0) { comparing = [-1, -1]; sorting = false; }
+  }
+
+  const btnBubble = $('sort-bubble');
+  const btnQuick = $('sort-quick');
+  const btnShuffle = $('sort-shuffle');
+  if (btnBubble) btnBubble.addEventListener('click', bubbleSort);
+  if (btnQuick) btnQuick.addEventListener('click', () => quickSort(0, n - 1));
+  if (btnShuffle) btnShuffle.addEventListener('click', () => { if (!sorting) init(); });
+})();
+
+/* ========== 贝塞尔曲线 ========== */
+(function() {
+  const canvas = $('bezier-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const points = [{x:100,y:350},{x:250,y:50},{x:550,y:50},{x:700,y:350}];
+  let dragIdx = -1;
+  canvas.addEventListener('mousedown', e => {
+    const r = canvas.getBoundingClientRect();
+    const mx = (e.clientX - r.left) * (800 / r.width), my = (e.clientY - r.top) * (400 / r.height);
+    dragIdx = -1; let bd = 20;
+    points.forEach((p, i) => { const d = Math.sqrt((mx - p.x) ** 2 + (my - p.y) ** 2); if (d < bd) { bd = d; dragIdx = i; } });
+  });
+  canvas.addEventListener('mousemove', e => {
+    if (dragIdx < 0) return;
+    const r = canvas.getBoundingClientRect();
+    points[dragIdx].x = clamp((e.clientX - r.left) * (800 / r.width), 20, 780);
+    points[dragIdx].y = clamp((e.clientY - r.top) * (400 / r.height), 20, 380);
+  });
+  canvas.addEventListener('mouseup', () => dragIdx = -1);
+  observeCanvas(canvas, () => {
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 800, 400);
+    ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+    for (let i = 1; i < 4; i++) ctx.lineTo(points[i].x, points[i].y);
+    ctx.strokeStyle = 'rgba(255,255,255,0.08)'; ctx.lineWidth = 1; ctx.setLineDash([4, 4]); ctx.stroke(); ctx.setLineDash([]);
+    ctx.beginPath(); ctx.moveTo(points[0].x, points[0].y);
+    for (let t = 0; t <= 1; t += 0.005) {
+      const x = Math.pow(1 - t, 3) * points[0].x + 3 * Math.pow(1 - t, 2) * t * points[1].x + 3 * (1 - t) * t * t * points[2].x + Math.pow(t, 3) * points[3].x;
+      const y = Math.pow(1 - t, 3) * points[0].y + 3 * Math.pow(1 - t, 2) * t * points[1].y + 3 * (1 - t) * t * t * points[2].y + Math.pow(t, 3) * points[3].y;
+      ctx.lineTo(x, y);
+    }
+    ctx.strokeStyle = '#00d4aa'; ctx.lineWidth = 3; ctx.stroke();
+    points.forEach((p, i) => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 8, 0, Math.PI * 2);
+      ctx.fillStyle = i === 0 || i === 3 ? '#f0a500' : '#00d4aa'; ctx.fill();
+      ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+    });
+  });
+})();
+
+/* ========== L-System 分形树 ========== */
+(function() {
+  const canvas = $('lsys-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+
+  // 多种预设规则
+  const presets = {
+    tree1: { name: '自然树', axiom: 'F', rules: {'F': 'F[+F]F[-F]F'}, angle: 25, len: 5, decay: 0.7, colorBase: 120 },
+    tree2: { name: '二叉树', axiom: 'F', rules: {'F': 'F[+F][-F]'}, angle: 20, len: 6, decay: 0.75, colorBase: 100 },
+    fern:  { name: '蕨类植物', axiom: 'X', rules: {'X': 'F+[[X]-X]-F[-FX]+X', 'F': 'FF'}, angle: 25, len: 3.5, decay: 0.65, colorBase: 140 },
+    bush:  { name: '灌木丛', axiom: 'F', rules: {'F': 'F[+F]F[-F][F]'}, angle: 22, len: 5, decay: 0.72, colorBase: 80 },
+    dragon:{ name: '龙形曲线', axiom: 'FX', rules: {'X': 'X+YF+', 'Y': '-FX-Y'}, angle: 90, len: 5.5, decay: 1.0, colorBase: 200 },
+    koch:  { name: '科赫雪花', axiom: 'F--F--F', rules: {'F': 'F+F--F+F'}, angle: 60, len: 3, decay: 1.0, colorBase: 180 }
+  };
+
+  let currentPreset = 'tree1';
+  let currentString = '';
+  let animFrame = 0;
+  let isAnimating = false;
+  let animTimer = null;
+
+  function generate(iter, preset) {
+    const p = presets[preset];
+    let s = p.axiom;
+    for (let i = 0; i < iter; i++) {
+      let ns = '';
+      for (let c of s) ns += p.rules[c] || c;
+      s = ns;
+    }
+    return s;
+  }
+
+  function drawLsys(animate = false, progress = 1) {
+    const iterEl = $('lsys-iter'), angleEl = $('lsys-angle'), lenEl = $('lsys-len');
+    const randAngleEl = $('lsys-rand');
+    const iter = iterEl ? parseInt(iterEl.value) : 5;
+    const angle = angleEl ? parseInt(angleEl.value) : presets[currentPreset].angle;
+    const baseLen = lenEl ? parseInt(lenEl.value) : presets[currentPreset].len;
+    const randAngle = randAngleEl ? parseInt(randAngleEl.value) : 0;
+    const preset = presets[currentPreset];
+
+    if (!animate || progress >= 1) {
+      currentString = generate(iter, currentPreset);
+    }
+    const s = currentString;
+    const drawLen = Math.floor(s.length * progress);
+
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 700, 460);
+    const stack = [];
+    let x = 350, y = 440, dir = -90;
+    if (currentPreset === 'dragon') { x = 200; y = 250; dir = 0; }
+    if (currentPreset === 'koch') { x = 100; y = 350; dir = 0; }
+
+    ctx.beginPath(); ctx.moveTo(x, y);
+
+    for (let idx = 0; idx < drawLen; idx++) {
+      const c = s[idx];
+      const depth = stack.length;
+      const len = baseLen * Math.pow(preset.decay, depth);
+
+      if (c === 'F' || c === 'X' || c === 'Y') {
+        const nx = x + len * Math.cos(dir * Math.PI / 180);
+        const ny = y + len * Math.sin(dir * Math.PI / 180);
+        ctx.lineTo(nx, ny);
+        x = nx; y = ny;
+      }
+      else if (c === '+') { dir += angle + (randAngle ? rand(-randAngle/2, randAngle/2) : 0); }
+      else if (c === '-') { dir -= angle + (randAngle ? rand(-randAngle/2, randAngle/2) : 0); }
+      else if (c === '[') { stack.push({x, y, dir}); }
+      else if (c === ']') { 
+        const st = stack.pop(); 
+        x = st.x; y = st.y; dir = st.dir; 
+        ctx.moveTo(x, y); 
+      }
+    }
+
+    // 颜色根据深度/迭代变化
+    const hue = preset.colorBase + iter * 8;
+    ctx.strokeStyle = 'hsl(' + hue + ',65%,58%)';
+    ctx.lineWidth = Math.max(0.5, 3.5 - iter * 0.35);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.stroke();
+
+    // 如果正在生长，在末端画一个发光点
+    if (animate && progress < 1) {
+      ctx.beginPath(); ctx.arc(x, y, 3, 0, Math.PI * 2);
+      ctx.fillStyle = 'hsl(' + hue + ',90%,70%)';
+      ctx.fill();
+    }
+  }
+
+  // 生长动画
+  function animateGrow() {
+    if (isAnimating) return;
+    isAnimating = true;
+    const duration = 1500; // ms
+    const startTime = performance.now();
+
+    function step(now) {
+      const elapsed = now - startTime;
+      const progress = Math.min(1, elapsed / duration);
+      // 使用 ease-out
+      const eased = 1 - Math.pow(1 - progress, 3);
+      drawLsys(true, eased);
+      if (progress < 1) {
+        animTimer = requestAnimationFrame(step);
+      } else {
+        isAnimating = false;
+        drawLsys(false, 1);
+      }
+    }
+    if (animTimer) cancelAnimationFrame(animTimer);
+    animTimer = requestAnimationFrame(step);
+  }
+
+  // 绑定事件
+  ['lsys-iter', 'lsys-angle', 'lsys-len', 'lsys-rand'].forEach(id => {
+    const el = $(id); if (!el) return;
+    el.addEventListener('input', () => { 
+      const valEl = $(id + '-val'); 
+      if (valEl) valEl.textContent = el.value; 
+      isAnimating = false;
+      if (animTimer) cancelAnimationFrame(animTimer);
+      drawLsys(); 
+    });
+  });
+
+  // 预设选择
+  const presetEl = $('lsys-preset');
+  if (presetEl) {
+    presetEl.addEventListener('change', () => {
+      currentPreset = presetEl.value;
+      const p = presets[currentPreset];
+      const angleEl = $('lsys-angle'), lenEl = $('lsys-len');
+      if (angleEl) { angleEl.value = p.angle; $('lsys-angle-val').textContent = p.angle; }
+      if (lenEl) { lenEl.value = p.len; $('lsys-len-val').textContent = p.len; }
+      animateGrow();
+    });
+  }
+
+  // 重播按钮
+  const replayBtn = $('lsys-replay');
+  if (replayBtn) replayBtn.addEventListener('click', animateGrow);
+
+  // 初始生长动画
+  setTimeout(animateGrow, 400);
+})();/* ========== 斐波那契螺旋 ========== */
+(function() {
+  const canvas = $('fib-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const fib = [1, 1]; for (let i = 2; i < 12; i++) fib.push(fib[i - 1] + fib[i - 2]);
+  const scale = 5.5;
+  observeCanvas(canvas, () => {
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 700, 460);
+    let x = 350, y = 280, dir = 0;
+    const dirs = [[1, 0], [0, -1], [-1, 0], [0, 1]];
+    fib.forEach((f, i) => {
+      const size = f * scale;
+      const d = dirs[i % 4];
+      ctx.strokeStyle = 'hsl('+(160 + i * 14)+',65%,55%)'; ctx.lineWidth = 1.2;
+      ctx.strokeRect(x, y, size * d[0] || size, size * d[1] || size);
+      ctx.beginPath();
+      const cx = x + (d[0] === -1 ? size : 0) + (d[0] === 0 ? (i % 4 === 1 ? size : 0) : 0);
+      const cy = y + (d[1] === -1 ? size : 0) + (d[1] === 0 ? (i % 4 === 0 ? size : 0) : 0);
+      const r = size;
+      let sa, ea;
+      if (i % 4 === 0) { sa = Math.PI; ea = Math.PI / 2; }
+      else if (i % 4 === 1) { sa = Math.PI / 2; ea = 0; }
+      else if (i % 4 === 2) { sa = 0; ea = -Math.PI / 2; }
+      else { sa = -Math.PI / 2; ea = -Math.PI; }
+      ctx.arc(cx, cy, r, sa, ea, true);
+      ctx.strokeStyle = '#00d4aa'; ctx.lineWidth = 2; ctx.stroke();
+      x += d[0] * size; y += d[1] * size;
+    });
+  });
+})();
+
+/* ========== 康威生命游戏 ========== */
+(function() {
+  const canvas = $('life-canvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const cols = 140, rows = 72;
+  const cellW = 700 / cols, cellH = 360 / rows;
+  let grid = Array(rows).fill().map(() => Array(cols).fill(0));
+  let nextGrid = Array(rows).fill().map(() => Array(cols).fill(0));
+  let running = true;
+
+  function randomize() { for (let y = 0; y < rows; y++) { for (let x = 0; x < cols; x++) { grid[y][x] = Math.random() > 0.85 ? 1 : 0; } } }
+  randomize();
+
+  canvas.addEventListener('click', e => {
+    const r = canvas.getBoundingClientRect();
+    const x = Math.floor(((e.clientX - r.left) / r.width) * cols);
+    const y = Math.floor(((e.clientY - r.top) / r.height) * rows);
+    if (x >= 0 && x < cols && y >= 0 && y < rows) grid[y][x] = 1 - grid[y][x];
+  });
+
+  function step() {
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        let neighbors = 0;
+        for (let dy = -1; dy <= 1; dy++) {
+          for (let dx = -1; dx <= 1; dx++) {
+            if (dx === 0 && dy === 0) continue;
+            const ny = (y + dy + rows) % rows; const nx = (x + dx + cols) % cols;
+            neighbors += grid[ny][nx] ? 1 : 0;
+          }
+        }
+        if (grid[y][x]) { nextGrid[y][x] = (neighbors === 2 || neighbors === 3) ? 1 : 0; }
+        else { nextGrid[y][x] = (neighbors === 3) ? 1 : 0; }
+      }
+    }
+    [grid, nextGrid] = [nextGrid, grid];
+  }
+
+  let frame = 0;
+  observeCanvas(canvas, () => {
+    frame++;
+    if (running && frame % 3 === 0) step();
+    ctx.fillStyle = '#000'; ctx.fillRect(0, 0, 700, 360);
+    for (let y = 0; y < rows; y++) {
+      for (let x = 0; x < cols; x++) {
+        if (grid[y][x]) {
+          const age = grid[y][x] > 1 ? Math.min(grid[y][x], 10) : 1;
+          const hue = 160 + age * 5;
+          ctx.fillStyle = 'hsl('+hue+',80%,'+(38 + age * 3)+'%)';
+          ctx.fillRect(x * cellW, y * cellH, cellW - 0.5, cellH - 0.5);
+        }
+      }
+    }
+    for (let y = 0; y < rows; y++) { for (let x = 0; x < cols; x++) { if (grid[y][x]) grid[y][x]++; } }
+  });
+
+  // 直接绑定按钮事件（不依赖 DOMContentLoaded）
+  const btnPlay = $('life-play');
+  const btnClear = $('life-clear');
+  const btnRandom = $('life-random');
+  const btnStep = $('life-step');
+  if (btnPlay) btnPlay.addEventListener('click', () => { running = !running; btnPlay.textContent = running ? '暂停' : '继续'; });
+  if (btnClear) btnClear.addEventListener('click', () => { grid = Array(rows).fill().map(() => Array(cols).fill(0)); });
+  if (btnRandom) btnRandom.addEventListener('click', randomize);
+  if (btnStep) btnStep.addEventListener('click', () => { running = false; if (btnPlay) btnPlay.textContent = '继续'; step(); });
+})();
+
+/* ========== 精密时钟 ========== */
+(function() {
+  const hourHand = $('ah-hour');
+  const minHand = $('ah-min');
+  const secHand = $('ah-sec');
+  const clock = $('analog-clock');
+  if (clock) { for (let i = 0; i < 60; i++) { const tick = document.createElement('div'); tick.className = 'tick ' + (i % 5 === 0 ? 'major' : 'minor'); tick.style.transform = 'rotate('+(i * 6)+'deg)'; clock.appendChild(tick); } }
+  function update() {
+    const now = new Date(); const h = now.getHours(), m = now.getMinutes(), s = now.getSeconds(), ms = now.getMilliseconds();
+    const timeEl = $('dc-time'); const msEl = $('dc-ms');
+    if (timeEl) timeEl.textContent = String(h).padStart(2, '0') + ':' + String(m).padStart(2, '0') + ':' + String(s).padStart(2, '0');
+    if (msEl) msEl.textContent = '.' + String(ms).padStart(3, '0');
+    if (secHand) secHand.style.transform = 'rotate('+((s + ms / 1000) * 6)+'deg)';
+    if (minHand) minHand.style.transform = 'rotate('+((m + s / 60) * 6)+'deg)';
+    if (hourHand) hourHand.style.transform = 'rotate('+((h % 12 + m / 60) * 30)+'deg)';
+    requestAnimationFrame(update);
+  }
+  update();
+})();
+
+/* ========== 计数器 ========== */
+(function() {
+  const grid = $('counter-grid');
+  if (!grid) return;
+  const counters = [
+    { label: '代码行数', value: 18432, suffix: '' },
+    { label: '粒子数量', value: 2400, suffix: '' },
+    { label: '渲染帧率', value: 60, suffix: 'FPS' },
+    { label: '功能模块', value: 19, suffix: '' },
+  ];
+  counters.forEach(c => {
+    const card = document.createElement('div'); card.className = 'counter-card';
+    card.innerHTML = '<div class="counter-num" data-target="'+c.value+'" data-suffix="'+c.suffix+'">0'+c.suffix+'</div><div class="counter-label">'+c.label+'</div>';
+    grid.appendChild(card);
+  });
+
+  const obs = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const nums = e.target.querySelectorAll('.counter-num');
+        nums.forEach(num => {
+          const target = parseInt(num.dataset.target);
+          const suffix = num.dataset.suffix;
+          let current = 0;
+          const step = Math.max(1, Math.floor(target / 60));
+          const timer = setInterval(() => {
+            current += step;
+            if (current >= target) { current = target; clearInterval(timer); }
+            num.textContent = current.toLocaleString() + suffix;
+          }, 20);
+        });
+        obs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  obs.observe(grid);
+})();
+
+/* ========== 技能矩阵 ========== */
+(function() {
+  const grid = $('skills-grid');
+  if (!grid) return;
+  const skills = [
+    {name:'JavaScript / TypeScript', value:97}, {name:'CSS3 / Animation', value:95},
+    {name:'Canvas 2D / WebGL', value:93}, {name:'Web Audio API', value:88},
+    {name:'算法与数据结构', value:90}, {name:'物理模拟', value:85},
+    {name:'分形与噪声', value:87}, {name:'L-System 文法', value:84},
+    {name:'性能优化', value:94}, {name:'UI / UX 设计', value:89},
+  ];
+  skills.forEach((s, i) => {
+    const card = document.createElement('div'); card.className = 'skill-card';
+    card.innerHTML = '<div class="skill-header"><span class="skill-name">'+s.name+'</span><span class="skill-value">'+s.value+'%</span></div><div class="skill-bar"><div class="skill-fill" style="width:0%"></div></div>';
+    grid.appendChild(card);
+    setTimeout(() => { const fill = card.querySelector('.skill-fill'); if (fill) fill.style.width = s.value + '%'; }, 300 + i * 80);
+  });
+})();
+</script>
+</body>
+</html>
