@@ -2309,6 +2309,8 @@
       <div class="auto-control">
         <span class="auto-label">自动抽卡</span>
         <div class="switch" id="autoSwitch"></div>
+        <span class="auto-label" style="margin-left:8px;">自动重生</span>
+        <div class="switch" id="autoRebirthSwitch"></div>
       </div>
       <button class="settings-btn" id="settingsBtn" title="设置">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -2348,10 +2350,10 @@
           <span class="collection-bonus">图鉴增益 <strong id="collectionBonus">×1.00</strong></span>
         </div>
         <div class="collection-legend">
-          <span class="legend-item"><span class="legend-dot" style="background:#8f96a3"></span>普通 +0.1</span>
-          <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>黄金 +0.2</span>
-          <span class="legend-item"><span class="legend-dot" style="background:#38bdf8"></span>钻石 +0.3</span>
-          <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(90deg,#ff006e,#3a86ff)"></span>彩虹 +0.4</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#8f96a3"></span>普通 +0.05</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>黄金 +0.1</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#38bdf8"></span>钻石 +0.15</span>
+          <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(90deg,#ff006e,#3a86ff)"></span>彩虹 +0.2</span>
           <span class="legend-item"><span class="legend-dot" style="background:#fff"></span>复制 +0.5</span>
         </div>
       </div>
@@ -2442,6 +2444,20 @@
             <div class="setting-desc">稀有及以上卡片过场动画时播放</div>
           </div>
           <div class="switch" id="soundRareSwitch"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">抽卡特效</div>
+            <div class="setting-desc">稀有卡过场动画、粒子、闪光等视觉效果</div>
+          </div>
+          <div class="switch" id="effectsSwitch"></div>
+        </div>
+        <div class="setting-row">
+          <div class="setting-info">
+            <div class="setting-name">抽卡提示</div>
+            <div class="setting-desc">抽卡结果右下角弹窗提示</div>
+          </div>
+          <div class="switch" id="toastSwitch"></div>
         </div>
         <div class="settings-divider"></div>
         <div class="setting-row vertical">
@@ -2583,9 +2599,9 @@
       gold: 0,
       cards: [],
       upgrades: { multi: 0, clone: 0, speed: 0 },
-      auto: { enabled: false, packId: 1 },
+      auto: { enabled: false, packId: 1, rebirth: false },
       redeemed: [],
-      settings: { soundNormal: true, soundRare: true },
+      settings: { soundNormal: true, soundRare: true, effects: true, toast: true },
       lastSave: Date.now(),
       lastTick: Date.now(),
       rebirths: 0,
@@ -2856,7 +2872,7 @@
 
       state.gold -= cost;
       animateGoldDeduct(cost);
-      if (originRect) createBurst(originRect.left + originRect.width/2, originRect.top + originRect.height/2);
+      if (originRect && state.settings.effects) createBurst(originRect.left + originRect.width/2, originRect.top + originRect.height/2);
 
       const results = [];
       for (let i = 0; i < multi; i++) {
@@ -2901,6 +2917,7 @@
 
     // Cinematic reveal
     function showCinematic(result) {
+      if (!state.settings.effects) { cinematicOpen = true; setTimeout(() => cinematicOpen = false, 100); return; }
       if (cinematicOpen) return;
       cinematicOpen = true;
       const overlay = document.getElementById('cinematicOverlay');
@@ -2987,6 +3004,7 @@
     document.getElementById('cinematicOverlay').onclick = closeCinematic;
 
     function showMegaCinematic(result) {
+      if (!state.settings.effects) { megaOpen = true; setTimeout(() => megaOpen = false, 100); return; }
       if (megaOpen) return;
       megaOpen = true;
       const overlay = document.getElementById('megaOverlay');
@@ -3060,10 +3078,10 @@
 
     // Collection / 图鉴系统
     const VARIANT_BONUS = {
-      normal: 0.1,
-      gold: 0.2,
-      diamond: 0.3,
-      rainbow: 0.4,
+      normal: 0.05,
+      gold: 0.1,
+      diamond: 0.15,
+      rainbow: 0.2,
       copy: 0.5
     };
 
@@ -3116,6 +3134,18 @@
         const y = computeYield();
         state.gold += y * dt;
       }
+      // 自动重生
+      if (state.auto.rebirth) {
+        const cost = getRebirthCost();
+        if (state.gold >= cost) {
+          state.gold = 0;
+          state.rebirths++;
+          state.rebirthTokens += 10;
+          if (state.settings.toast) {
+            toast('自动重生成功', `第 ${state.rebirths} 次重生！收益倍率 ×${state.rebirths + 1}`);
+          }
+        }
+      }
       if (now - lastDisplayUpdate > 120) {
         lastDisplayUpdate = now;
         updateDisplays();
@@ -3154,11 +3184,15 @@
           const saved = JSON.parse(raw);
           state = { ...state, ...saved, lastTick: Date.now() };
           if (!Array.isArray(state.cards)) state.cards = [];
-          if (!state.settings) state.settings = { soundNormal: true, soundRare: true };
+          if (!state.settings) state.settings = { soundNormal: true, soundRare: true, effects: true, toast: true };
+          if (typeof state.settings.effects !== 'boolean') state.settings.effects = true;
+          if (typeof state.settings.toast !== 'boolean') state.settings.toast = true;
           if (!state.redeemed) state.redeemed = [];
           if (typeof state.rebirths !== 'number') state.rebirths = 0;
           if (typeof state.rebirthTokens !== 'number') state.rebirthTokens = 0;
           if (typeof state.collectionBonus !== 'number') state.collectionBonus = 1;
+          if (!state.auto) state.auto = { enabled: false, packId: 1, rebirth: false };
+          if (typeof state.auto.rebirth !== 'boolean') state.auto.rebirth = false;
         } catch (e) { console.error(e); }
       } else {
         state.cards.push({ tier: 'N', variant: 'normal', count: 1 });
@@ -3280,7 +3314,7 @@
       const copyEl = document.createElement('div');
       copyEl.className = 'collection-cell' + (copyCount > 0 ? ' owned' : ' locked');
       copyEl.innerHTML = `
-        <div class="cc-bonus">+5</div>
+        <div class="cc-bonus">+0.5</div>
         <div class="cc-tier" style="color:#fff">COPY</div>
         <div class="cc-variant" style="color:#fff">复制</div>
         ${copyCount > 0 ? `<div class="cc-count">×${formatNumber(copyCount)}</div>` : ''}
@@ -3413,6 +3447,7 @@
 
     // Toast
     function toast(title, desc) {
+      if (!state.settings.toast) return;
       const c = document.getElementById('toastContainer');
       const el = document.createElement('div');
       el.className = 'toast';
@@ -3492,6 +3527,9 @@
     function applySettingsSwitches() {
       document.getElementById('soundNormalSwitch').classList.toggle('on', state.settings.soundNormal);
       document.getElementById('soundRareSwitch').classList.toggle('on', state.settings.soundRare);
+      document.getElementById('effectsSwitch').classList.toggle('on', state.settings.effects);
+      document.getElementById('toastSwitch').classList.toggle('on', state.settings.toast);
+      document.getElementById('autoRebirthSwitch').classList.toggle('on', state.auto.rebirth);
     }
 
     function toggleSetting(key) {
@@ -3518,7 +3556,9 @@
           throw new Error('invalid');
         }
         state = { ...state, ...data, lastTick: Date.now() };
-        if (!state.settings) state.settings = { soundNormal: true, soundRare: true };
+        if (!state.settings) state.settings = { soundNormal: true, soundRare: true, effects: true, toast: true };
+          if (typeof state.settings.effects !== 'boolean') state.settings.effects = true;
+          if (typeof state.settings.toast !== 'boolean') state.settings.toast = true;
         if (!state.redeemed) state.redeemed = [];
         if (typeof state.rebirths !== 'number') state.rebirths = 0;
         if (typeof state.rebirthTokens !== 'number') state.rebirthTokens = 0;
@@ -3574,6 +3614,14 @@
     };
     document.getElementById('soundNormalSwitch').onclick = () => toggleSetting('soundNormal');
     document.getElementById('soundRareSwitch').onclick = () => toggleSetting('soundRare');
+    document.getElementById('effectsSwitch').onclick = () => toggleSetting('effects');
+    document.getElementById('toastSwitch').onclick = () => toggleSetting('toast');
+    document.getElementById('autoRebirthSwitch').onclick = function() {
+      state.auto.rebirth = !state.auto.rebirth;
+      this.classList.toggle('on', state.auto.rebirth);
+      updateDisplays();
+      save();
+    };
     document.getElementById('exportBtn').onclick = exportSave;
     document.getElementById('importBtn').onclick = importSave;
     document.getElementById('resetBtn').onclick = resetSave;
@@ -3606,6 +3654,7 @@
     renderCollection();
     updateDisplays();
     document.getElementById('autoSwitch').classList.toggle('on', state.auto.enabled);
+    document.getElementById('autoRebirthSwitch').classList.toggle('on', state.auto.rebirth);
     applySettingsSwitches();
 
     setInterval(save, 5000);
