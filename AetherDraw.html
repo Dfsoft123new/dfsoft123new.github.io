@@ -3069,9 +3069,11 @@
       let bonus = 1;
       let ownedTypes = 0;
       for (const c of state.cards) {
-        const b = VARIANT_BONUS[c.variant] || 0;
-        bonus += c.count * b;
-        if (c.count > 0) ownedTypes++;
+        if (c.count > 0) {
+          const b = VARIANT_BONUS[c.variant] || 0;
+          bonus *= (1 + b * (Math.log(c.count) / Math.log(10)));
+          ownedTypes++;
+        }
       }
       return { multiplier: bonus, owned: ownedTypes };
     }
