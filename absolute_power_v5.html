@@ -132,6 +132,7 @@ body { background:var(--bg); color:var(--txt); font-family:-apple-system,BlinkMa
 .reveal { opacity:0; transform:translateY(20px); transition:all 0.7s var(--ease); }
 .reveal.visible { opacity:1; transform:translateY(0); }
 </style>
+<base target="_blank">
 </head>
 <body>
 
@@ -192,7 +193,7 @@ body { background:var(--bg); color:var(--txt); font-family:-apple-system,BlinkMa
   <div class="sec-head reveal">
     <div class="sec-label">Web Audio Synthesizer</div>
     <h2 class="sec-title">虚拟模拟合成器</h2>
-    <p class="sec-desc">基于 Web Audio API 的物理建模合成器。25键双八度（C3-C5），点击琴键或按键盘演奏。多谐波叠加、ADSR 包络、混响与力度感应，音色更饱满更干脆。</p>
+    <p class="sec-desc">基于 Web Audio API 的物理建模合成器。25键双八度（C3-C5），支持鼠标点击和键盘演奏（低音 Z-M / 高音 Q-I）。多谐波叠加、ADSR 包络、混响与力度感应。多谐波叠加、ADSR 包络、混响与力度感应，音色更饱满更干脆。</p>
   </div>
   <div class="glass synth-panel reveal">
     <div class="synth-displays">
@@ -480,7 +481,7 @@ function observeCanvas(canvas, callback) {
   });
   // 标题动画
   const title = $('hero-title');
-  if (title) { const text = title.textContent; title.innerHTML = ''; [...text].forEach((ch,i) => { const span = document.createElement('span'); span.textContent = ch === ' ' ? ' ' : ch; span.style.animationDelay = (0.2+i*0.05)+'s'; title.appendChild(span); }); }
+  if (title) { const text = title.textContent; title.innerHTML = ''; [...text].forEach((ch,i) => { const span = document.createElement('span'); span.textContent = ch === ' ' ? ' ' : ch; span.style.animationDelay = (0.2+i*0.05)+'s'; title.appendChild(span); }); }
   // 打字机
   const sub = $('hero-sub');
   if (sub) { const subText = '极致前端技术演示 — 纯原生实现 — 零依赖'; let si = 0; function type() { if (si < subText.length) { sub.textContent += subText[si++]; setTimeout(type, rand(30,80)); } } setTimeout(type, 1000); }
@@ -543,7 +544,7 @@ function observeCanvas(canvas, callback) {
 (function() {
   let audioCtx = null, analyser = null, dataArray = null, freqArray = null;
   const activeVoices = new Map();
-  // 扩展为两个八度+：C3 到 C5 (25个白键+黑键)
+  // 25键双八度+：C3 到 C5
   const notes = [
     {n:'C3',f:130.81,k:'z',b:0},{n:'C#3',f:138.59,k:'s',b:1},{n:'D3',f:146.83,k:'x',b:0},
     {n:'D#3',f:155.56,k:'d',b:1},{n:'E3',f:164.81,k:'c',b:0},{n:'F3',f:174.61,k:'v',b:0},
@@ -567,7 +568,6 @@ function observeCanvas(canvas, callback) {
     } catch(e) { console.log('Web Audio not supported'); }
   }
 
-  // 创建简单混响脉冲响应
   function createReverb() {
     if (!audioCtx) return null;
     const rate = audioCtx.sampleRate;
@@ -595,10 +595,15 @@ function observeCanvas(canvas, callback) {
     const key = document.createElement('div');
     key.className = 'synth-key' + (note.b ? ' black' : '');
     key.dataset.note = note.n;
-    key.textContent = note.n;
+    // 显示音符名 + 键盘映射
+    key.innerHTML = '<div style="display:flex;flex-direction:column;align-items:center;gap:2px;"><span>' + note.n + '</span><span style="font-size:7px;opacity:0.4;text-transform:uppercase;">' + note.k + '</span></div>';
     kb.appendChild(key);
 
     const play = (velocity = 0.7) => {
+      // 修复：确保 velocity 是有效数字
+      if (!isFinite(velocity) || velocity <= 0) velocity = 0.7;
+      velocity = clamp(velocity, 0.1, 1.0);
+
       initAudio();
       if (!audioCtx) return;
       if (audioCtx.state === 'suspended') audioCtx.resume();
@@ -608,26 +613,21 @@ function observeCanvas(canvas, callback) {
       const wf = $('waveform');
       const waveform = wf ? wf.value : 'sine';
 
-      // 获取ADSR参数
       const atkEl = $('attack'), relEl = $('release'), flEl = $('filter');
       const atk = atkEl ? Math.max(0.005, parseInt(atkEl.value) / 1000) : 0.01;
       const rel = relEl ? Math.max(0.05, parseInt(relEl.value) / 500) : 0.4;
       const filterFreq = flEl ? parseInt(flEl.value) : 3000;
 
-      // 创建主增益（ADSR包络）
       const masterGain = audioCtx.createGain();
       masterGain.connect(analyser);
       analyser.connect(audioCtx.destination);
 
-      // 混响
       if (!reverbNode) {
         reverbNode = createReverb();
-        if (reverbNode) {
-          reverbNode.reverbGain.connect(analyser);
-        }
+        if (reverbNode) reverbNode.reverbGain.connect(analyser);
       }
 
-      // 钢琴音色：基频 + 2个泛音 + 滤波器
+      // 钢琴音色：基频 + 2个泛音
       const oscs = [];
       const harmonics = [1, 2, 3];
       const harmonicGains = [0.55, 0.18, 0.08];
@@ -658,7 +658,6 @@ function observeCanvas(canvas, callback) {
         oscs.push({osc, gain});
       });
 
-      // 主包络
       masterGain.gain.setValueAtTime(0, now);
       masterGain.gain.linearRampToValueAtTime(1, now + atk);
       masterGain.gain.setTargetAtTime(0.5, now + atk + 0.1, 0.3);
@@ -681,26 +680,50 @@ function observeCanvas(canvas, callback) {
       key.classList.remove('active');
     };
 
+    // 鼠标点击：力度根据Y位置
     key.addEventListener('mousedown', e => {
-      // 力度根据点击Y位置：越靠下力度越大
       const rect = key.getBoundingClientRect();
-      const vel = 0.5 + (1 - (e.clientY - rect.top) / rect.height) * 0.5;
+      const vel = e.clientY !== undefined 
+        ? 0.5 + (1 - (e.clientY - rect.top) / rect.height) * 0.5 
+        : 0.5 + Math.random() * 0.4;
       play(vel);
     });
     key.addEventListener('mouseup', stop);
     key.addEventListener('mouseleave', stop);
     key.addEventListener('touchstart', e => { e.preventDefault(); play(0.75); });
     key.addEventListener('touchend', e => { e.preventDefault(); stop(); });
+
+    // 存储引用供键盘事件使用
+    note._play = play;
+    note._stop = stop;
+    note._el = key;
   });
 
+  // 键盘事件：直接调用 play/stop，不通过 dispatchEvent
+  const pressedKeys = new Set();
   document.addEventListener('keydown', e => {
     if (e.repeat) return;
-    const note = notes.find(n => n.k === e.key.toLowerCase());
-    if (note) { const el = kb.querySelector('[data-note="'+note.n+'"]'); if (el) { const rect = el.getBoundingClientRect(); const vel = 0.5 + Math.random() * 0.4; el.dispatchEvent(new Event('mousedown')); } }
+    const k = e.key.toLowerCase();
+    if (pressedKeys.has(k)) return;
+    const note = notes.find(n => n.k === k);
+    if (note && note._play) { 
+      pressedKeys.add(k);
+      note._play(0.5 + Math.random() * 0.4); 
+    }
   });
   document.addEventListener('keyup', e => {
-    const note = notes.find(n => n.k === e.key.toLowerCase());
-    if (note) { const el = kb.querySelector('[data-note="'+note.n+'"]'); if (el) el.dispatchEvent(new Event('mouseup')); }
+    const k = e.key.toLowerCase();
+    pressedKeys.delete(k);
+    const note = notes.find(n => n.k === k);
+    if (note && note._stop) note._stop();
+  });
+  // 窗口失去焦点时释放所有键
+  window.addEventListener('blur', () => {
+    pressedKeys.forEach(k => {
+      const note = notes.find(n => n.k === k);
+      if (note && note._stop) note._stop();
+    });
+    pressedKeys.clear();
   });
 
   // 示波器
