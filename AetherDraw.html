@@ -135,6 +135,7 @@
         "header header"
         "packs upgrades"
         "vault vault"
+        "collection collection"
         "redeem redeem";
     }
 
@@ -147,6 +148,7 @@
           "packs"
           "upgrades"
           "vault"
+          "collection"
           "redeem";
       }
     }
@@ -527,6 +529,7 @@
 
     /* Vault */
     .vault-area { grid-area: vault; }
+    .collection-area { grid-area: collection; }
     .vault-toolbar {
       display: flex;
       align-items: center;
@@ -1744,6 +1747,119 @@
     .confirm-btn-confirm:hover { transform: translateY(-2px); box-shadow: 0 10px 32px rgba(192,132,252,0.45); }
     .confirm-btn-confirm:active { transform: translateY(0); }
 
+    /* Collection / 图鉴 */
+    .collection-toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 14px;
+      margin-bottom: 22px;
+    }
+    .collection-info {
+      display: flex;
+      gap: 20px;
+      align-items: center;
+    }
+    .collection-total, .collection-bonus {
+      font-size: 13px;
+      font-weight: 800;
+      color: var(--text);
+    }
+    .collection-total strong, .collection-bonus strong {
+      font-family: 'JetBrains Mono', monospace;
+      color: var(--gold-2);
+    }
+    .collection-legend {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+    }
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 11px;
+      color: var(--muted);
+      font-weight: 700;
+    }
+    .legend-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+    .collection-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(90px, 1fr));
+      gap: 10px;
+    }
+    .collection-cell {
+      aspect-ratio: 1;
+      border-radius: 14px;
+      background: var(--surface);
+      border: 1px solid rgba(255,255,255,0.06);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      position: relative;
+      overflow: hidden;
+      transition: 0.2s;
+      cursor: default;
+    }
+    .collection-cell.owned {
+      border-color: rgba(255,255,255,0.18);
+      background: rgba(255,255,255,0.04);
+    }
+    .collection-cell.owned::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at 50% 0%, rgba(255,255,255,0.08), transparent 55%);
+      pointer-events: none;
+    }
+    .collection-cell .cc-tier {
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 14px;
+      font-weight: 900;
+      line-height: 1;
+    }
+    .collection-cell .cc-variant {
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      opacity: 0.7;
+    }
+    .collection-cell .cc-count {
+      position: absolute;
+      bottom: 4px;
+      right: 6px;
+      font-family: 'JetBrains Mono', monospace;
+      font-size: 10px;
+      font-weight: 800;
+      color: var(--gold-2);
+    }
+    .collection-cell .cc-bonus {
+      position: absolute;
+      top: 4px;
+      left: 6px;
+      font-size: 9px;
+      font-weight: 800;
+      color: var(--muted);
+    }
+    .collection-cell.locked {
+      opacity: 0.35;
+      filter: grayscale(0.8);
+    }
+    .collection-cell.locked .cc-tier,
+    .collection-cell.locked .cc-variant {
+      opacity: 0.5;
+    }
+
     /* ========== MOBILE PERFORMANCE OPTIMIZATIONS ========== */
     @media (max-width: 768px) {
       /* Disable heavy background effects */
@@ -2182,6 +2298,11 @@
           <span class="stat-value" id="rebirthDisplay" style="background: linear-gradient(180deg,#fff,#c084fc); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">0</span>
           <span class="stat-sub" id="rebirthTokenDisplay">重生币: 0</span>
         </div>
+        <div class="stat">
+          <span class="stat-label">图鉴增益</span>
+          <span class="stat-value" id="collectionDisplay" style="background: linear-gradient(180deg,#fff,#4ade80); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">×1.00</span>
+          <span class="stat-sub" id="collectionCountDisplay">已收集: 0/89</span>
+        </div>
       </div>
       <div class="auto-control">
         <span class="auto-label">自动抽卡</span>
@@ -2215,6 +2336,24 @@
         <span class="vault-info" id="vaultInfo">共 0 种卡片</span>
       </div>
       <div class="vault-grid" id="vaultGrid"></div>
+    </section>
+
+    <section class="panel section collection-area" id="collectionArea">
+      <h2 class="section-title">图鉴</h2>
+      <div class="collection-toolbar">
+        <div class="collection-info">
+          <span class="collection-total">已收集 <strong id="collectionTotal">0</strong> / 89</span>
+          <span class="collection-bonus">图鉴增益 <strong id="collectionBonus">×1.00</strong></span>
+        </div>
+        <div class="collection-legend">
+          <span class="legend-item"><span class="legend-dot" style="background:#8f96a3"></span>普通 +0.1</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#f59e0b"></span>黄金 +0.2</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#38bdf8"></span>钻石 +0.5</span>
+          <span class="legend-item"><span class="legend-dot" style="background:linear-gradient(90deg,#ff006e,#3a86ff)"></span>彩虹 +1</span>
+          <span class="legend-item"><span class="legend-dot" style="background:#fff"></span>复制 +5</span>
+        </div>
+      </div>
+      <div class="collection-grid" id="collectionGrid"></div>
     </section>
 
     <section class="panel section redeem-area">
@@ -2447,7 +2586,8 @@
       settings: { soundNormal: true, soundRare: true },
       lastSave: Date.now(),
       lastTick: Date.now(),
-      rebirths: 0
+      rebirths: 0,
+      collectionBonus: 1
     };
 
     let currentSort = 'total';
@@ -2916,6 +3056,26 @@
 
     document.getElementById('megaOverlay').onclick = closeMegaCinematic;
 
+    // Collection / 图鉴系统
+    const VARIANT_BONUS = {
+      normal: 0.1,
+      gold: 0.2,
+      diamond: 0.5,
+      rainbow: 1,
+      copy: 5
+    };
+
+    function computeCollectionMultiplier() {
+      let bonus = 1;
+      let ownedTypes = 0;
+      for (const c of state.cards) {
+        const b = VARIANT_BONUS[c.variant] || 0;
+        bonus += c.count * b;
+        if (c.count > 0) ownedTypes++;
+      }
+      return { multiplier: bonus, owned: ownedTypes };
+    }
+
     // Yield
     function computeMaxBase() {
       let max = 0;
@@ -2940,7 +3100,8 @@
         }
       }
       const rebirthMul = state.rebirths + 1;
-      return total * rebirthMul;
+      const col = computeCollectionMultiplier();
+      return total * rebirthMul * col.multiplier;
     }
 
     // Economy tick（由 Web Worker 驱动，后台也能运行）
@@ -2993,6 +3154,7 @@
           if (!state.redeemed) state.redeemed = [];
           if (typeof state.rebirths !== 'number') state.rebirths = 0;
           if (typeof state.rebirthTokens !== 'number') state.rebirthTokens = 0;
+          if (typeof state.collectionBonus !== 'number') state.collectionBonus = 1;
         } catch (e) { console.error(e); }
       } else {
         state.cards.push({ tier: 'N', variant: 'normal', count: 1 });
@@ -3071,6 +3233,63 @@
       const rebirthBtn = rebirthEl.querySelector('button');
       rebirthBtn.onclick = doRebirth;
       list.appendChild(rebirthEl);
+    }
+
+    function renderCollection() {
+      const grid = document.getElementById('collectionGrid');
+      if (!grid) return;
+      grid.innerHTML = '';
+
+      const ownedMap = new Map();
+      for (const c of state.cards) {
+        ownedMap.set(c.tier + '|' + c.variant, c.count);
+      }
+
+      let ownedTotal = 0;
+      const fragment = document.createDocumentFragment();
+      const allVariants = ['normal', 'gold', 'diamond', 'rainbow'];
+
+      for (const tier of TIERS) {
+        for (const variant of allVariants) {
+          const key = tier.id + '|' + variant;
+          const count = ownedMap.get(key) || 0;
+          if (count > 0) ownedTotal++;
+
+          const el = document.createElement('div');
+          el.className = 'collection-cell' + (count > 0 ? ' owned' : ' locked');
+          const variantName = VARIANTS[variant].name || '普通';
+          const bonus = VARIANT_BONUS[variant];
+          const color = VARIANTS[variant].color || tier.color;
+
+          el.innerHTML = `
+            <div class="cc-bonus">+${bonus}</div>
+            <div class="cc-tier" style="color:${color}">${tier.name}</div>
+            <div class="cc-variant" style="color:${color}">${variantName}</div>
+            ${count > 0 ? `<div class="cc-count">×${formatNumber(count)}</div>` : ''}
+          `;
+          fragment.appendChild(el);
+        }
+      }
+
+      const copyCount = ownedMap.get('N|copy') || 0;
+      if (copyCount > 0) ownedTotal++;
+      const copyEl = document.createElement('div');
+      copyEl.className = 'collection-cell' + (copyCount > 0 ? ' owned' : ' locked');
+      copyEl.innerHTML = `
+        <div class="cc-bonus">+5</div>
+        <div class="cc-tier" style="color:#fff">COPY</div>
+        <div class="cc-variant" style="color:#fff">复制</div>
+        ${copyCount > 0 ? `<div class="cc-count">×${formatNumber(copyCount)}</div>` : ''}
+      `;
+      fragment.appendChild(copyEl);
+
+      grid.appendChild(fragment);
+
+      const col = computeCollectionMultiplier();
+      const totalEl = document.getElementById('collectionTotal');
+      const bonusEl = document.getElementById('collectionBonus');
+      if (totalEl) totalEl.textContent = ownedTotal;
+      if (bonusEl) bonusEl.textContent = '×' + formatNumber(col.multiplier);
     }
 
     function getCardSortValue(c) {
@@ -3172,6 +3391,12 @@
       const tokenEl = document.getElementById('rebirthTokenDisplay');
       if (rebirthEl) rebirthEl.textContent = state.rebirths;
       if (tokenEl) tokenEl.textContent = `重生币: ${formatNumber(state.rebirthTokens || 0)}`;
+
+      const col = computeCollectionMultiplier();
+      const colEl = document.getElementById('collectionDisplay');
+      const colCountEl = document.getElementById('collectionCountDisplay');
+      if (colEl) colEl.textContent = '×' + formatNumber(col.multiplier);
+      if (colCountEl) colCountEl.textContent = `已收集: ${col.owned}/89`;
     }
 
     function updateUI() {
@@ -3179,6 +3404,7 @@
       renderUpgrades();
       renderVault();
       renderPacks();
+      renderCollection();
     }
 
     // Toast
@@ -3373,6 +3599,7 @@
     renderPacks();
     renderUpgrades();
     renderVault();
+    renderCollection();
     updateDisplays();
     document.getElementById('autoSwitch').classList.toggle('on', state.auto.enabled);
     applySettingsSwitches();
