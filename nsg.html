@@ -1,0 +1,1529 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>DEEP MINE MASTER</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Cinzel:wght@400;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#070605;--bg-up:#0c0a08;--bg-card:#12100e;--bg-hover:#181614;--bg-active:#1e1b18;
+  --border:rgba(255,255,255,.04);--border-hover:rgba(255,255,255,.1);--border-gold:rgba(201,168,76,.2);
+  --text:#ece8e0;--text-sec:#9a958c;--text-tert:#5a554d;
+  --gold:#c9a84c;--gold-bright:#e8c860;--gold-dim:#8a7330;--gold-glow:rgba(201,168,76,.15);
+  --copper:#b87333;--silver:#a8b4be;--iron:#7a8a96;--emerald:#4a9b5e;--ruby:#b05048;
+  --sapphire:#4a7fb0;--amethyst:#8b6fa0;--diamond:#6ab8c9;--mithril:#5a8a9a;--adamantite:#8a6a4a;
+  --void:#6a5a8a;--divine:#c9a84c;--success:#4a9b5e;--danger:#b05048;--info:#4a7fb0;
+  --ft-title:'Cinzel',serif;--ft-body:'Inter',sans-serif;
+  --r-sm:8px;--r-md:12px;--r-lg:16px;
+  --sh-sm:0 4px 12px rgba(0,0,0,.4);--sh-md:0 8px 24px rgba(0,0,0,.5);--sh-lg:0 16px 48px rgba(0,0,0,.6);
+}
+*{-webkit-tap-highlight-color:transparent;}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--ft-body);background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden;line-height:1.6;-webkit-font-smoothing:antialiased;}
+
+/* ===== LOADING ===== */
+#load{position:fixed;inset:0;z-index:9999;background:var(--bg);display:flex;flex-direction:column;align-items:center;justify-content:center;transition:opacity 1s,visibility 1s;}
+#load.done{opacity:0;visibility:hidden;}
+#load .lg{font-family:var(--ft-title);font-size:2.8rem;color:var(--gold);letter-spacing:.25em;font-weight:800;text-shadow:0 0 40px rgba(201,168,76,.3);animation:loadPulse 2s ease-in-out infinite;}
+#load .sub{font-size:.7rem;color:var(--text-tert);letter-spacing:.4em;text-transform:uppercase;margin-top:8px;}
+#load .bar{width:180px;height:2px;background:var(--bg-card);border-radius:1px;margin-top:48px;overflow:hidden;}
+#load .bar::after{content:'';display:block;width:0%;height:100%;background:linear-gradient(90deg,var(--gold),var(--gold-bright));transition:width .8s;}
+#load.ready .bar::after{width:100%;}
+@keyframes loadPulse{0%,100%{text-shadow:0 0 40px rgba(201,168,76,.2);}50%{text-shadow:0 0 60px rgba(201,168,76,.4);}}
+
+/* ===== 3D PICKAXE ICONS ===== */
+.pick-ico{width:40px;height:40px;position:relative;flex-shrink:0;transition:transform .3s;}
+.pick-ico:hover{transform:scale(1.15) rotateY(10deg);}
+.pick-ico svg{width:100%;height:100%;filter:drop-shadow(0 2px 4px rgba(0,0,0,.5));transition:filter .3s;}
+.pick-ico:hover svg{filter:drop-shadow(0 0 8px currentColor);}
+
+/* Wood Pick */
+.p0 svg .head{fill:#8B6914;}
+.p0 svg .handle{fill:#5C4033;}
+/* Stone Pick */
+.p1 svg .head{fill:#7a7a7a;}
+.p1 svg .handle{fill:#5C4033;}
+/* Copper Pick */
+.p2 svg .head{fill:#b87333;}
+.p2 svg .handle{fill:#4a3520;}
+/* Iron Pick */
+.p3 svg .head{fill:#8a9ba8;}
+.p3 svg .handle{fill:#3a3028;}
+/* Steel Pick */
+.p4 svg .head{fill:#b8c4ce;}
+.p4 svg .handle{fill:#2a2520;}
+/* Silver Pick */
+.p5 svg .head{fill:#d0d8e0;}
+.p5 svg .handle{fill:#1a1814;}
+/* Gold Pick */
+.p6 svg .head{fill:#c9a84c;}
+.p6 svg .handle{fill:#3a3020;}
+/* Mithril Pick */
+.p7 svg .head{fill:#4a7fb0;}
+.p7 svg .handle{fill:#1a1e28;}
+/* Adamantite Pick */
+.p8 svg .head{fill:#5a9b6e;}
+.p8 svg .handle{fill:#1a2418;}
+/* Obsidian Pick */
+.p9 svg .head{fill:#2a2a2a;}
+.p9 svg .handle{fill:#1a1a1a;}
+.p9 svg .head{stroke:#6a6a6a;stroke-width:.5;}
+/* Crystal Pick */
+.p10 svg .head{fill:#7ab8c9;}
+.p10 svg .handle{fill:#1a2028;}
+.p10 svg .head{opacity:.9;}
+/* Emerald Pick */
+.p11 svg .head{fill:#4a9b5e;}
+.p11 svg .handle{fill:#1a2418;}
+/* Diamond Pick */
+.p12 svg .head{fill:#6ab8c9;}
+.p12 svg .handle{fill:#1a2028;}
+.p12 svg .head{stroke:#a8d8e8;stroke-width:.3;}
+/* Amethyst Pick */
+.p13 svg .head{fill:#8b6fa0;}
+.p13 svg .handle{fill:#1a1820;}
+/* Void Pick */
+.p14 svg .head{fill:#6a5a8a;}
+.p14 svg .handle{fill:#1a1420;}
+.p14 svg .head{stroke:#9a8aba;stroke-width:.3;}
+/* Soul Pick */
+.p15 svg .head{fill:#8a9ba8;}
+.p15 svg .handle{fill:#1a1e24;}
+.p15 svg .head{opacity:.8;}
+/* Star Pick */
+.p16 svg .head{fill:#c9a84c;}
+.p16 svg .handle{fill:#2a2010;}
+.p16 svg .head{stroke:#e8d070;stroke-width:.3;}
+/* Creation Pick */
+.p17 svg .head{fill:#d4af37;}
+.p17 svg .handle{fill:#2a2010;}
+/* Divine Pick */
+.p18 svg .head{fill:#c9a84c;}
+.p18 svg .handle{fill:#3a2810;}
+.p18 svg .head{stroke:#e8c860;stroke-width:.5;}
+/* Eternal Pick */
+.p19 svg .head{fill:#7ab8c9;}
+.p19 svg .handle{fill:#1a2028;}
+.p19 svg .head{stroke:#a8e0f0;stroke-width:.5;}
+/* Abyss Pick */
+.p20 svg .head{fill:#2a2a2a;}
+.p20 svg .handle{fill:#1a1a1a;}
+.p20 svg .head{stroke:#c9a84c;stroke-width:.8;}
+
+/* ===== GEOMETRIC BLOCK ICONS ===== */
+.block-ico{width:56px;height:56px;position:relative;flex-shrink:0;}
+.block-ico svg{width:100%;height:100%;filter:drop-shadow(0 4px 8px rgba(0,0,0,.4));transition:transform .3s cubic-bezier(.34,1.56,.64,1);}
+.block-ico:hover svg{transform:scale(1.12);}
+
+/* ===== PARTICLES ===== */
+#fx{position:fixed;inset:0;pointer-events:none;z-index:100;}
+.part{position:absolute;border-radius:50%;pointer-events:none;}
+#dmgL{position:fixed;inset:0;pointer-events:none;z-index:200;}
+.dmg{position:absolute;font-weight:900;pointer-events:none;white-space:nowrap;text-shadow:0 2px 8px rgba(0,0,0,.9);font-family:var(--ft-body);}
+
+/* ===== LAYOUT ===== */
+.app{display:flex;flex-direction:column;min-height:100vh;max-width:1440px;margin:0 auto;padding:0 24px;}
+@media(max-width:600px){.app{padding:0 14px;}}
+
+/* ===== HEADER ===== */
+.hdr{display:flex;align-items:center;justify-content:space-between;padding:20px 0;border-bottom:1px solid var(--border);position:sticky;top:0;background:rgba(7,6,5,.95);backdrop-filter:blur(16px);z-index:50;}
+.hdr .brd{display:flex;align-items:center;gap:14px;}
+.hdr .brd-mk{width:36px;height:36px;border:2px solid var(--gold);border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 0 12px rgba(201,168,76,.1);}
+.hdr .brd-mk::before{content:'';position:absolute;width:16px;height:16px;background:var(--gold);clip-path:polygon(50% 0%,100% 35%,100% 65%,50% 100%,0% 65%,0% 35%);}
+.hdr .brd-tx{font-family:var(--ft-title);font-size:1.15rem;color:var(--gold);letter-spacing:.15em;font-weight:700;}
+.hdr .sts{display:flex;gap:10px;align-items:center;flex-wrap:wrap;}
+.st-chip{display:flex;align-items:center;gap:8px;padding:6px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:24px;font-size:.78rem;font-weight:600;transition:all .2s;}
+.st-chip:hover{border-color:var(--border-hover);transform:translateY(-1px);box-shadow:var(--sh-sm);}
+.st-chip .dot{width:7px;height:7px;border-radius:50%;}
+
+/* ===== MAIN ===== */
+main{flex:1;display:grid;grid-template-columns:1fr 360px;gap:28px;padding:28px 0;}
+@media(max-width:1100px){main{grid-template-columns:1fr;}}
+
+/* ===== CARD ===== */
+.card{background:var(--bg-up);border:1px solid var(--border);border-radius:var(--r-lg);padding:22px;position:relative;overflow:hidden;transition:border-color .3s,box-shadow .3s,transform .3s;}
+.card::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,rgba(255,255,255,.08),transparent);}
+.card:hover{border-color:var(--border-hover);box-shadow:var(--sh-md);}
+.card.gold{border-color:var(--border-gold);box-shadow:0 0 20px rgba(201,168,76,.06);}
+.card-hd{display:flex;align-items:center;gap:12px;margin-bottom:18px;}
+.card-hd .c-ico{width:32px;height:32px;border-radius:var(--r-sm);background:var(--bg-card);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;position:relative;}
+.card-hd .c-ico svg{width:18px;height:18px;}
+.card-hd .c-tl{font-family:var(--ft-title);font-size:.95rem;color:var(--gold);letter-spacing:.08em;font-weight:700;}
+
+/* ===== MINE STAGE ===== */
+.mine-st{min-height:420px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:24px;position:relative;}
+.mine-st::after{content:'';position:absolute;inset:0;border-radius:var(--r-lg);background:radial-gradient(ellipse at center,rgba(201,168,76,.025) 0%,transparent 70%);pointer-events:none;}
+
+/* 3D Ring */
+.ring-w{position:relative;width:280px;height:280px;perspective:800px;}
+.ring-w svg{transform:rotate(-90deg);filter:drop-shadow(0 0 6px rgba(201,168,76,.1));}
+.ring-bg{fill:none;stroke:var(--bg-card);stroke-width:3;}
+.ring-fg{fill:none;stroke:var(--gold);stroke-width:3;stroke-linecap:round;transition:stroke-dashoffset .12s linear;filter:drop-shadow(0 0 4px rgba(201,168,76,.2));}
+.ring-in{position:absolute;inset:28px;border-radius:var(--r-lg);display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:pointer;user-select:none;background:linear-gradient(165deg,var(--bg-card),var(--bg-hover));border:1.5px solid var(--border);transition:all .1s cubic-bezier(.4,0,.2,1);transform-style:preserve-3d;}
+.ring-in:hover{border-color:var(--border-hover);box-shadow:0 8px 32px rgba(0,0,0,.4);}
+.ring-in:active{transform:scale(.95) translateZ(-10px);}
+.ring-in .b-geo{width:72px;height:72px;margin-bottom:6px;}
+.ring-in .b-geo svg{width:100%;height:100%;}
+.ring-in .b-nm{font-size:1.05rem;font-weight:800;margin-top:6px;color:var(--text);letter-spacing:.03em;}
+.ring-in .b-hp{font-size:.8rem;color:var(--text-sec);margin-top:6px;font-variant-numeric:tabular-nums;font-weight:500;}
+.ring-in .b-def{position:absolute;top:12px;right:12px;font-size:.65rem;padding:3px 10px;background:var(--bg);border:1px solid var(--border);border-radius:12px;color:var(--text-sec);font-weight:600;letter-spacing:.02em;}
+.ring-in .b-zone{position:absolute;top:12px;left:12px;font-size:.65rem;padding:3px 10px;background:var(--bg);border:1px solid var(--border-gold);border-radius:12px;color:var(--gold);font-weight:700;letter-spacing:.05em;}
+
+.hp-tr{width:220px;height:5px;background:var(--bg);border-radius:3px;overflow:hidden;margin-top:4px;}
+.hp-fi{height:100%;border-radius:3px;transition:width .12s linear,background .3s;}
+
+.combo-tr{width:200px;height:3px;background:var(--bg);border-radius:2px;overflow:hidden;margin-top:16px;}
+.combo-fi{height:100%;background:linear-gradient(90deg,var(--copper),var(--gold),var(--gold-bright));border-radius:2px;transition:width .1s linear;}
+.combo-tx{font-size:.75rem;color:var(--gold);text-align:center;margin-top:6px;font-weight:700;letter-spacing:.06em;}
+
+.log-p{width:100%;max-width:420px;max-height:110px;overflow-y:auto;font-size:.72rem;color:var(--text-tert);display:flex;flex-direction:column;gap:4px;padding:12px 16px;background:var(--bg-card);border-radius:var(--r-md);border:1px solid var(--border);}
+.log-p .ln{opacity:.85;}
+.log-p .ln.g{color:var(--gold);}
+.log-p .ln.gr{color:var(--emerald);}
+.log-p .ln.r{color:var(--ruby);}
+
+/* ===== TABS ===== */
+.tab-b{display:flex;gap:3px;margin-bottom:16px;padding:4px;background:var(--bg-card);border-radius:var(--r-md);border:1px solid var(--border);}
+.tab-bt{flex:1;padding:9px 0;border-radius:var(--r-sm);border:none;background:transparent;color:var(--text-tert);font-size:.74rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--ft-body);letter-spacing:.04em;}
+.tab-bt:hover{color:var(--text-sec);}
+.tab-bt.on{background:rgba(201,168,76,.1);color:var(--gold);box-shadow:0 2px 8px rgba(201,168,76,.08);}
+.tab-p{display:none;}
+.tab-p.on{display:block;animation:fadeIn .3s ease;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px);}to{opacity:1;transform:translateY(0);}}
+
+/* ===== ZONE GRID ===== */
+.zg{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:10px;}
+.zc{padding:16px 12px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--bg-card);text-align:center;cursor:pointer;transition:all .25s;position:relative;overflow:hidden;}
+.zc::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:transparent;transition:background .25s;}
+.zc:hover{border-color:var(--border-hover);background:var(--bg-hover);transform:translateY(-2px);box-shadow:var(--sh-sm);}
+.zc.on{border-color:var(--border-gold);background:rgba(201,168,76,.04);}
+.zc.on::before{background:var(--gold);}
+.zc.lock{opacity:.35;cursor:not-allowed;transform:none;box-shadow:none;}
+.zc .z-geo{width:24px;height:24px;margin:0 auto 8px;}
+.zc .z-nm{font-size:.76rem;font-weight:700;color:var(--text);}
+.zc .z-rq{font-size:.65rem;color:var(--text-tert);margin-top:3px;}
+
+/* Block rows */
+.brs{display:flex;flex-direction:column;gap:7px;margin-top:14px;}
+.br{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:all .2s;}
+.br:hover{border-color:var(--border-hover);background:var(--bg-hover);transform:translateX(4px);}
+.br.on{border-color:rgba(74,155,94,.35);background:rgba(74,155,94,.04);}
+.br .br-geo{width:36px;height:36px;flex-shrink:0;}
+.br .br-geo svg{width:100%;height:100%;}
+.br .br-in{flex:1;min-width:0;}
+.br .br-nm{font-size:.84rem;font-weight:700;color:var(--text);}
+.br .br-st{font-size:.74rem;color:var(--text-sec);margin-top:2px;}
+.br .br-dr{font-size:.68rem;color:var(--text-tert);margin-top:2px;}
+
+/* ===== PICK LIST ===== */
+.pk-l{max-height:320px;overflow-y:auto;display:flex;flex-direction:column;gap:7px;}
+.pk-l::-webkit-scrollbar{width:4px;}
+.pk-l::-webkit-scrollbar-thumb{background:var(--border);border-radius:2px;}
+.pk-r{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:all .2s;position:relative;}
+.pk-r:hover{border-color:var(--border-hover);background:var(--bg-hover);transform:translateX(4px);box-shadow:var(--sh-sm);}
+.pk-r.on{border-color:var(--border-gold);background:rgba(201,168,76,.05);}
+.pk-r.lock{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none;}
+.pk-r .pk-in{flex:1;min-width:0;}
+.pk-r .pk-nm{font-size:.84rem;font-weight:700;color:var(--text);}
+.pk-r .pk-st{font-size:.74rem;color:var(--text-sec);margin-top:1px;}
+.pk-r .pk-ac{padding:6px 14px;border-radius:var(--r-sm);border:none;font-size:.74rem;font-weight:700;cursor:pointer;background:var(--gold);color:var(--bg);transition:all .15s;box-shadow:0 2px 8px rgba(201,168,76,.2);}
+.pk-r .pk-ac:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.pk-r .pk-ac:disabled{opacity:.35;cursor:not-allowed;background:var(--bg-hover);color:var(--text-tert);box-shadow:none;transform:none;}
+.pk-r .pk-tg{font-size:.65rem;padding:3px 10px;border-radius:10px;background:var(--emerald);color:#fff;font-weight:700;}
+
+/* ===== MATERIALS ===== */
+.mg{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;}
+.mc{display:flex;align-items:center;gap:10px;padding:12px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);transition:all .2s;}
+.mc:hover{border-color:var(--border-hover);background:var(--bg-hover);transform:translateY(-1px);}
+.mc .mg-geo{width:30px;height:30px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--border);flex-shrink:0;}
+.mc .mg-geo svg{width:22px;height:22px;}
+.mc .mg-in{flex:1;}
+.mc .mg-nm{font-size:.78rem;font-weight:600;color:var(--text);}
+.mc .mg-ct{font-size:.74rem;color:var(--text-sec);font-variant-numeric:tabular-nums;}
+
+/* ===== TALENTS ===== */
+.tl-s{margin-bottom:20px;}
+.tl-hd{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.tl-hd .tl-ico{width:22px;height:22px;}
+.tl-hd .tl-tl{font-size:.88rem;font-weight:700;color:var(--gold);letter-spacing:.04em;}
+.tl-g{display:grid;grid-template-columns:repeat(5,1fr);gap:8px;}
+.tl-n{aspect-ratio:1;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);cursor:pointer;transition:all .2s;position:relative;padding:6px;}
+.tl-n:hover{border-color:var(--border-hover);transform:translateY(-3px);box-shadow:var(--sh-sm);}
+.tl-n.on{border-color:var(--gold);background:rgba(201,168,76,.08);box-shadow:0 0 12px rgba(201,168,76,.08);}
+.tl-n.mx{border-color:var(--emerald);background:rgba(74,155,94,.08);box-shadow:0 0 12px rgba(74,155,94,.08);}
+.tl-n .tn-geo{width:22px;height:22px;}
+.tl-n .tn-lv{font-size:.62rem;color:var(--text-tert);margin-top:3px;font-weight:600;}
+.tl-n .tn-nm{font-size:.58rem;color:var(--text-tert);text-align:center;line-height:1.2;margin-top:2px;}
+.tl-tt{position:absolute;bottom:calc(100%+10px);left:50%;transform:translateX(-50%);width:200px;background:var(--bg-up);border:1px solid var(--border-hover);border-radius:var(--r-md);padding:12px;font-size:.76rem;z-index:20;pointer-events:none;opacity:0;transition:opacity .2s;box-shadow:var(--sh-lg);}
+.tl-n:hover .tl-tt{opacity:1;}
+.tl-tt .tt-nm{font-weight:800;color:var(--gold);margin-bottom:5px;font-size:.8rem;}
+.tl-tt .tt-dc{color:var(--text-sec);margin-bottom:5px;line-height:1.5;}
+.tl-tt .tt-ct{color:var(--emerald);font-weight:600;}
+
+/* ===== CRAFTING ===== */
+.cf-l{display:flex;flex-direction:column;gap:8px;}
+.cf-r{display:flex;align-items:center;gap:14px;padding:16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);transition:all .2s;}
+.cf-r:hover{border-color:var(--border-hover);background:var(--bg-hover);transform:translateY(-1px);box-shadow:var(--sh-sm);}
+.cf-r .cf-geo{width:44px;height:44px;border-radius:var(--r-sm);display:flex;align-items:center;justify-content:center;background:var(--bg);border:1px solid var(--border);flex-shrink:0;}
+.cf-r .cf-in{flex:1;}
+.cf-r .cf-nm{font-size:.88rem;font-weight:700;color:var(--text);}
+.cf-r .cf-rq{font-size:.74rem;color:var(--text-sec);margin-top:4px;line-height:1.5;}
+.cf-r .cf-bt{padding:8px 18px;border-radius:var(--r-sm);border:none;font-size:.76rem;font-weight:700;cursor:pointer;background:var(--gold);color:var(--bg);transition:all .15s;box-shadow:0 2px 8px rgba(201,168,76,.2);}
+.cf-r .cf-bt:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.cf-r .cf-bt:disabled{opacity:.35;cursor:not-allowed;background:var(--bg-hover);color:var(--text-tert);box-shadow:none;transform:none;}
+
+/* ===== ACHIEVEMENTS ===== */
+.ach-l{display:flex;flex-direction:column;gap:6px;max-height:360px;overflow-y:auto;}
+.ach-r{display:flex;align-items:center;gap:12px;padding:12px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);transition:all .2s;}
+.ach-r.done{border-color:rgba(74,155,94,.3);background:rgba(74,155,94,.04);}
+.ach-r .ach-geo{width:30px;height:30px;flex-shrink:0;}
+.ach-r .ach-geo svg{width:100%;height:100%;}
+.ach-r .ach-in{flex:1;}
+.ach-r .ach-nm{font-size:.84rem;font-weight:700;color:var(--text);}
+.ach-r .ach-dc{font-size:.74rem;color:var(--text-sec);margin-top:1px;}
+.ach-r .ach-rw{font-size:.74rem;color:var(--gold);font-weight:700;}
+
+/* ===== CHEST ===== */
+.ch-st{display:flex;flex-direction:column;align-items:center;gap:18px;padding:32px 24px;}
+.ch-geo{width:80px;height:64px;position:relative;cursor:pointer;transition:transform .1s;}
+.ch-geo:active{transform:scale(.92);}
+.ch-geo .ch-lid{position:absolute;top:0;left:4px;right:4px;height:18px;background:var(--copper);border-radius:var(--r-sm) var(--r-sm) 0 0;border:2px solid var(--copper-dim);border-bottom:none;transition:transform .3s;transform-origin:bottom;}
+.ch-geo:hover .ch-lid{transform:rotateX(-25deg);}
+.ch-geo .ch-body{position:absolute;bottom:0;left:4px;right:4px;height:46px;background:var(--copper);border-radius:0 0 var(--r-sm) var(--r-sm);border:2px solid var(--copper-dim);border-top:none;box-shadow:inset 0 2px 8px rgba(0,0,0,.3);}
+.ch-geo .ch-lk{position:absolute;top:50%;left:50%;transform:translate(-50%,-10%);width:14px;height:16px;background:var(--gold);border-radius:2px;box-shadow:0 0 6px rgba(201,168,76,.3);}
+.ch-geo .ch-lk::before{content:'';position:absolute;top:-7px;left:3px;width:8px;height:8px;border:2px solid var(--gold);border-radius:50%;border-bottom:none;}
+.ch-geo.pulse{animation:chPulse 2.5s ease-in-out infinite;}
+@keyframes chPulse{0%,100%{filter:drop-shadow(0 0 0 rgba(201,168,76,0));}50%{filter:drop-shadow(0 0 16px rgba(201,168,76,.3));}}
+.ch-geo.shake{animation:chShake .5s ease;}
+@keyframes chShake{0%,100%{transform:rotate(0);}15%{transform:rotate(-10deg);}30%{transform:rotate(10deg);}45%{transform:rotate(-6deg);}60%{transform:rotate(6deg);}75%{transform:rotate(-3deg);}}
+.ch-sts{font-size:.88rem;color:var(--text-sec);font-weight:600;}
+.ch-rws{display:flex;gap:10px;flex-wrap:wrap;justify-content:center;}
+.rw-cp{display:flex;align-items:center;gap:6px;font-size:.8rem;padding:7px 14px;background:var(--bg);border-radius:var(--r-sm);border:1px solid var(--border);font-weight:600;}
+
+/* ===== SETTINGS ===== */
+.set-r{display:flex;align-items:center;justify-content:space-between;padding:14px 0;border-bottom:1px solid var(--border);}
+.set-r:last-child{border-bottom:none;}
+.set-lb{font-size:.86rem;font-weight:600;color:var(--text);}
+.set-dc{font-size:.72rem;color:var(--text-tert);margin-top:3px;}
+.tog-tr{width:48px;height:26px;background:var(--bg-card);border:1px solid var(--border);border-radius:13px;position:relative;cursor:pointer;transition:all .3s cubic-bezier(.4,0,.2,1);}
+.tog-tr.on{background:var(--emerald);border-color:var(--emerald);}
+.tog-tr::after{content:'';position:absolute;top:2px;left:2px;width:20px;height:20px;background:var(--text);border-radius:50%;transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:var(--sh-sm);}
+.tog-tr.on::after{transform:translateX(22px);background:#fff;}
+
+.cd-r{display:flex;gap:8px;margin-bottom:14px;}
+.cd-r input{flex:1;padding:11px 16px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);font-size:.84rem;outline:none;font-family:var(--ft-body);transition:border-color .2s;}
+.cd-r input:focus{border-color:var(--gold);box-shadow:0 0 8px rgba(201,168,76,.1);}
+.cd-r button{padding:11px 20px;background:var(--gold);color:var(--bg);border:none;border-radius:var(--r-md);font-weight:700;cursor:pointer;font-size:.84rem;transition:all .15s;box-shadow:0 2px 8px rgba(201,168,76,.2);}
+.cd-r button:hover{filter:brightness(1.15);transform:translateY(-1px);}
+.cd-ts{display:flex;flex-wrap:wrap;gap:6px;}
+.cd-tg{font-size:.72rem;padding:4px 12px;background:var(--bg-card);border:1px solid var(--border);border-radius:12px;color:var(--text-tert);font-weight:600;letter-spacing:.03em;transition:all .2s;}
+.cd-tg:hover{border-color:var(--border-hover);color:var(--text-sec);}
+.cd-tg.used{border-color:rgba(74,155,94,.35);color:var(--emerald);}
+
+.sv-g{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;}
+.sv-c{padding:18px 12px;border-radius:var(--r-md);border:1px solid var(--border);background:var(--bg-card);text-align:center;cursor:pointer;transition:all .2s;}
+.sv-c:hover{border-color:var(--border-hover);background:var(--bg-hover);transform:translateY(-2px);box-shadow:var(--sh-sm);}
+.sv-c.on{border-color:var(--border-gold);background:rgba(201,168,76,.06);box-shadow:0 0 12px rgba(201,168,76,.06);}
+.sv-c .sv-nm{font-size:.84rem;font-weight:800;color:var(--gold);letter-spacing:.05em;}
+.sv-c .sv-in{font-size:.74rem;color:var(--text-tert);margin-top:5px;}
+
+/* ===== MODALS ===== */
+.md-ov{position:fixed;inset:0;background:rgba(0,0,0,.8);z-index:300;display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:all .3s cubic-bezier(.4,0,.2,1);backdrop-filter:blur(6px);}
+.md-ov.on{opacity:1;visibility:visible;}
+.md-bx{background:var(--bg-up);border:1px solid var(--border-hover);border-radius:var(--r-lg);padding:32px;max-width:460px;width:90%;max-height:85vh;overflow-y:auto;transform:scale(.95) translateY(10px);transition:transform .3s cubic-bezier(.4,0,.2,1);position:relative;box-shadow:var(--sh-lg);}
+.md-ov.on .md-bx{transform:scale(1) translateY(0);}
+.md-tl{font-family:var(--ft-title);font-size:1.2rem;color:var(--gold);margin-bottom:20px;letter-spacing:.06em;font-weight:700;}
+.md-cl{position:absolute;top:16px;right:16px;width:32px;height:32px;border-radius:50%;border:1px solid var(--border);background:var(--bg-card);color:var(--text-tert);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:1.2rem;transition:all .2s;}
+.md-cl:hover{color:var(--text);border-color:var(--border-hover);background:var(--bg-hover);}
+
+/* ===== TOASTS ===== */
+.ts-st{position:fixed;top:24px;right:24px;z-index:400;display:flex;flex-direction:column;gap:8px;pointer-events:none;}
+.ts{padding:14px 20px;background:var(--bg-up);border:1px solid var(--border);border-radius:var(--r-md);font-size:.86rem;box-shadow:var(--sh-lg);animation:tsIn .4s cubic-bezier(.4,0,.2,1);max-width:320px;pointer-events:auto;font-weight:600;}
+.ts.ok{border-color:rgba(74,155,94,.35);}
+.ts.err{border-color:rgba(176,80,72,.35);}
+.ts.inf{border-color:rgba(74,127,176,.35);}
+@keyframes tsIn{from{opacity:0;transform:translateX(40px) scale(.95);}to{opacity:1;transform:translateX(0) scale(1);}}
+
+/* ===== OFFLINE ===== */
+.of-st{text-align:center;padding:28px 20px;}
+.of-tl{font-family:var(--ft-title);font-size:1.3rem;color:var(--gold);margin-bottom:14px;letter-spacing:.06em;font-weight:700;}
+.of-tm{font-size:.92rem;color:var(--text-sec);margin-bottom:22px;}
+.of-it{display:flex;flex-wrap:wrap;gap:10px;justify-content:center;margin-bottom:28px;}
+.of-itm{padding:12px 18px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);font-size:.88rem;font-weight:600;transition:all .2s;}
+.of-itm:hover{border-color:var(--border-hover);transform:translateY(-1px);}
+.of-bt{padding:14px 36px;background:var(--gold);color:var(--bg);border:none;border-radius:var(--r-md);font-weight:800;cursor:pointer;font-size:.95rem;letter-spacing:.04em;transition:all .15s;box-shadow:0 4px 16px rgba(201,168,76,.25);}
+.of-bt:hover{filter:brightness(1.15);transform:translateY(-2px);box-shadow:0 6px 24px rgba(201,168,76,.35);}
+
+/* ===== ANIMATIONS ===== */
+@keyframes shk{0%,100%{transform:translateX(0);}20%{transform:translateX(-5px)rotate(-1.5deg);}40%{transform:translateX(5px)rotate(1.5deg);}60%{transform:translateX(-3px);}80%{transform:translateX(3px);}}
+.shk{animation:shk .25s ease;}
+@keyframes flt{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+.flt{animation:flt 3.5s ease-in-out infinite;}
+@keyframes glw{0%,100%{box-shadow:0 0 0 0 rgba(201,168,76,0);}50%{box-shadow:0 0 0 8px rgba(201,168,76,.06);}}
+.glw{animation:glw 2.5s ease-in-out infinite;}
+
+/* ===== SCROLLBAR ===== */
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:transparent;}
+::-webkit-scrollbar-thumb{background:var(--border);border-radius:3px;}
+::-webkit-scrollbar-thumb:hover{background:var(--border-hover);}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:600px){
+  .hdr .brd-tx{font-size:.95rem;}
+  .st-chip{padding:5px 10px;font-size:.7rem;}
+  .ring-w{width:240px;height:240px;}
+  .ring-in{inset:24px;}
+  .ring-in .b-geo{width:56px;height:56px;}
+  .tl-g{gap:6px;}
+  .sv-g{grid-template-columns:1fr;}
+  .mg{grid-template-columns:1fr;}
+  .zg{grid-template-columns:repeat(2,1fr);}
+}
+</style>
+</head>
+<body>
+<div id="load"><div class="lg">DEEP MINE</div><div class="sub">MASTER EDITION</div><div class="bar" id="loadBar"></div></div>
+<div id="fx"></div>
+<div id="dmgL"></div>
+<div class="ts-st" id="tsSt"></div>
+
+<div class="app">
+<header class="hdr">
+  <div class="brd">
+    <div class="brd-mk"></div>
+    <div class="brd-tx">DEEP MINE</div>
+  </div>
+  <div class="sts">
+    <div class="st-chip"><span class="dot" style="background:var(--gold)"></span><span id="hCoin">0</span></div>
+    <div class="st-chip"><span class="dot" style="background:var(--emerald)"></span><span id="hLvl">Lv.1</span></div>
+    <div class="st-chip"><span class="dot" style="background:var(--sapphire)"></span><span id="hDps">手动</span></div>
+    <div class="st-chip"><span class="dot" style="background:var(--copper)"></span><span id="hPick">木镐</span></div>
+  </div>
+</header>
+
+<main>
+  <div class="main-col">
+    <div class="card gold" style="margin-bottom:20px;">
+      <div class="card-hd">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M12 2L2 7l10 5 10-5-10-5z"/><path d="M2 17l10 5 10-5"/><path d="M2 12l10 5 10-5"/></svg></div>
+        <div class="c-tl">矿区挖掘</div>
+      </div>
+      <div class="mine-st">
+        <div class="ring-w" id="ringW">
+          <svg width="280" height="280" viewBox="0 0 280 280"><circle class="ring-bg" cx="140" cy="140" r="130"/><circle class="ring-fg" id="ringFg" cx="140" cy="140" r="130" stroke-dasharray="817" stroke-dashoffset="0"/></svg>
+          <div class="ring-in" id="mineTarget">
+            <div class="b-zone" id="bZone">表层矿区</div>
+            <div class="b-def" id="bDef">防御 0</div>
+            <div class="b-geo flt" id="bGeo"></div>
+            <div class="b-nm" id="bName">碎石</div>
+            <div class="b-hp" id="bHp">80 / 80</div>
+          </div>
+        </div>
+        <div class="hp-tr"><div class="hp-fi" id="bHpBar" style="width:100%;background:var(--emerald)"></div></div>
+        <div>
+          <div class="combo-tr"><div class="combo-fi" id="comboBar" style="width:0%"></div></div>
+          <div class="combo-tx" id="comboTx">连击 x1.00</div>
+        </div>
+        <div class="log-p" id="logP"></div>
+      </div>
+    </div>
+
+    <div class="card">
+      <div class="tab-b">
+        <button class="tab-bt on" data-tab="zones">矿区</button>
+        <button class="tab-bt" data-tab="talents">天赋</button>
+        <button class="tab-bt" data-tab="craft">锻造</button>
+        <button class="tab-bt" data-tab="achieve">成就</button>
+        <button class="tab-bt" data-tab="chest">宝箱</button>
+        <button class="tab-bt" data-tab="settings">设置</button>
+      </div>
+
+      <div class="tab-p on" id="p-zones">
+        <div class="zg" id="zg"></div>
+        <div class="brs" id="brs"></div>
+      </div>
+
+      <div class="tab-p" id="p-talents">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;">
+          <span style="font-size:.86rem;color:var(--text-sec)">天赋点: <b id="tPt" style="color:var(--gold);font-size:1.05rem;">0</b></span>
+          <button id="resetTal" style="padding:8px 16px;background:var(--ruby);color:#fff;border:none;border-radius:var(--r-sm);font-size:.76rem;font-weight:700;cursor:pointer;transition:filter .15s;">重置天赋 (1000金币)</button>
+        </div>
+        <div id="tTree"></div>
+      </div>
+
+      <div class="tab-p" id="p-craft">
+        <div class="cf-l" id="cfL"></div>
+      </div>
+
+      <div class="tab-p" id="p-achieve">
+        <div class="ach-l" id="achL"></div>
+      </div>
+
+      <div class="tab-p" id="p-chest">
+        <div class="ch-st">
+          <div class="ch-geo pulse" id="chGeo">
+            <div class="ch-lid"></div>
+            <div class="ch-body"></div>
+            <div class="ch-lk"></div>
+          </div>
+          <div class="ch-sts" id="chSts">点击开启在线宝箱</div>
+          <div class="ch-rws" id="chRws"></div>
+        </div>
+      </div>
+
+      <div class="tab-p" id="p-settings">
+        <div class="set-r"><div><div class="set-lb">自动挖掘</div><div class="set-dc">自动持续挖掘当前方块</div></div><div class="tog-tr" id="togAuto"></div></div>
+        <div class="set-r"><div><div class="set-lb">伤害数字</div><div class="set-dc">显示浮动伤害数值</div></div><div class="tog-tr on" id="togDmg"></div></div>
+        <div class="set-r"><div><div class="set-lb">屏幕震动</div><div class="set-dc">挖掘时产生震动反馈</div></div><div class="tog-tr on" id="togShake"></div></div>
+        <div class="set-r"><div><div class="set-lb">粒子特效</div><div class="set-dc">挖掘时产生粒子效果</div></div><div class="tog-tr on" id="togPart"></div></div>
+        <div style="margin-top:22px;">
+          <div class="card-hd" style="margin-bottom:14px;">
+            <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg></div>
+            <div class="c-tl" style="font-size:.88rem;">兑换码</div>
+          </div>
+          <div class="cd-r"><input type="text" id="cdIn" placeholder="输入兑换码..." maxlength="20"><button id="cdBtn">兑换</button></div>
+          <div class="cd-ts" id="cdTs"></div>
+        </div>
+        <div style="margin-top:22px;">
+          <div class="card-hd" style="margin-bottom:14px;">
+            <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18"/></svg></div>
+            <div class="c-tl" style="font-size:.88rem;">存档管理</div>
+          </div>
+          <div class="sv-g" id="svG"></div>
+        </div>
+        <div style="margin-top:16px;display:flex;gap:8px;">
+          <button id="btnExp" style="flex:1;padding:11px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;">导出存档</button>
+          <button id="btnImp" style="flex:1;padding:11px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);cursor:pointer;font-size:.82rem;font-weight:600;transition:all .2s;">导入存档</button>
+        </div>
+        <input type="file" id="fileImp" style="display:none;" accept=".json">
+      </div>
+    </div>
+  </div>
+
+  <div class="side-col">
+    <div class="card">
+      <div class="card-hd">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--gold)" stroke-width="2"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg></div>
+        <div class="c-tl">镐子</div>
+      </div>
+      <div class="pk-l" id="pkL"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--emerald)" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg></div>
+        <div class="c-tl">材料</div>
+      </div>
+      <div class="mg" id="mg"></div>
+    </div>
+    <div class="card">
+      <div class="card-hd">
+        <div class="c-ico"><svg viewBox="0 0 24 24" fill="none" stroke="var(--sapphire)" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg></div>
+        <div class="c-tl">统计</div>
+      </div>
+      <div style="font-size:.8rem;color:var(--text-sec);display:flex;flex-direction:column;gap:9px;">
+        <div style="display:flex;justify-content:space-between;"><span>总挖掘次数</span><b id="sClk" style="color:var(--text);font-variant-numeric:tabular-nums;">0</b></div>
+        <div style="display:flex;justify-content:space-between;"><span>总获得金币</span><b id="sCoin" style="color:var(--gold);font-variant-numeric:tabular-nums;">0</b></div>
+        <div style="display:flex;justify-content:space-between;"><span>破坏方块数</span><b id="sBlk" style="color:var(--emerald);font-variant-numeric:tabular-nums;">0</b></div>
+        <div style="display:flex;justify-content:space-between;"><span>最高连击</span><b id="sCombo" style="color:var(--ruby);font-variant-numeric:tabular-nums;">0</b></div>
+        <div style="display:flex;justify-content:space-between;"><span>暴击次数</span><b id="sCrit" style="color:var(--sapphire);font-variant-numeric:tabular-nums;">0</b></div>
+        <div style="display:flex;justify-content:space-between;"><span>游戏时长</span><b id="sTime" style="color:var(--text);font-variant-numeric:tabular-nums;">0m</b></div>
+      </div>
+    </div>
+  </div>
+</main>
+</div>
+
+<div class="md-ov" id="mdOff">
+  <div class="md-bx of-st">
+    <div class="of-tl">离线收益</div>
+    <div class="of-tm" id="offTime">你离线了 0 分钟</div>
+    <div class="of-it" id="offIt"></div>
+    <button class="of-bt" id="offBtn">领取奖励</button>
+  </div>
+</div>
+
+<div class="md-ov" id="mdExp">
+  <div class="md-bx">
+    <button class="md-cl" id="clExp">&times;</button>
+    <div class="md-tl">导出存档</div>
+    <textarea id="txExp" style="width:100%;height:130px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);padding:14px;font-size:.78rem;resize:none;font-family:monospace;" readonly></textarea>
+    <button id="cpExp" style="margin-top:16px;padding:11px 22px;background:var(--gold);color:var(--bg);border:none;border-radius:var(--r-md);font-weight:700;cursor:pointer;font-size:.86rem;transition:filter .15s;">复制到剪贴板</button>
+  </div>
+</div>
+
+<div class="md-ov" id="mdImp">
+  <div class="md-bx">
+    <button class="md-cl" id="clImp">&times;</button>
+    <div class="md-tl">导入存档</div>
+    <textarea id="txImp" style="width:100%;height:130px;background:var(--bg-card);border:1px solid var(--border);border-radius:var(--r-md);color:var(--text);padding:14px;font-size:.78rem;resize:none;font-family:monospace;" placeholder="粘贴存档数据..."></textarea>
+    <button id="doImp" style="margin-top:16px;padding:11px 22px;background:var(--emerald);color:#fff;border:none;border-radius:var(--r-md);font-weight:700;cursor:pointer;font-size:.86rem;transition:filter .15s;">确认导入</button>
+  </div>
+</div>
+
+<script>
+// ===== PICKAXE SVG TEMPLATES =====
+const PICK_SVG = (cls) => `<svg viewBox="0 0 40 40" class="pick-ico ${cls}"><defs><linearGradient id="g${cls}" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:currentColor;stop-opacity:1"/><stop offset="100%" style="stop-color:currentColor;stop-opacity:.6"/></linearGradient></defs><rect class="handle" x="18" y="14" width="4" height="24" rx="1"/><path class="head" d="M8 14 L20 4 L32 14 L28 16 L20 8 L12 16 Z"/><rect class="head" x="6" y="13" width="28" height="4" rx="1"/></svg>`;
+
+const PICK_SVG_ADV = (cls, glow) => `<svg viewBox="0 0 40 40" class="pick-ico ${cls}"><defs><filter id="gl${cls}"><feGaussianBlur stdDeviation="1.5" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs><rect class="handle" x="18" y="14" width="4" height="24" rx="1"/><path class="head" d="M8 14 L20 2 L32 14 L28 16 L20 6 L12 16 Z" filter="${glow?'url(#gl'+cls+')':''}"/><rect class="head" x="5" y="12" width="30" height="5" rx="1.5" filter="${glow?'url(#gl'+cls+')':''}"/><circle cx="20" cy="20" r="2" fill="var(--gold)" opacity=".8"/></svg>`;
+
+const PICK_SVG_EPIC = (cls) => `<svg viewBox="0 0 40 40" class="pick-ico ${cls}"><defs><linearGradient id="grad${cls}" x1="0%" y1="0%" x2="0%" y2="100%"><stop offset="0%" style="stop-color:#fff;stop-opacity:.3"/><stop offset="100%" style="stop-color:transparent;stop-opacity:0"/></linearGradient></defs><rect class="handle" x="17" y="12" width="6" height="26" rx="2"/><path class="head" d="M6 12 L20 0 L34 12 L30 15 L20 5 L10 15 Z"/><rect class="head" x="4" y="10" width="32" height="6" rx="2"/><path d="M6 12 L20 0 L34 12" fill="url(#grad${cls})" opacity=".5"/><circle cx="20" cy="20" r="3" fill="var(--gold)" opacity=".6"><animate attributeName="opacity" values=".6;1;.6" dur="2s" repeatCount="indefinite"/></circle></svg>`;
+
+const PICK_SVG_LEGEND = (cls) => `<svg viewBox="0 0 40 40" class="pick-ico ${cls}"><defs><filter id="lg${cls}"><feGaussianBlur stdDeviation="2" result="b"/><feMerge><feMergeNode in="b"/><feMergeNode in="SourceGraphic"/></feMerge></filter><linearGradient id="lgd${cls}" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" style="stop-color:#fff;stop-opacity:.4"/><stop offset="50%" style="stop-color:transparent;stop-opacity:0"/></linearGradient></defs><rect class="handle" x="17" y="10" width="6" height="28" rx="2"/><path class="head" d="M4 10 L20 0 L36 10 L32 14 L20 4 L8 14 Z" filter="url(#lg${cls})"/><rect class="head" x="2" y="8" width="36" height="7" rx="2" filter="url(#lg${cls})"/><path d="M4 10 L20 0 L36 10" fill="url(#lgd${cls})"/><circle cx="20" cy="18" r="4" fill="var(--gold)" opacity=".8"><animate attributeName="r" values="4;5;4" dur="1.5s" repeatCount="indefinite"/><animate attributeName="opacity" values=".8;1;.8" dur="1.5s" repeatCount="indefinite"/></circle><path d="M20 2 L20 8 M14 5 L20 8 L26 5" stroke="var(--gold)" stroke-width=".8" opacity=".5"/></svg>`;
+
+// ===== BLOCK GEO SHAPES =====
+const GEO = {
+  hex:(c,s) => `<svg viewBox="0 0 64 64"><polygon points="32,4 58,18 58,46 32,60 6,46 6,18" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/><polygon points="32,10 52,22 52,42 32,54 12,42 12,22" fill="${c}" opacity=".3"/></svg>`,
+  cube:(c,s) => `<svg viewBox="0 0 64 64"><rect x="10" y="10" width="44" height="44" rx="6" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/><rect x="16" y="16" width="32" height="32" rx="4" fill="${c}" opacity=".25"/></svg>`,
+  diamond:(c,s) => `<svg viewBox="0 0 64 64"><polygon points="32,4 60,32 32,60 4,32" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/><polygon points="32,12 52,32 32,52 12,32" fill="${c}" opacity=".25"/></svg>`,
+  tri:(c,s) => `<svg viewBox="0 0 64 64"><polygon points="32,6 58,56 6,56" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/></svg>`,
+  star:(c,s) => `<svg viewBox="0 0 64 64"><polygon points="32,4 40,24 60,24 44,36 50,56 32,44 14,56 20,36 4,24 24,24" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/></svg>`,
+  eye:(c,s) => `<svg viewBox="0 0 64 64"><ellipse cx="32" cy="32" rx="26" ry="18" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/><circle cx="32" cy="32" r="10" fill="${s||'#000'}" opacity=".5"/><circle cx="32" cy="32" r="4" fill="#fff" opacity=".6"/></svg>`,
+  skull:(c,s) => `<svg viewBox="0 0 64 64"><circle cx="32" cy="28" r="22" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/><rect x="16" y="44" width="32" height="16" rx="6" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/><circle cx="24" cy="28" r="5" fill="${s||'#000'}" opacity=".4"/><circle cx="40" cy="28" r="5" fill="${s||'#000'}" opacity=".4"/><rect x="28" y="36" width="8" height="5" rx="2" fill="${s||'#000'}" opacity=".3"/></svg>`,
+  crown:(c,s) => `<svg viewBox="0 0 64 64"><polygon points="8,48 8,20 20,32 32,12 44,32 56,20 56,48" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/><rect x="6" y="46" width="52" height="8" rx="2" fill="${s||'rgba(0,0,0,.3)'}"/></svg>`,
+  ring:(c,s) => `<svg viewBox="0 0 64 64"><circle cx="32" cy="32" r="24" fill="none" stroke="${c}" stroke-width="4"/><circle cx="32" cy="32" r="14" fill="none" stroke="${c}" stroke-width="2" opacity=".5"/></svg>`,
+  spiral:(c,s) => `<svg viewBox="0 0 64 64"><path d="M32 8 A24 24 0 0 1 56 32 A24 24 0 0 1 32 56 A16 16 0 0 1 16 40 A16 16 0 0 1 32 24 A8 8 0 0 1 40 32" fill="none" stroke="${c}" stroke-width="3" stroke-linecap="round"/></svg>`,
+  scroll:(c,s) => `<svg viewBox="0 0 64 64"><rect x="12" y="8" width="40" height="48" rx="4" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/><line x1="20" y1="20" x2="44" y2="20" stroke="${s||'rgba(0,0,0,.3)'}" stroke-width="2"/><line x1="20" y1="32" x2="44" y2="32" stroke="${s||'rgba(0,0,0,.3)'}" stroke-width="2"/><line x1="20" y1="44" x2="36" y2="44" stroke="${s||'rgba(0,0,0,.3)'}" stroke-width="2"/></svg>`,
+  bolt:(c,s) => `<svg viewBox="0 0 64 64"><polygon points="36,4 20,28 32,28 24,60 48,32 36,32" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/></svg>`,
+  shield:(c,s) => `<svg viewBox="0 0 64 64"><path d="M32 4 L56 14 L56 34 Q56 48 32 58 Q8 48 8 34 L8 14 Z" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/></svg>`,
+  sword:(c,s) => `<svg viewBox="0 0 64 64"><path d="M30 8 L34 8 L34 48 L30 48 Z" fill="${c}"/><path d="M20 44 L44 44 L44 48 L20 48 Z" fill="${s||'rgba(0,0,0,.4)'}"/><circle cx="32" cy="52" r="4" fill="${c}"/></svg>`,
+  lock:(c,s) => `<svg viewBox="0 0 64 64"><rect x="12" y="28" width="40" height="32" rx="4" fill="${c}" stroke="${s||'rgba(0,0,0,.4)'}" stroke-width="2"/><path d="M20 28 L20 20 A12 12 0 0 1 44 20 L44 28" fill="none" stroke="${c}" stroke-width="3"/><circle cx="32" cy="44" r="4" fill="${s||'rgba(0,0,0,.3)'}"/></svg>`,
+};
+
+// ===== GAME DATA =====
+const ZONES = [
+  {id:0,name:'表层矿区',req:1,shape:'hex',stroke:'#5a554d',blocks:[
+    {name:'碎石',shape:'hex',color:'#8a8479',hp:80,def:0,coins:8,exp:3,drops:{ore:1}},
+    {name:'砂岩',shape:'cube',color:'#a89878',hp:150,def:2,coins:14,exp:5,drops:{ore:1,sand:1}},
+    {name:'花岗岩',shape:'hex',color:'#9a9590',hp:280,def:4,coins:24,exp:8,drops:{ore:2}},
+    {name:'石灰岩',shape:'cube',color:'#b8b4a8',hp:450,def:6,coins:36,exp:12,drops:{ore:2,stone:1}},
+    {name:'板岩',shape:'diamond',color:'#6a6560',hp:700,def:8,coins:52,exp:17,drops:{ore:3}},
+  ]},
+  {id:1,name:'浅层矿区',req:5,shape:'cube',stroke:'#7a4f22',blocks:[
+    {name:'铜矿石',shape:'cube',color:'#b87333',hp:1200,def:12,coins:85,exp:25,drops:{ore:3,copper:1}},
+    {name:'铁矿石',shape:'hex',color:'#8a5a52',hp:2000,def:18,coins:130,exp:38,drops:{ore:4,iron:1}},
+    {name:'锡矿石',shape:'diamond',color:'#a8a8a0',hp:3200,def:25,coins:190,exp:55,drops:{ore:5,tin:1}},
+    {name:'铅矿石',shape:'cube',color:'#5a5a5a',hp:5000,def:32,coins:270,exp:78,drops:{ore:6,lead:1}},
+    {name:'锌矿石',shape:'hex',color:'#9a9a7a',hp:7500,def:40,coins:380,exp:108,drops:{ore:7,zinc:1}},
+  ]},
+  {id:2,name:'中层矿区',req:15,shape:'diamond',stroke:'#8a9ba8',blocks:[
+    {name:'银矿石',shape:'diamond',color:'#b8c4ce',hp:12000,def:55,coins:560,exp:155,drops:{ore:8,silver:1}},
+    {name:'金矿石',shape:'hex',color:'#c9a84c',hp:18000,def:72,coins:780,exp:215,drops:{ore:9,gold:1}},
+    {name:'秘银矿',shape:'cube',color:'#5a8a9a',hp:28000,def:95,coins:1100,exp:300,drops:{ore:10,mithril:1}},
+    {name:'精金矿',shape:'hex',color:'#6a8a5a',hp:42000,def:125,coins:1550,exp:420,drops:{ore:11,adamantite:1}},
+    {name:'黑曜石',shape:'diamond',color:'#2a2a2a',hp:65000,def:160,coins:2200,exp:580,drops:{ore:12,obsidian:1}},
+  ]},
+  {id:3,name:'深层矿区',req:35,shape:'star',stroke:'#4a7fb0',blocks:[
+    {name:'蓝宝石',shape:'diamond',color:'#4a7fb0',hp:100000,def:210,coins:3200,exp:820,drops:{ore:15,sapphire:1}},
+    {name:'红宝石',shape:'hex',color:'#a85048',hp:160000,def:270,coins:4600,exp:1150,drops:{ore:18,ruby:1}},
+    {name:'翡翠',shape:'cube',color:'#4a9b5e',hp:250000,def:340,coins:6500,exp:1600,drops:{ore:22,emerald:1}},
+    {name:'钻石',shape:'diamond',color:'#7ab8c9',hp:400000,def:430,coins:9200,exp:2250,drops:{ore:28,diamond:1}},
+    {name:'紫水晶',shape:'hex',color:'#8b6fa0',hp:650000,def:540,coins:13000,exp:3150,drops:{ore:35,amethyst:1}},
+  ]},
+  {id:4,name:'极深层',req:60,shape:'eye',stroke:'#6a5a8a',blocks:[
+    {name:'虚空石',shape:'eye',color:'#4a3a6a',hp:1000000,def:700,coins:18500,exp:4500,drops:{ore:50,void:1}},
+    {name:'暗影矿',shape:'cube',color:'#3a3a3a',hp:1600000,def:880,coins:26000,exp:6300,drops:{ore:70,shadow:1}},
+    {name:'灵魂石',shape:'skull',color:'#7a8a96',hp:2500000,def:1100,coins:37000,exp:8800,drops:{ore:100,soul:1}},
+    {name:'星辰矿',shape:'star',color:'#c9a84c',hp:4000000,def:1380,coins:52000,exp:12300,drops:{ore:140,star:1}},
+    {name:'创世岩',shape:'crown',color:'#d4af37',hp:6500000,def:1750,coins:74000,exp:17200,drops:{ore:200,creation:1}},
+  ]},
+  {id:5,name:'深渊矿区',req:90,shape:'bolt',stroke:'#c9a84c',blocks:[
+    {name:'神铁矿',shape:'shield',color:'#c9a84c',hp:10000000,def:2200,coins:105000,exp:24000,drops:{ore:300,divine:1}},
+    {name:'永恒石',shape:'ring',color:'#7ab8c9',hp:16000000,def:2800,coins:148000,exp:33500,drops:{ore:450,eternal:1}},
+    {name:'混沌矿',shape:'spiral',color:'#8b6fa0',hp:25000000,def:3500,coins:210000,exp:47000,drops:{ore:650,chaos:1}},
+    {name:'真理石',shape:'scroll',color:'#c9a84c',hp:40000000,def:4400,coins:295000,exp:65500,drops:{ore:950,truth:1}},
+    {name:'终焉岩',shape:'bolt',color:'#2a2a2a',hp:65000000,def:5500,coins:420000,exp:92000,drops:{ore:1400,abyss:1}},
+  ]},
+];
+
+const PICKAXES = [
+  {id:0,name:'木镐',damage:12,cost:0,req:null,mat:{},tier:0},
+  {id:1,name:'石镐',damage:25,cost:150,req:0,mat:{ore:20},tier:0},
+  {id:2,name:'铜镐',damage:45,cost:400,req:1,mat:{ore:40,copper:8},tier:0},
+  {id:3,name:'铁镐',damage:80,cost:900,req:2,mat:{ore:80,iron:15},tier:0},
+  {id:4,name:'钢镐',damage:140,cost:2000,req:3,mat:{ore:150,iron:30,tin:10},tier:1},
+  {id:5,name:'银镐',damage:240,cost:4500,req:4,mat:{ore:300,silver:20},tier:1},
+  {id:6,name:'金镐',damage:400,cost:10000,req:5,mat:{ore:500,gold:30},tier:1},
+  {id:7,name:'秘银镐',damage:680,cost:22000,req:6,mat:{ore:800,mithril:25},tier:1},
+  {id:8,name:'精金镐',damage:1150,cost:50000,req:7,mat:{ore:1200,adamantite:20},tier:1},
+  {id:9,name:'黑曜石镐',damage:1900,cost:110000,req:8,mat:{ore:1800,obsidian:15},tier:2},
+  {id:10,name:'水晶镐',damage:3100,cost:240000,req:9,mat:{ore:2500,sapphire:10,ruby:10},tier:2},
+  {id:11,name:'翡翠镐',damage:5000,cost:520000,req:10,mat:{ore:3500,emerald:15},tier:2},
+  {id:12,name:'钻石镐',damage:8000,cost:1100000,req:11,mat:{ore:5000,diamond:12},tier:2},
+  {id:13,name:'紫晶镐',damage:12800,cost:2400000,req:12,mat:{ore:7000,amethyst:10},tier:2},
+  {id:14,name:'虚空镐',damage:20000,cost:5000000,req:13,mat:{ore:10000,void:8},tier:3},
+  {id:15,name:'灵魂镐',damage:32000,cost:11000000,req:14,mat:{ore:15000,soul:6},tier:3},
+  {id:16,name:'星辰镐',damage:50000,cost:24000000,req:15,mat:{ore:22000,star:5},tier:3},
+  {id:17,name:'创世镐',damage:80000,cost:52000000,req:16,mat:{ore:32000,creation:4},tier:3},
+  {id:18,name:'神铁镐',damage:130000,cost:120000000,req:17,mat:{ore:50000,divine:3},tier:4},
+  {id:19,name:'永恒镐',damage:220000,cost:280000000,req:18,mat:{ore:80000,eternal:2},tier:4},
+  {id:20,name:'深渊镐',damage:400000,cost:650000000,req:19,mat:{ore:120000,abyss:2},tier:4},
+];
+
+function getPickSVG(id){
+  const tier = PICKAXES[id].tier;
+  if(tier===0) return PICK_SVG('p'+id);
+  if(tier===1) return PICK_SVG_ADV('p'+id, false);
+  if(tier===2) return PICK_SVG_ADV('p'+id, true);
+  if(tier===3) return PICK_SVG_EPIC('p'+id);
+  return PICK_SVG_LEGEND('p'+id);
+}
+
+const MATERIALS = {
+  ore:{name:'矿石碎片',shape:'cube',color:'#8a8479'},
+  sand:{name:'砂砾',shape:'tri',color:'#c9b896'},
+  stone:{name:'石材',shape:'cube',color:'#9a9590'},
+  copper:{name:'铜锭',shape:'cube',color:'#b87333'},
+  iron:{name:'铁锭',shape:'hex',color:'#8a9ba8'},
+  tin:{name:'锡锭',shape:'diamond',color:'#b8c4ce'},
+  lead:{name:'铅锭',shape:'cube',color:'#5a5a5a'},
+  zinc:{name:'锌锭',shape:'hex',color:'#9a9a7a'},
+  silver:{name:'银锭',shape:'diamond',color:'#c0c0c0'},
+  gold:{name:'金锭',shape:'hex',color:'#c9a84c'},
+  mithril:{name:'秘银锭',shape:'cube',color:'#4a7fb0'},
+  adamantite:{name:'精金锭',shape:'hex',color:'#5a9b6e'},
+  obsidian:{name:'黑曜石',shape:'diamond',color:'#2a2a2a'},
+  sapphire:{name:'蓝宝石',shape:'diamond',color:'#4a7fb0'},
+  ruby:{name:'红宝石',shape:'hex',color:'#a85048'},
+  emerald:{name:'翡翠',shape:'cube',color:'#5a9b6e'},
+  diamond:{name:'钻石',shape:'diamond',color:'#7ab8c9'},
+  amethyst:{name:'紫水晶',shape:'hex',color:'#8b6fa0'},
+  void:{name:'虚空碎片',shape:'eye',color:'#6a5a8a'},
+  shadow:{name:'暗影精华',shape:'cube',color:'#4a4a4a'},
+  soul:{name:'灵魂结晶',shape:'skull',color:'#8a9ba8'},
+  star:{name:'星辰碎片',shape:'star',color:'#c9a84c'},
+  creation:{name:'创世之尘',shape:'crown',color:'#d4af37'},
+  divine:{name:'神铁锭',shape:'shield',color:'#c9a84c'},
+  eternal:{name:'永恒核心',shape:'ring',color:'#7ab8c9'},
+  chaos:{name:'混沌碎片',shape:'spiral',color:'#8b6fa0'},
+  truth:{name:'真理之石',shape:'scroll',color:'#c9a84c'},
+  abyss:{name:'深渊核心',shape:'bolt',color:'#2a2a2a'},
+};
+
+const TALENTS = [
+  {branch:'攻击',shape:'sword',skills:[
+    {id:'atk1',name:'强力挥击',desc:'攻击力+5%',max:5,cost:1},
+    {id:'atk2',name:'暴击精通',desc:'暴击率+2%',max:5,cost:1},
+    {id:'atk3',name:'致命一击',desc:'暴击伤害+10%',max:5,cost:1},
+    {id:'atk4',name:'破甲',desc:'无视防御+5%',max:5,cost:2},
+    {id:'atk5',name:'毁灭之力',desc:'攻击力+15%',max:5,cost:3},
+  ]},
+  {branch:'防御',shape:'shield',skills:[
+    {id:'def1',name:'坚韧',desc:'连击持续时间+0.5秒',max:5,cost:1},
+    {id:'def2',name:'精准',desc:'命中率+2%',max:5,cost:1},
+    {id:'def3',name:'反击',desc:'被防御时反弹5%伤害',max:5,cost:2},
+    {id:'def4',name:'专注',desc:'连击上限+1',max:5,cost:2},
+    {id:'def5',name:'不屈意志',desc:'每次挖掘有5%几率不消耗连击',max:5,cost:3},
+  ]},
+  {branch:'经济',shape:'cube',skills:[
+    {id:'eco1',name:'财富嗅觉',desc:'金币获取+5%',max:5,cost:1},
+    {id:'eco2',name:'经验加成',desc:'经验获取+5%',max:5,cost:1},
+    {id:'eco3',name:'材料回收',desc:'材料掉落+10%',max:5,cost:1},
+    {id:'eco4',name:'幸运星',desc:'稀有材料掉率+1%',max:5,cost:2},
+    {id:'eco5',name:'商业头脑',desc:'商店价格-5%',max:5,cost:2},
+  ]},
+  {branch:'特殊',shape:'bolt',skills:[
+    {id:'sp1',name:'自动挖掘',desc:'自动挖掘速度+10%',max:5,cost:1},
+    {id:'sp2',name:'多重打击',desc:'2%几率双倍伤害',max:5,cost:2},
+    {id:'sp3',name:'吸血',desc:'伤害的1%转化为金币',max:5,cost:2},
+    {id:'sp4',name:'时间扭曲',desc:'离线收益+10%',max:5,cost:2},
+    {id:'sp5',name:'神之手',desc:'1%几率直接摧毁方块',max:5,cost:3},
+  ]},
+];
+
+const ACHIEVEMENTS = [
+  {id:'a1',name:'初次挖掘',desc:'挖掘1次',req:s=>s.totalClicks>=1,reward:50},
+  {id:'a2',name:'勤劳矿工',desc:'挖掘100次',req:s=>s.totalClicks>=100,reward:200},
+  {id:'a3',name:'挖掘狂人',desc:'挖掘1000次',req:s=>s.totalClicks>=1000,reward:1000},
+  {id:'a4',name:'永动机',desc:'挖掘10000次',req:s=>s.totalClicks>=10000,reward:5000},
+  {id:'a5',name:'富可敌国',desc:'累计获得10000金币',req:s=>s.totalCoins>=10000,reward:2000},
+  {id:'a6',name:'百万富翁',desc:'累计获得100000金币',req:s=>s.totalCoins>=100000,reward:10000},
+  {id:'a7',name:'千万富翁',desc:'累计获得1000000金币',req:s=>s.totalCoins>=1000000,reward:50000},
+  {id:'a8',name:'碎石者',desc:'破坏10个方块',req:s=>s.blocksBroken>=10,reward:100},
+  {id:'a9',name:'破岩者',desc:'破坏100个方块',req:s=>s.blocksBroken>=100,reward:500},
+  {id:'a10',name:'毁灭者',desc:'破坏1000个方块',req:s=>s.blocksBroken>=1000,reward:3000},
+  {id:'a11',name:'升级之路',desc:'达到等级5',req:s=>s.level>=5,reward:300},
+  {id:'a12',name:'中级矿工',desc:'达到等级20',req:s=>s.level>=20,reward:1500},
+  {id:'a13',name:'高级矿工',desc:'达到等级50',req:s=>s.level>=50,reward:8000},
+  {id:'a14',name:'大师矿工',desc:'达到等级80',req:s=>s.level>=80,reward:30000},
+  {id:'a15',name:'连击新手',desc:'达到5连击',req:s=>s.maxCombo>=5,reward:200},
+  {id:'a16',name:'连击高手',desc:'达到20连击',req:s=>s.maxCombo>=20,reward:1000},
+  {id:'a17',name:'连击大师',desc:'达到50连击',req:s=>s.maxCombo>=50,reward:5000},
+  {id:'a18',name:'暴击新手',desc:'暴击10次',req:s=>s.critCount>=10,reward:150},
+  {id:'a19',name:'暴击高手',desc:'暴击100次',req:s=>s.critCount>=100,reward:800},
+  {id:'a20',name:'收藏家',desc:'获得10种材料',req:s=>Object.keys(s.materials).length>=10,reward:1000},
+  {id:'a21',name:'锻造师',desc:'合成5把镐子',req:s=>s.pickaxesOwned>=5,reward:2000},
+  {id:'a22',name:'神匠',desc:'合成10把镐子',req:s=>s.pickaxesOwned>=10,reward:10000},
+  {id:'a23',name:'天赋觉醒',desc:'投入10个天赋点',req:s=>s.talentPointsSpent>=10,reward:1500},
+  {id:'a24',name:'深渊行者',desc:'解锁深渊矿区',req:s=>s.maxZone>=5,reward:50000},
+  {id:'a25',name:'终极矿工',desc:'获得永恒镐',req:s=>s.hasEternalPick>=1,reward:200000},
+];
+
+const CODES = {
+  'HELLO':{coins:100,msg:'欢迎礼包'},
+  'MINING':{coins:300,msg:'挖矿基金'},
+  'PICKAXE':{coins:500,msg:'镐子基金'},
+  'MASTER':{coins:1000,msg:'大师礼包'},
+  'GOLDEN':{coins:2000,msg:'黄金礼包'},
+  'DIAMOND':{coins:5000,msg:'钻石礼包'},
+  'SUPREME':{coins:10000,msg:'至尊礼包'},
+  'SKILL':{talentPoints:2,msg:'技能点礼包'},
+  'EXP':{exp:500,msg:'经验礼包'},
+  'COINS':{coins:3000,msg:'金币礼包'},
+  'TROPHY':{coins:10000,msg:'奖杯兑换'},
+  'FRAGMENT':{materials:{ore:50},msg:'材料礼包'},
+  'STARDUST':{materials:{star:5},msg:'星辰礼包'},
+  'SOUL':{materials:{soul:3},msg:'灵魂礼包'},
+  'CREATION':{materials:{creation:2},msg:'创世礼包'},
+  'LUCKY':{coins:7777,msg:'幸运礼包'},
+  'SPEED':{materials:{ore:100},msg:'加速礼包'},
+  'OFFLINE':{coins:5000,msg:'离线补偿'},
+};
+
+// ===== STATE =====
+let game = {
+  coins:0,level:1,exp:0,zone:0,block:0,
+  pickaxe:0,pickaxesOwned:[0],
+  materials:{},talents:{},talentPoints:0,
+  achievements:{},usedCodes:[],
+  autoMine:false,showDmg:true,showShake:true,showParticles:true,
+  totalClicks:0,totalCoins:0,blocksBroken:0,maxCombo:0,critCount:0,
+  combo:0,comboTimer:0,playTime:0,lastSave:Date.now(),lastOnline:Date.now(),
+  chestTimer:0,chestReady:true,
+};
+let currentSlot = 0;
+let autoMineInterval = null;
+let comboDecayInterval = null;
+let saveInterval = null;
+let playTimeInterval = null;
+let chestInterval = null;
+
+// ===== UTILS =====
+const $ = id => document.getElementById(id);
+const fmt = n => n>=1e12?(n/1e12).toFixed(2)+'T':n>=1e9?(n/1e9).toFixed(2)+'B':n>=1e6?(n/1e6).toFixed(2)+'M':n>=1e3?(n/1e3).toFixed(1)+'K':Math.floor(n);
+const rand = (min,max) => Math.random()*(max-min)+min;
+const randInt = (min,max) => Math.floor(rand(min,max+1));
+
+function saveGame(){
+  game.lastSave = Date.now();
+  localStorage.setItem('deepMine3_slot'+currentSlot,JSON.stringify(game));
+  localStorage.setItem('deepMine3_slot',currentSlot);
+}
+function loadGame(slot){
+  const data = localStorage.getItem('deepMine3_slot'+slot);
+  if(data){game = JSON.parse(data);currentSlot=slot;return true;}
+  return false;
+}
+function newGame(slot){
+  game = {
+    coins:0,level:1,exp:0,zone:0,block:0,
+    pickaxe:0,pickaxesOwned:[0],
+    materials:{},talents:{},talentPoints:0,
+    achievements:{},usedCodes:[],
+    autoMine:false,showDmg:true,showShake:true,showParticles:true,
+    totalClicks:0,totalCoins:0,blocksBroken:0,maxCombo:0,critCount:0,
+    combo:0,comboTimer:0,playTime:0,lastSave:Date.now(),lastOnline:Date.now(),
+    chestTimer:0,chestReady:true,
+  };
+  currentSlot = slot;
+  saveGame();
+}
+
+function toast(msg,type='info'){
+  const el = document.createElement('div');
+  el.className = 'ts '+(type==='success'?'ok':type==='error'?'err':'inf');
+  el.textContent = msg;
+  $('tsSt').appendChild(el);
+  setTimeout(()=>{el.style.opacity='0';el.style.transform='translateX(40px) scale(.95)';setTimeout(()=>el.remove(),300);},2800);
+}
+
+function log(msg,cls=''){
+  const area = $('logP');
+  const line = document.createElement('div');
+  line.className = 'ln '+cls;
+  line.textContent = msg;
+  area.appendChild(line);
+  if(area.children.length>25) area.removeChild(area.firstChild);
+  area.scrollTop = area.scrollHeight;
+}
+
+// ===== COMBAT =====
+function getPickDamage(){
+  let base = PICKAXES[game.pickaxe].damage;
+  let best = 0;
+  for(const id of game.pickaxesOwned) if(PICKAXES[id].damage>best) best = PICKAXES[id].damage;
+  if(best>base) base += (best-base)*0.3;
+  const atk1 = game.talents.atk1||0;
+  base *= (1+atk1*0.05);
+  const atk5 = game.talents.atk5||0;
+  base *= (1+atk5*0.15);
+  return Math.floor(base);
+}
+function getCritChance(){return 0.05+(game.talents.atk2||0)*0.02;}
+function getCritMult(){return 1.5+(game.talents.atk3||0)*0.10;}
+function getIgnoreDef(){return (game.talents.atk4||0)*0.05;}
+function getComboMax(){return 10+(game.talents.def4||0);}
+function getComboDuration(){return 2+(game.talents.def1||0)*0.5;}
+function getCoinMult(){return 1+(game.talents.eco1||0)*0.05;}
+function getExpMult(){return 1+(game.talents.eco2||0)*0.05;}
+function getDropMult(){return 1+(game.talents.eco3||0)*0.10;}
+function getAutoSpeed(){return 1+(game.talents.sp1||0)*0.10;}
+function getInstakillChance(){return (game.talents.sp5||0)*0.01;}
+function getDoubleChance(){return (game.talents.sp2||0)*0.02;}
+function getOfflineMult(){return 0.5+(game.talents.sp4||0)*0.10;}
+
+// ===== BLOCK SYSTEM =====
+function getCurrentBlock(){return ZONES[game.zone].blocks[game.block];}
+function getBlockHp(){return getCurrentBlock().hp;}
+function getBlockDef(){return getCurrentBlock().def;}
+let blockCurrentHp = 0;
+function initBlock(){blockCurrentHp = getBlockHp();}
+
+function calcDamage(){
+  let dmg = getPickDamage();
+  const def = getBlockDef();
+  const ignore = getIgnoreDef();
+  let effectiveDef = def*(1-ignore);
+  if(effectiveDef<0) effectiveDef=0;
+  dmg = Math.max(1, dmg - effectiveDef);
+  let comboMult = 1;
+  if(game.combo>0){
+    comboMult = 1+game.combo*0.03;
+    if(comboMult>3) comboMult=3;
+  }
+  dmg *= comboMult;
+  let isCrit = false;
+  if(Math.random()<getCritChance()){isCrit=true;dmg*=getCritMult();game.critCount++;}
+  if(Math.random()<getDoubleChance()){dmg*=2;}
+  dmg = Math.floor(dmg);
+  return {dmg,isCrit,comboMult};
+}
+
+function spawnDmgNum(x,y,dmg,isCrit){
+  if(!game.showDmg) return;
+  const el = document.createElement('div');
+  el.className = 'dmg';
+  el.textContent = dmg;
+  el.style.left = x+'px';
+  el.style.top = y+'px';
+  el.style.color = isCrit?'#ff5555':'#ece8e0';
+  el.style.fontSize = isCrit?'1.4rem':'1.05rem';
+  if(isCrit) el.style.textShadow = '0 0 12px rgba(255,85,85,.6)';
+  $('dmgL').appendChild(el);
+  let opacity=1,top=y;
+  const anim = setInterval(()=>{opacity-=0.022;top-=1.3;el.style.opacity=opacity;el.style.top=top+'px';if(opacity<=0){clearInterval(anim);el.remove();}},30);
+}
+
+function spawnParticles(x,y,color){
+  if(!game.showParticles) return;
+  for(let i=0;i<8;i++){
+    const el = document.createElement('div');
+    el.className = 'part';
+    const size = rand(3,9);
+    el.style.width = size+'px';
+    el.style.height = size+'px';
+    el.style.background = color||'#c9a84c';
+    el.style.left = x+'px';
+    el.style.top = y+'px';
+    $('fx').appendChild(el);
+    const angle = rand(0,Math.PI*2);
+    const speed = rand(2,8);
+    let vx = Math.cos(angle)*speed, vy = Math.sin(angle)*speed-3;
+    let px=x,py=y,op=1;
+    const anim = setInterval(()=>{px+=vx;py+=vy;vy+=0.35;op-=0.03;el.style.left=px+'px';el.style.top=py+'px';el.style.opacity=op;if(op<=0){clearInterval(anim);el.remove();}},30);
+  }
+}
+
+function shakeScreen(){
+  if(!game.showShake) return;
+  const app = document.querySelector('.app');
+  app.style.transform = 'translate('+rand(-4,4)+'px,'+rand(-4,4)+'px)';
+  setTimeout(()=>app.style.transform='none',80);
+}
+
+function mineAt(x,y){
+  game.totalClicks++;
+  game.combo++;
+  if(game.combo>game.maxCombo) game.maxCombo=game.combo;
+  const maxCombo = getComboMax();
+  if(game.combo>maxCombo) game.combo=maxCombo;
+  game.comboTimer = getComboDuration();
+  if(Math.random()<getInstakillChance()){
+    blockCurrentHp = 0;
+    log('神之手! 直接摧毁!','g');
+  }else{
+    const {dmg,isCrit} = calcDamage();
+    blockCurrentHp -= dmg;
+    if(x&&y) spawnDmgNum(x,y,dmg,isCrit);
+    spawnParticles(x||window.innerWidth/2,y||window.innerHeight/2);
+    shakeScreen();
+  }
+  updateBlockUI();
+  updateComboUI();
+  checkBlockDead();
+  checkAchievements();
+}
+
+function checkBlockDead(){
+  if(blockCurrentHp<=0){
+    const b = getCurrentBlock();
+    let coins = Math.round(b.coins*getCoinMult());
+    game.coins += coins; game.totalCoins += coins;
+    let exp = Math.round(b.exp*getExpMult());
+    game.exp += exp;
+    const dm = getDropMult();
+    for(const [mat,amt] of Object.entries(b.drops)){
+      const final = Math.round(amt*dm*(0.8+Math.random()*0.4));
+      game.materials[mat] = (game.materials[mat]||0)+final;
+    }
+    game.blocksBroken++;
+    log('破坏 '+b.name+' +'+fmt(coins)+'金币 +'+exp+'EXP','gr');
+    checkLevelUp();
+    game.block++;
+    if(game.block>=ZONES[game.zone].blocks.length){game.block=0;}
+    initBlock();
+    updateBlockUI();
+    updateStatsUI();
+    updateMatUI();
+  }
+}
+
+function checkLevelUp(){
+  const need = Math.floor(100*Math.pow(game.level,1.55));
+  if(game.exp>=need){
+    game.exp -= need;
+    game.level++;
+    game.talentPoints++;
+    log('升级 Lv.'+game.level+'! 获得1天赋点','g');
+    toast('升级 Lv.'+game.level,'success');
+    checkLevelUp();
+  }
+}
+
+// ===== UI UPDATES =====
+function updateBlockUI(){
+  const b = getCurrentBlock();
+  const z = ZONES[game.zone];
+  const maxHp = getBlockHp();
+  const pct = Math.max(0,blockCurrentHp/maxHp*100);
+  $('bGeo').innerHTML = GEO[b.shape](b.color,z.stroke);
+  $('bName').textContent = b.name;
+  $('bHp').textContent = fmt(blockCurrentHp)+' / '+fmt(maxHp);
+  $('bDef').textContent = '防御 '+b.def;
+  $('bZone').textContent = z.name;
+  $('bHpBar').style.width = pct+'%';
+  let barColor = 'var(--emerald)';
+  if(pct<55) barColor='var(--gold)';
+  if(pct<25) barColor='var(--ruby)';
+  $('bHpBar').style.background = barColor;
+  const ring = $('ringFg');
+  const total = 2*Math.PI*130;
+  ring.style.strokeDasharray = total;
+  ring.style.strokeDashoffset = total*(1-pct/100);
+}
+
+function updateComboUI(){
+  const max = getComboMax();
+  const pct = Math.min(100,game.combo/max*100);
+  $('comboBar').style.width = pct+'%';
+  let mult = 1+game.combo*0.03;
+  if(mult>3) mult=3;
+  $('comboTx').textContent = game.combo>0?'连击 x'+mult.toFixed(2):'连击 x1.00';
+}
+
+function updateStatsUI(){
+  $('hCoin').textContent = fmt(game.coins);
+  $('hLvl').textContent = 'Lv.'+game.level;
+  const dps = game.autoMine?Math.floor(getPickDamage()*getAutoSpeed()):0;
+  $('hDps').textContent = dps>0?fmt(dps)+'/s':'手动';
+  $('hPick').textContent = PICKAXES[game.pickaxe].name;
+  $('sClk').textContent = fmt(game.totalClicks);
+  $('sCoin').textContent = fmt(game.totalCoins);
+  $('sBlk').textContent = fmt(game.blocksBroken);
+  $('sCombo').textContent = fmt(game.maxCombo);
+  $('sCrit').textContent = fmt(game.critCount);
+  $('sTime').textContent = Math.floor(game.playTime/60)+'m';
+}
+
+function updateMatUI(){
+  const grid = $('mg');
+  grid.innerHTML = '';
+  for(const [key,info] of Object.entries(MATERIALS)){
+    const count = game.materials[key]||0;
+    if(count===0) continue;
+    const el = document.createElement('div');
+    el.className = 'mc';
+    el.innerHTML = '<div class="mg-geo">'+GEO[info.shape](info.color)+'</div><div class="mg-in"><div class="mg-nm">'+info.name+'</div><div class="mg-ct">'+fmt(count)+'</div></div>';
+    grid.appendChild(el);
+  }
+  if(grid.children.length===0){
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;color:var(--text-tert);font-size:.8rem;padding:20px;">暂无材料</div>';
+  }
+}
+
+function updatePickUI(){
+  const list = $('pkL');
+  list.innerHTML = '';
+  for(const p of PICKAXES){
+    const owned = game.pickaxesOwned.includes(p.id);
+    const equipped = game.pickaxe===p.id;
+    const canBuy = !owned && game.pickaxe===p.req && game.coins>=p.cost && hasMaterials(p.mat);
+    const el = document.createElement('div');
+    el.className = 'pk-r'+(equipped?' on':'')+(!owned&&!canBuy?' lock':'');
+    let btn = '';
+    if(equipped){btn = '<span class="pk-tg">已装备</span>';}
+    else if(owned){btn = '<button class="pk-ac" onclick="equipPick('+p.id+')">装备</button>';}
+    else if(canBuy){btn = '<button class="pk-ac" onclick="buyPick('+p.id+')">'+fmt(p.cost)+'</button>';}
+    else{btn = '<button class="pk-ac" disabled>未解锁</button>';}
+    let reqText = '';
+    if(!owned && p.req!==null){
+      reqText = '需'+PICKAXES[p.req].name;
+      if(Object.keys(p.mat).length>0){reqText += ' '; for(const [k,v] of Object.entries(p.mat)) reqText += MATERIALS[k].name+'x'+v+' ';}
+    }
+    el.innerHTML = getPickSVG(p.id)+'<div class="pk-in"><div class="pk-nm">'+p.name+'</div><div class="pk-st">攻击 '+fmt(p.damage)+(reqText?' | '+reqText:'')+'</div></div>'+btn;
+    list.appendChild(el);
+  }
+}
+
+function hasMaterials(mat){
+  for(const [k,v] of Object.entries(mat)){if((game.materials[k]||0)<v) return false;}
+  return true;
+}
+
+function buyPick(id){
+  const p = PICKAXES[id];
+  if(game.coins<p.cost) return;
+  if(!hasMaterials(p.mat)) return;
+  game.coins -= p.cost;
+  for(const [k,v] of Object.entries(p.mat)) game.materials[k]-=v;
+  game.pickaxesOwned.push(id);
+  game.pickaxe = id;
+  toast('合成 '+p.name,'success');
+  log('合成 '+p.name,'g');
+  updatePickUI();
+  updateMatUI();
+  updateStatsUI();
+  saveGame();
+}
+
+function equipPick(id){
+  if(!game.pickaxesOwned.includes(id)) return;
+  game.pickaxe = id;
+  toast('装备 '+PICKAXES[id].name,'info');
+  updatePickUI();
+  updateStatsUI();
+  saveGame();
+}
+
+function updateZoneUI(){
+  const grid = $('zg');
+  grid.innerHTML = '';
+  for(const z of ZONES){
+    const unlocked = game.level>=z.req;
+    const active = game.zone===z.id;
+    const el = document.createElement('button');
+    el.className = 'zc'+(active?' on':'')+(!unlocked?' lock':'');
+    el.innerHTML = '<div class="z-geo">'+GEO[z.shape](z.stroke||z.blocks[0].color)+'</div><div class="z-nm">'+z.name+'</div><div class="z-rq">'+(unlocked?'已解锁':'需Lv.'+z.req)+'</div>';
+    if(unlocked) el.onclick = ()=>selectZone(z.id);
+    grid.appendChild(el);
+  }
+  const bl = $('brs');
+  bl.innerHTML = '';
+  const z = ZONES[game.zone];
+  for(let i=0;i<z.blocks.length;i++){
+    const b = z.blocks[i];
+    const active = game.block===i;
+    const el = document.createElement('div');
+    el.className = 'br'+(active?' on':'');
+    let drops = '';
+    for(const [k,v] of Object.entries(b.drops)) drops += MATERIALS[k].name+' ';
+    el.innerHTML = '<div class="br-geo">'+GEO[b.shape](b.color)+'</div><div class="br-in"><div class="br-nm">'+b.name+'</div><div class="br-st">HP '+fmt(b.hp)+' | 防御 '+b.def+'</div><div class="br-dr">'+drops+'</div></div>';
+    el.onclick = ()=>{game.block=i;initBlock();updateBlockUI();updateZoneUI();};
+    bl.appendChild(el);
+  }
+}
+
+function selectZone(id){
+  game.zone = id;
+  game.block = 0;
+  initBlock();
+  updateBlockUI();
+  updateZoneUI();
+  saveGame();
+}
+
+function updateTalentUI(){
+  $('tPt').textContent = game.talentPoints;
+  const tree = $('tTree');
+  tree.innerHTML = '';
+  for(const branch of TALENTS){
+    const div = document.createElement('div');
+    div.className = 'tl-s';
+    div.innerHTML = '<div class="tl-hd"><div class="tl-ico">'+GEO[branch.shape]('#c9a84c')+'</div><div class="tl-tl">'+branch.branch+'</div></div>';
+    const grid = document.createElement('div');
+    grid.className = 'tl-g';
+    for(const s of branch.skills){
+      const lvl = game.talents[s.id]||0;
+      const maxed = lvl>=s.max;
+      const node = document.createElement('div');
+      node.className = 'tl-n'+(lvl>0?' on':'')+(maxed?' mx':'');
+      node.innerHTML = '<div class="tn-geo">'+GEO[branch.shape](maxed?'#4a9b5e':lvl>0?'#c9a84c':'#5a554d')+'</div><div class="tn-lv">'+lvl+'/'+s.max+'</div><div class="tn-nm">'+s.name+'</div><div class="tl-tt"><div class="tt-nm">'+s.name+'</div><div class="tt-dc">'+s.desc+'</div><div class="tt-ct">'+(maxed?'已满级':'消耗 '+s.cost+' 点')+'</div></div>';
+      node.onclick = ()=>upgradeTalent(s);
+      grid.appendChild(node);
+    }
+    div.appendChild(grid);
+    tree.appendChild(div);
+  }
+}
+
+function upgradeTalent(s){
+  const lvl = game.talents[s.id]||0;
+  if(lvl>=s.max){toast('已满级','error');return;}
+  if(game.talentPoints<s.cost){toast('天赋点不足','error');return;}
+  game.talentPoints -= s.cost;
+  game.talents[s.id] = lvl+1;
+  toast(s.name+' Lv.'+(lvl+1),'success');
+  updateTalentUI();
+  updateStatsUI();
+  saveGame();
+}
+
+$('resetTal').onclick = ()=>{
+  if(game.coins<1000){toast('金币不足 (需1000)','error');return;}
+  game.coins -= 1000;
+  let refunded = 0;
+  for(const branch of TALENTS){
+    for(const s of branch.skills){
+      const lvl = game.talents[s.id]||0;
+      refunded += lvl*s.cost;
+    }
+  }
+  game.talentPoints += refunded;
+  game.talents = {};
+  toast('天赋重置, 退还 '+refunded+' 点','success');
+  updateTalentUI();
+  updateStatsUI();
+  saveGame();
+};
+
+function updateCraftUI(){
+  const list = $('cfL');
+  list.innerHTML = '';
+  for(const p of PICKAXES){
+    if(p.id===0) continue;
+    const owned = game.pickaxesOwned.includes(p.id);
+    if(owned) continue;
+    const prevOwned = p.req===null || game.pickaxesOwned.includes(p.req);
+    if(!prevOwned) continue;
+    const canCraft = game.coins>=p.cost && hasMaterials(p.mat);
+    const el = document.createElement('div');
+    el.className = 'cf-r';
+    let req = '金币x'+fmt(p.cost)+' ';
+    for(const [k,v] of Object.entries(p.mat)) req += MATERIALS[k].name+'x'+v+' ';
+    el.innerHTML = '<div class="cf-geo">'+getPickSVG(p.id)+'</div><div class="cf-in"><div class="cf-nm">'+p.name+'</div><div class="cf-rq">'+req+'</div></div><button class="cf-bt" '+(canCraft?'':'disabled')+' onclick="buyPick('+p.id+')">合成</button>';
+    list.appendChild(el);
+  }
+  if(list.children.length===0){
+    list.innerHTML = '<div style="text-align:center;color:var(--text-tert);font-size:.85rem;padding:28px;">所有镐子已合成</div>';
+  }
+}
+
+function updateAchieveUI(){
+  const list = $('achL');
+  list.innerHTML = '';
+  const stats = {
+    totalClicks:game.totalClicks,totalCoins:game.totalCoins,blocksBroken:game.blocksBroken,
+    level:game.level,maxCombo:game.maxCombo,critCount:game.critCount,
+    talentPointsSpent:Object.values(game.talents).reduce((a,b)=>a+b,0),
+    maxZone:game.zone,pickaxesOwned:game.pickaxesOwned.length,
+    hasEternalPick:game.pickaxesOwned.includes(20)?1:0,
+    materials:game.materials,
+  };
+  for(const a of ACHIEVEMENTS){
+    const completed = game.achievements[a.id];
+    const canComplete = !completed && a.req(stats);
+    if(canComplete){
+      game.achievements[a.id]=true;
+      game.coins += a.reward;
+      toast('成就: '+a.name+' +'+fmt(a.reward)+'金币','success');
+    }
+    const el = document.createElement('div');
+    el.className = 'ach-r'+(game.achievements[a.id]?' done':'');
+    el.innerHTML = '<div class="ach-geo">'+GEO[game.achievements[a.id]?'crown':'lock'](game.achievements[a.id]?'#c9a84c':'#5a554d')+'</div><div class="ach-in"><div class="ach-nm">'+a.name+'</div><div class="ach-dc">'+a.desc+'</div></div><div class="ach-rw">+'+fmt(a.reward)+'</div>';
+    list.appendChild(el);
+  }
+}
+
+function checkAchievements(){updateAchieveUI();}
+
+// ===== CHEST =====
+function updateChestUI(){
+  const ready = game.chestReady;
+  $('chSts').textContent = ready?'点击开启在线宝箱':'宝箱冷却中...';
+  if(ready){$('chGeo').classList.add('pulse');$('chGeo').style.cursor='pointer';}
+  else{$('chGeo').classList.remove('pulse');$('chGeo').style.cursor='not-allowed';}
+}
+
+$('chGeo').onclick = ()=>{
+  if(!game.chestReady){toast('宝箱冷却中','error');return;}
+  game.chestReady = false;
+  game.chestTimer = Date.now();
+  $('chGeo').classList.add('shake');
+  setTimeout(()=>$('chGeo').classList.remove('shake'),500);
+  const rewards = [];
+  const r = Math.random();
+  let coins = 0;
+  if(r<0.5) coins=randInt(50,200);
+  else if(r<0.8) coins=randInt(200,600);
+  else if(r<0.95) coins=randInt(600,1500);
+  else coins=randInt(1500,5000);
+  game.coins += coins; game.totalCoins += coins;
+  rewards.push({text:fmt(coins)+'金币'});
+  const mats = Object.keys(MATERIALS);
+  const mat = mats[randInt(0,mats.length-1)];
+  const matAmt = randInt(1,5);
+  game.materials[mat] = (game.materials[mat]||0)+matAmt;
+  rewards.push({text:MATERIALS[mat].name+'x'+matAmt});
+  const exp = randInt(20,100);
+  game.exp += exp;
+  rewards.push({text:exp+'经验'});
+  const cont = $('chRws');
+  cont.innerHTML = '';
+  for(const rw of rewards){
+    const el = document.createElement('div');
+    el.className = 'rw-cp';
+    el.textContent = rw.text;
+    cont.appendChild(el);
+  }
+  toast('开启宝箱!','success');
+  checkLevelUp();
+  updateStatsUI();
+  updateMatUI();
+  updateChestUI();
+  saveGame();
+};
+
+// ===== SETTINGS =====
+function toggleSwitch(id,key){
+  const el = $(id);
+  game[key] = !game[key];
+  el.classList.toggle('on',game[key]);
+  saveGame();
+}
+$('togAuto').onclick = ()=>{toggleSwitch('togAuto','autoMine');toggleAutoMine();};
+$('togDmg').onclick = ()=>toggleSwitch('togDmg','showDmg');
+$('togShake').onclick = ()=>toggleSwitch('togShake','showShake');
+$('togPart').onclick = ()=>toggleSwitch('togPart','showParticles');
+
+function toggleAutoMine(){
+  if(game.autoMine){
+    if(autoMineInterval) clearInterval(autoMineInterval);
+    autoMineInterval = setInterval(()=>{
+      const rect = $('mineTarget').getBoundingClientRect();
+      mineAt(rect.left+rect.width/2,rect.top+rect.height/2);
+    },1000/getAutoSpeed());
+  }else{
+    if(autoMineInterval){clearInterval(autoMineInterval);autoMineInterval=null;}
+  }
+}
+
+// Code
+$('cdBtn').onclick = ()=>{
+  const code = $('cdIn').value.trim().toUpperCase();
+  if(!code) return;
+  if(game.usedCodes.includes(code)){toast('兑换码已使用','error');return;}
+  const reward = CODES[code];
+  if(!reward){toast('无效兑换码','error');return;}
+  game.usedCodes.push(code);
+  if(reward.coins){game.coins+=reward.coins;game.totalCoins+=reward.coins;}
+  if(reward.exp){game.exp+=reward.exp;}
+  if(reward.talentPoints){game.talentPoints+=reward.talentPoints;}
+  if(reward.materials){for(const[k,v] of Object.entries(reward.materials)) game.materials[k]=(game.materials[k]||0)+v;}
+  toast(reward.msg+'!','success');
+  $('cdIn').value='';
+  checkLevelUp();
+  updateStatsUI();
+  updateMatUI();
+  updateTalentUI();
+  updateCodeUI();
+  saveGame();
+};
+
+function updateCodeUI(){
+  const list = $('cdTs');
+  list.innerHTML = '';
+  for(const code of Object.keys(CODES)){
+    const used = game.usedCodes.includes(code);
+    const el = document.createElement('span');
+    el.className = 'cd-tg'+(used?' used':'');
+    el.textContent = code;
+    list.appendChild(el);
+  }
+}
+
+// Save slots
+function updateSaveUI(){
+  const grid = $('svG');
+  grid.innerHTML = '';
+  for(let i=0;i<3;i++){
+    const data = localStorage.getItem('deepMine3_slot'+i);
+    let info = '空存档';
+    if(data){const s=JSON.parse(data);info='Lv.'+s.level+' '+fmt(s.coins)+'金币';}
+    const el = document.createElement('div');
+    el.className = 'sv-c'+(i===currentSlot?' on':'');
+    el.innerHTML = '<div class="sv-nm">存档 '+(i+1)+'</div><div class="sv-in">'+info+'</div>';
+    el.onclick = ()=>switchSlot(i);
+    grid.appendChild(el);
+  }
+}
+
+function switchSlot(i){
+  if(i===currentSlot) return;
+  if(loadGame(i)){toast('加载存档 '+(i+1),'info');}
+  else{newGame(i);toast('新建存档 '+(i+1),'info');}
+  initGame();
+}
+
+// Export/Import
+$('btnExp').onclick = ()=>{
+  $('txExp').value = btoa(JSON.stringify(game));
+  $('mdExp').classList.add('on');
+};
+$('clExp').onclick = ()=>$('mdExp').classList.remove('on');
+$('cpExp').onclick = ()=>{
+  $('txExp').select();
+  document.execCommand('copy');
+  toast('已复制','success');
+};
+$('btnImp').onclick = ()=>$('mdImp').classList.add('on');
+$('clImp').onclick = ()=>$('mdImp').classList.remove('on');
+$('doImp').onclick = ()=>{
+  try{
+    const data = JSON.parse(atob($('txImp').value.trim()));
+    game = data;
+    saveGame();
+    initGame();
+    $('mdImp').classList.remove('on');
+    toast('导入成功','success');
+  }catch(e){toast('导入失败','error');}
+};
+
+// ===== OFFLINE =====
+function calcOffline(){
+  const now = Date.now();
+  const offline = (now - game.lastOnline)/1000;
+  if(offline<60) return;
+  const hours = offline/3600;
+  const mult = getOfflineMult();
+  const dps = getPickDamage()*getAutoSpeed();
+  const maxHours = 8;
+  const effHours = Math.min(hours,maxHours);
+  let coins=0,exp=0,mats={};
+  const b = getCurrentBlock();
+  const kills = Math.floor(dps*effHours*3600/b.hp*mult*0.3);
+  if(kills>0){
+    coins = Math.floor(kills*b.coins*getCoinMult());
+    exp = Math.floor(kills*b.exp*getExpMult());
+    for(const [k,v] of Object.entries(b.drops)) mats[k]=Math.floor(kills*v*getDropMult());
+  }
+  if(coins>0 || exp>0){
+    $('offTime').textContent = '离线 '+Math.floor(offline/60)+' 分钟 (上限8小时)';
+    const cont = $('offIt');
+    cont.innerHTML = '';
+    if(coins>0){const el=document.createElement('div');el.className='of-itm';el.textContent=fmt(coins)+'金币';cont.appendChild(el);}
+    if(exp>0){const el=document.createElement('div');el.className='of-itm';el.textContent=fmt(exp)+'经验';cont.appendChild(el);}
+    for(const [k,v] of Object.entries(mats)){if(v>0){const el=document.createElement('div');el.className='of-itm';el.textContent=MATERIALS[k].name+'x'+v;cont.appendChild(el);}}
+    $('mdOff').classList.add('on');
+    $('offBtn').onclick = ()=>{
+      game.coins+=coins;game.totalCoins+=coins;game.exp+=exp;
+      for(const [k,v] of Object.entries(mats)) game.materials[k]=(game.materials[k]||0)+v;
+      game.lastOnline=now;
+      $('mdOff').classList.remove('on');
+      checkLevelUp();
+      updateStatsUI();
+      updateMatUI();
+      saveGame();
+    };
+  }
+}
+
+// ===== TABS =====
+document.querySelectorAll('.tab-bt').forEach(tab=>{
+  tab.onclick = ()=>{
+    document.querySelectorAll('.tab-bt').forEach(t=>t.classList.remove('on'));
+    document.querySelectorAll('.tab-p').forEach(t=>t.classList.remove('on'));
+    tab.classList.add('on');
+    $('p-'+tab.dataset.tab).classList.add('on');
+    if(tab.dataset.tab==='craft') updateCraftUI();
+    if(tab.dataset.tab==='achieve') updateAchieveUI();
+  };
+});
+
+// ===== INPUT =====
+let longPress = false;
+let longPressTimer = null;
+$('mineTarget').onmousedown = (e)=>{longPress=false;longPressTimer=setTimeout(()=>longPress=true,300);};
+$('mineTarget').onmouseup = (e)=>{if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;}if(!longPress) mineAt(e.clientX,e.clientY);};
+$('mineTarget').ontouchstart = (e)=>{longPress=false;longPressTimer=setTimeout(()=>longPress=true,300);};
+$('mineTarget').ontouchend = (e)=>{if(longPressTimer){clearTimeout(longPressTimer);longPressTimer=null;}if(!longPress){const t=e.changedTouches[0];mineAt(t.clientX,t.clientY);}e.preventDefault();};
+
+// Combo decay
+function startComboDecay(){
+  if(comboDecayInterval) clearInterval(comboDecayInterval);
+  comboDecayInterval = setInterval(()=>{
+    if(game.comboTimer>0){game.comboTimer-=0.1;if(game.comboTimer<=0){game.combo=0;updateComboUI();}}
+  },100);
+}
+
+// Chest timer
+chestInterval = setInterval(()=>{
+  if(!game.chestReady){
+    const elapsed = (Date.now()-game.chestTimer)/1000;
+    if(elapsed>=300){game.chestReady=true;updateChestUI();}
+  }
+},1000);
+
+// Play time
+playTimeInterval = setInterval(()=>{game.playTime++;game.lastOnline=Date.now();updateStatsUI();},60);
+
+// Auto save
+saveInterval = setInterval(()=>saveGame(),30000);
+
+// ===== INIT =====
+function initGame(){
+  initBlock();
+  updateBlockUI();
+  updateStatsUI();
+  updateMatUI();
+  updatePickUI();
+  updateZoneUI();
+  updateTalentUI();
+  updateCraftUI();
+  updateAchieveUI();
+  updateChestUI();
+  updateCodeUI();
+  updateSaveUI();
+  $('togAuto').classList.toggle('on',game.autoMine);
+  $('togDmg').classList.toggle('on',game.showDmg);
+  $('togShake').classList.toggle('on',game.showShake);
+  $('togPart').classList.toggle('on',game.showParticles);
+  if(game.autoMine) toggleAutoMine();
+  setTimeout(()=>{$('loadBar').parentElement.classList.add('ready');setTimeout(()=>$('load').classList.add('done'),700);},500);
+  calcOffline();
+  startComboDecay();
+}
+
+const savedSlot = localStorage.getItem('deepMine3_slot');
+if(savedSlot!==null && loadGame(parseInt(savedSlot))){
+  currentSlot = parseInt(savedSlot);
+} else if(!loadGame(0)){
+  newGame(0);
+}
+initGame();
+</script>
+</body>
+</html>
