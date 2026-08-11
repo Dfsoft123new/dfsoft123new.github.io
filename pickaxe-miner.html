@@ -807,10 +807,11 @@ var PICKAXES={
   titanium:{n:'钛合金镐',dmg:30,use:0.4,coins:1.8},
   netherite:{n:'下界合金镐',dmg:80,use:0.6,coins:2},
   obsidian:{n:'黑曜石镐',dmg:125,use:0.8,coins:2.2},
-  mystic:{n:'神秘镐',dmg:200,use:1,coins:2.5}
+  mystic:{n:'神秘镐',dmg:200,use:1,coins:2.5},
+  bucket:{n:'铁桶',dmg:0,use:0,coins:1}
 };
-var PICK_ITEMS={wood:'pickWood',stone:'pickStone',iron:'pickIron',bronze:'pickBronze',gold:'pickGold',diamond:'pickDiamond',steel:'pickSteel',amethyst:'pickAmethyst',dural:'pickDural',titanium:'pickTitanium',netherite:'pickNetherite',obsidian:'pickObsidian',mystic:'pickMystic'};
-var PICK_ORDER=['hands','wood','stone','iron','bronze','gold','diamond','steel','amethyst','dural','titanium','netherite','obsidian','mystic'];
+var PICK_ITEMS={wood:'pickWood',stone:'pickStone',iron:'pickIron',bronze:'pickBronze',gold:'pickGold',diamond:'pickDiamond',steel:'pickSteel',amethyst:'pickAmethyst',dural:'pickDural',titanium:'pickTitanium',netherite:'pickNetherite',obsidian:'pickObsidian',mystic:'pickMystic',bucket:'bucket'};
+var PICK_ORDER=['hands','wood','stone','iron','bronze','gold','diamond','steel','amethyst','dural','titanium','netherite','obsidian','mystic','bucket'];
 
 var ITEMS={
   log:{n:'原木',c:'#8b6a45'},cobble:{n:'圆石',c:'#8a8a8a'},coal:{n:'煤炭',c:'#33383e'},
@@ -863,7 +864,7 @@ var BLOCKS_BRANCH=[
   {id:'mang',n:'锰矿',hp:12400000000,coin:1600,def:1500000000,drop:{rawMang:0.025},tex:{base:['linear-gradient(180deg,#a98294 0%,#8e6a7e 100%)'],spots:[[25,35,'#755466',5],[65,25,'#755466',5],[40,70,'#755466',5],[85,55,'#755466',4],[15,85,'#755466',4]]}},
   {id:'titan',n:'钛矿',hp:39000000000,coin:2800,def:4800000000,drop:{rawTitan:0.01},tex:{base:['linear-gradient(180deg,#a5adbc 0%,#8991a3 100%)'],spots:[[20,30,'#e8edf5',4],[60,55,'#e8edf5',4],[80,25,'#e8edf5',4],[40,75,'#e8edf5',4],[65,90,'#e8edf5',4],[10,60,'#e8edf5',3]]}},
   {id:'mystery',n:'神秘矿石',hp:5400000000000,coin:15000,def:888800000000,drop:{mysticStone:0.01},tex:{base:['linear-gradient(180deg,#2b2742 0%,#1e1b33 100%)'],spots:[[20,30,'#7a5ae8',5],[65,25,'#7a5ae8',5],[40,70,'#7a5ae8',5],[80,60,'#7a5ae8',4],[10,85,'#7a5ae8',4],[55,85,'#38d8d0',4],[75,90,'#38d8d0',4],[35,15,'#38d8d0',4]]}},
-  {id:'volcano',n:'火山',hp:Infinity,coin:null,def:null,drop:{lava:0.001,acid:0.001},bucket:true,hint:'无法摧毁 · 需拥有铁桶方可采集 · 每次挖掘 0.1% 概率获得岩浆或硫酸',tex:{base:['linear-gradient(180deg,#4a413c 0%,#2e2825 100%)','repeating-linear-gradient(90deg,transparent 0 14px,rgba(224,85,42,.7) 14px 16px,transparent 16px 30px)'],spots:[[15,25,'#ff8c3a',3],[60,15,'#ff8c3a',3],[75,45,'#ff8c3a',3],[40,65,'#ff8c3a',3],[20,80,'#ff8c3a',3],[70,85,'#ff8c3a',3],[45,40,'#ff8c3a',3]]}}
+  {id:'volcano',n:'火山',hp:Infinity,coin:null,def:null,drop:{lava:0.5,acid:0.5},bucket:true,hint:'无法摧毁 · 需装备铁桶方可采集 · 每次挖掘 50% 概率获得岩浆或硫酸 · 每获得 1 个消耗 1 个铁桶',tex:{base:['linear-gradient(180deg,#4a413c 0%,#2e2825 100%)','repeating-linear-gradient(90deg,transparent 0 14px,rgba(224,85,42,.7) 14px 16px,transparent 16px 30px)'],spots:[[15,25,'#ff8c3a',3],[60,15,'#ff8c3a',3],[75,45,'#ff8c3a',3],[40,65,'#ff8c3a',3],[20,80,'#ff8c3a',3],[70,85,'#ff8c3a',3],[45,40,'#ff8c3a',3]]}}
 ];
 var AREAS={
   main:{n:'主矿区 I',blocks:BLOCKS_MAIN},
@@ -1005,10 +1006,19 @@ function doDig(silent){
       S.hp[b.id]=hp;
     }
   }else{
-    if((S.inv.bucket||0)>0){
+    if(S.equipped==='bucket'&&(S.inv.bucket||0)>0){
       var d2=b.drop||{};
       for(var k2 in d2){
-        if(d2[k2]>0&&Math.random()<d2[k2])addItem(k2,1,silent);
+        if((S.inv.bucket||0)<=0)break;
+        if(d2[k2]>0&&Math.random()<d2[k2]){
+          addItem(k2,1,silent);
+          S.inv.bucket=(S.inv.bucket||0)-1;
+          if((S.inv.bucket||0)<=0){
+            S.inv.bucket=0;
+            S.equipped='hands';
+            if(!silent)toast('铁桶已用尽，已切换为徒手','');
+          }
+        }
       }
     }
   }
@@ -1078,7 +1088,7 @@ function dropTxt(b){
   if(!b.drop)return '—';
   var parts=[];
   for(var k in b.drop)parts.push(ITEMS[k].n+' '+(b.drop[k]*100).toFixed(1)+'%');
-  if(b.bucket)parts.push('需铁桶');
+  if(b.bucket)parts.push('需装备铁桶');
   return parts.join(' · ');
 }
 function toast(msg,cls){
@@ -1093,9 +1103,12 @@ function toast(msg,cls){
 var craftCards=[],smeltRows=[],pickBtns=[],blkItems=[];
 function buildUI(){
   var at=$('areaTabs');
+  at._btns=[];
   Object.keys(AREAS).forEach(function(a){
     var b=document.createElement('button');
-    b.className='area-tab'+(S.area===a?' active':'');
+    b.className='area-tab';
+    b._a=a;
+    at._btns.push(b);
     b.textContent=AREAS[a].n;
     b.onclick=function(){S.area=a;S.idx[a]=Math.min(S.idx[a]||0,AREAS[a].blocks.length-1);rebuildBlockList();render();};
     at.appendChild(b);
@@ -1303,6 +1316,11 @@ var trailHp=-1;
 var lastBlockId=null;
 function renderFast(){
   var b=curBlock(),p=PICKAXES[S.equipped];
+  var at=$('areaTabs');
+  if(at._active!==S.area){
+    at._active=S.area;
+    for(var ai=0;ai<at._btns.length;ai++)at._btns[ai].classList.toggle('active',at._btns[ai]._a===S.area);
+  }
   var hp=S.hp[b.id]!==undefined?S.hp[b.id]:b.hp;
   setTxt('blockName',b.n);
   setTxt('bHp',isFinite(b.hp)?fmt(hp)+' / '+fmt(b.hp):'∞');
