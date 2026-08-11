@@ -627,6 +627,28 @@ main{
   transition:width .3s;
 }
 
+#offlineBox{
+  position:fixed;inset:0;z-index:110;display:none;
+  align-items:center;justify-content:center;
+  background:rgba(10,8,6,.92);
+}
+#offlineBox.on{display:flex}
+.obox{
+  width:min(92vw,430px);max-height:80vh;overflow:auto;
+  background:var(--bg1);border:1px solid rgba(232,163,61,.45);
+  border-radius:16px;padding:22px;box-shadow:var(--shadow);
+  display:flex;flex-direction:column;gap:13px;
+}
+.o-title{font-size:18px;font-weight:800;color:#ffe9bd;text-align:center;letter-spacing:1px}
+.o-rows{display:flex;flex-direction:column;gap:6px;font-size:12.5px}
+.o-rows>div{display:flex;justify-content:space-between;align-items:center;padding:6px 10px;background:var(--bg2);border:1px solid var(--line);border-radius:9px}
+.o-rows span{color:var(--dim)}
+.o-rows b{font-family:var(--mono);color:var(--txt)}
+.o-rows .o-pos{color:#a8efc0}
+.o-items{font-size:12px;color:var(--dim2);display:flex;flex-wrap:wrap;gap:6px;border-top:1px dashed var(--line);padding-top:10px}
+.o-items span{background:var(--bg2);border:1px solid var(--line);padding:3px 9px;border-radius:11px;color:var(--txt)}
+.o-empty{color:var(--dim2);font-size:12px;text-align:center;padding:4px 0}
+
 /* ===== 响应式 ===== */
 @media (max-width:1020px){
   main{grid-template-columns:1fr}
@@ -649,6 +671,12 @@ main{
 </head>
 <body><div class="aurora"><i></i><i></i><i></i></div><div class="stars"></div>
 <div id="loading"><div class="lbox"><div class="spin"></div><div id="loadText">正在结算离线收益...</div><div class="lbar"><div id="loadBar"></div></div></div></div>
+<div id="offlineBox"><div class="obox">
+  <div class="o-title">离线收益结算</div>
+  <div class="o-rows" id="oRows"></div>
+  <div class="o-items" id="oItems"></div>
+  <button class="btn primary" id="oClaim">领取</button>
+</div></div>
 <div class="toasts" id="toasts"></div>
 
 <header>
@@ -1161,6 +1189,7 @@ function buildUI(){
     }
     render();
   };
+  $('oClaim').onclick=function(){$('offlineBox').classList.remove('on');};
   $('resetBtn').onclick=function(){
     resetSlot();
   };
@@ -1543,6 +1572,32 @@ function advance(sec,done){
   if(big){$('loadBar').style.width='0%';$('loading').classList.add('on');}
   chunk();
 }
+function showOfflineReport(snap,dt){
+  var sim=Math.min(Math.floor(dt/1000),12960000);
+  var dCoins=S.coins-snap.coins;
+  var consumed=0;
+  for(var lv=snap.level;lv<S.level;lv++)consumed+=needExp(lv);
+  var dExp=(S.exp-snap.exp)+consumed;
+  var dUse=S.useBonus-snap.use;
+  var dDigs=S.digs-snap.digs;
+  var dBroken=S.broken-snap.broken;
+  var rows='';
+  rows+='<div><span>离线时长</span><b>'+timeFull(sim*1000)+'</b></div>';
+  rows+='<div><span>金币</span><b class="o-pos">+'+fmt(dCoins)+'</b></div>';
+  rows+='<div><span>经验</span><b class="o-pos">+'+fmt(dExp)+'</b></div>';
+  rows+='<div><span>等级</span><b>'+(S.level>snap.level?(snap.level+' → '+S.level):'不变 ('+S.level+')')+'</b></div>';
+  rows+='<div><span>使用增益</span><b class="o-pos">+'+fmt(dUse)+'</b></div>';
+  rows+='<div><span>挖掘次数 / 挖掉方块</span><b>'+fmt(dDigs)+' / '+fmt(dBroken)+'</b></div>';
+  var items=[];
+  for(var k in S.inv){
+    var got=S.inv[k]-(snap.inv[k]||0);
+    if(got>0)items.push('<span>'+ITEMS[k].n+' +'+fmt(got)+'</span>');
+  }
+  $('oRows').innerHTML=rows;
+  $('oItems').innerHTML=items.length?items.join(''):'<div class="o-empty">本次离线未获得物品</div>';
+  $('offlineBox').classList.add('on');
+  toast('离线 '+timeFull(sim*1000)+' 已结算','lv');
+}
 function save(){
   S.t=Date.now();
   try{localStorage.setItem(slotKey(activeSlot),JSON.stringify(S));}catch(e){}
@@ -1592,7 +1647,15 @@ function tick(){
   S.tP=now;
   if(advancing)return;
   _dt=Math.min(dt,100);
-  if(dt>60000){advance(dt/1000,function(){render();});return;}
+  if(dt>60000){
+    var snap={coins:S.coins,exp:S.exp,level:S.level,use:S.useBonus,digs:S.digs,broken:S.broken,inv:{}};
+    for(var k in S.inv)snap.inv[k]=S.inv[k];
+    advance(dt/1000,function(){
+      render();
+      showOfflineReport(snap,dt);
+    });
+    return;
+  }
   S.online+=dt;
   totalOnline+=dt;
   S.smAcc+=dt;
