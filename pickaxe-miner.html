@@ -968,7 +968,7 @@ function gainExp(x,silent){
 function curBlock(){return AREAS[S.area].blocks[S.idx[S.area]];}
 function digDamage(b){
   var p=PICKAXES[S.equipped];
-  var total=p.dmg*Math.pow(S.level,0.5)*(1+Math.pow(S.coins,0.6))*S.useBonus;
+  var total=p.dmg*Math.pow(S.level,0.5)*(1+Math.pow(S.coins,0.5))*S.useBonus;
   return Math.max(total-(b.def||0),0.1);
 }
 function addItem(k,q,silent){
@@ -1331,7 +1331,7 @@ function renderFast(){
   var need=needExp(S.level);
   setTxt('expTxt',fmt(S.exp)+' / '+fmt(need));
   setW('expFill',Math.min(100,S.exp/need*100)+'%');
-  var lvB=Math.pow(S.level,0.5),cnB=1+Math.pow(S.coins,0.6),useB=S.useBonus;
+  var lvB=Math.pow(S.level,0.5),cnB=1+Math.pow(S.coins,0.5),useB=S.useBonus;
   var total=p.dmg*lvB*cnB*useB;
   setTxt('dPick','x'+fmt(p.dmg));
   setTxt('dLv','x'+fmt(lvB));
