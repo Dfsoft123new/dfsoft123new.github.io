@@ -771,7 +771,7 @@ main{
 </section>
 
 <section class="panel panel-tab hidden" id="smeltPanel">
-  <div class="panel-head"><div class="pt">熔炼系统</div><div class="ps">每秒消耗 1 点熔炼值 · 每块煤炭提供 8 点熔炼值 · 燃料耗尽时自动添加煤炭（燃烧开启时不自动充能）· 燃烧开关：每秒消耗 5 点熔炼值，挖掘伤害 ×2.5</div></div>
+  <div class="panel-head"><div class="pt">熔炼系统</div><div class="ps">每秒消耗 1 点熔炼值 · 每块煤炭提供 8 点熔炼值 · 燃料耗尽时自动添加煤炭 · 燃烧开关：每秒消耗 5 点熔炼值（自动用煤炭充能），挖掘伤害 ×2.5</div></div>
   <div class="smelt-top">
     <div class="fuel-card"><div class="flame"></div>
       <div class="sec-t" style="margin:0">熔炼值</div>
@@ -1034,6 +1034,7 @@ function doDig(silent){
 }
 function burnTick(){
   if(!S.burn)return;
+  if((S.smelt.value||0)<5&&(S.inv.coal||0)>0){S.inv.coal--;S.smelt.value=(S.smelt.value||0)+8;}
   if((S.smelt.value||0)>=5){
     S.smelt.value-=5;
   }else{
@@ -1045,7 +1046,7 @@ function smeltTick(){
   var sm=S.smelt;
   if(!sm.rid)return;
   var r=SMELT_MAP[sm.rid];
-  if(sm.value<1&&(S.inv.coal||0)>0&&!S.burn){S.inv.coal--;sm.value+=8;}
+  if(sm.value<1&&(S.inv.coal||0)>0){S.inv.coal--;sm.value+=8;}
   if(sm.value<1)return;
   sm.value-=1;
   sm.prog+=1;
