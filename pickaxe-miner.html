@@ -771,7 +771,7 @@ main{
 </section>
 
 <section class="panel panel-tab hidden" id="smeltPanel">
-  <div class="panel-head"><div class="pt">熔炼系统</div><div class="ps">每秒消耗 1 点熔炼值 · 每块煤炭提供 8 点熔炼值 · 燃料耗尽时自动添加煤炭</div></div>
+  <div class="panel-head"><div class="pt">熔炼系统</div><div class="ps">每秒消耗 1 点熔炼值 · 每块煤炭提供 8 点熔炼值 · 燃料耗尽时自动添加煤炭 · 燃烧开关：每秒消耗 5 点熔炼值，挖掘伤害 ×2.5</div></div>
   <div class="smelt-top">
     <div class="fuel-card"><div class="flame"></div>
       <div class="sec-t" style="margin:0">熔炼值</div>
@@ -781,6 +781,12 @@ main{
         <div><span>煤炭</span><span id="coalCnt">0</span></div>
         <div><span>每块煤炭</span><span>+8</span></div>
         <div><span>消耗速率</span><span>1/秒</span></div>
+        <div class="burn-row">
+          <span>燃烧</span>
+          <button class="autoswitch" id="burnBtn"><span class="knob"></span><span class="as-txt">燃烧·关</span></button>
+        </div>
+        <div><span>燃烧消耗</span><span>5 熔炼值/秒</span></div>
+        <div><span>燃烧增益</span><span id="burnMul">x1</span></div>
       </div>
       <div class="fuel-status" id="fuelStatus"></div>
     </div>
@@ -887,7 +893,7 @@ var CRAFTS=[
   {id:'pickAmethyst',out:{pickAmethyst:1},in:{amethyst:3,sticks:2}},
   {id:'pickSteel',out:{pickSteel:1},in:{steelIngot:3,sticks:2}},
   {id:'pickDural',out:{pickDural:1},in:{duralIngot:3,sticks:2}},
-  {id:'pickTitanium',out:{pickTitanium:1},in:{titaniumIngot:3,sticks:2}},
+  {id:'pickTitanium',out:{pickTitanium:1},in:{titaniumAlloy:3,sticks:2}},
   {id:'hydrogen',out:{hydrogen:1},in:{zincIngot:1,acid:1}},
   {id:'obsidianBlock',out:{obsidian:1},in:{water:1,lava:1}},
   {id:'pickObsidian',out:{pickObsidian:1},in:{obsidian:3,sticks:2}},
@@ -908,17 +914,20 @@ var SMELTS=[
   {id:'steelIngot',in:{ironIngot:6,zincIngot:1,mangIngot:2,nickelIngot:1},out:{steelIngot:1},cost:12,tier:'high'},
   {id:'aluIngot',in:{rawAlu:1},out:{aluIngot:1},cost:2.5,tier:'high'},
   {id:'duralIngot',in:{aluIngot:8,copperIngot:2,magIngot:1,mangIngot:1},out:{duralIngot:1},cost:15,tier:'high'},
+  {id:'titaniumIngot',in:{rawTitan:1},out:{titaniumIngot:1},cost:2.5,tier:'high'},
+  {id:'titaniumAlloy',in:{titaniumIngot:4,aluIngot:1,ironIngot:1},out:{titaniumAlloy:1},cost:18,tier:'high'},
   {id:'water',in:{hydrogen:2},out:{water:1},cost:0.5,tier:'high'}
 ];
 var SMELT_MAP={};
 SMELTS.forEach(function(r){SMELT_MAP[r.id]=r;});
 var TITANIUM_INGOT='titaniumIngot';
-ITEMS.titaniumIngot={n:'钛合金',c:'#e6ecf5'};
+ITEMS.titaniumIngot={n:'钛锭',c:'#e6ecf5'};
+ITEMS.titaniumAlloy={n:'钛合金',c:'#e6ecf5'};
 
 function freshSlot(){
   return {coins:0,exp:0,level:1,useBonus:1,digs:0,broken:0,online:0,equipped:'hands',auto:true,
     inv:{},hp:{},brk:{},area:'main',idx:{main:0,branch:0},
-    smelt:{rid:null,prog:0,value:0},digAcc:0,smAcc:0,t:Date.now(),v:1};
+    smelt:{rid:null,prog:0,value:0},digAcc:0,smAcc:0,t:Date.now(),v:1,burn:false};
 }
 function slotKey(i){return 'pickaxe-save-v1-slot'+i;}
 var ACTIVE_KEY='pickaxe-active-v1';
@@ -971,7 +980,7 @@ function gainExp(x,silent){
 function curBlock(){return AREAS[S.area].blocks[S.idx[S.area]];}
 function digDamage(b){
   var p=PICKAXES[S.equipped];
-  var total=p.dmg*Math.pow(S.level,0.5)*(1+Math.pow(S.coins,0.5))*S.useBonus;
+  var total=p.dmg*Math.pow(S.level,0.5)*(1+Math.pow(S.coins,0.5))*S.useBonus*(S.burn?2.5:1);
   return Math.max(total-(b.def||0),0.1);
 }
 function addItem(k,q,silent){
@@ -1021,6 +1030,15 @@ function doDig(silent){
         }
       }
     }
+  }
+}
+function burnTick(){
+  if(!S.burn)return;
+  if((S.smelt.value||0)>=5){
+    S.smelt.value-=5;
+  }else{
+    S.smelt.value=0;
+    S.burn=false;
   }
 }
 function smeltTick(){
@@ -1131,6 +1149,15 @@ function buildUI(){
   $('autoBtn').onclick=function(){
     S.auto=!S.auto;
     if(S.auto)S.digAcc=0;
+    render();
+  };
+  $('burnBtn').onclick=function(){
+    if(S.burn){
+      S.burn=false;
+    }else{
+      if((S.smelt.value||0)<5){toast('熔炼值不足，无法启动燃烧','');return;}
+      S.burn=true;
+    }
     render();
   };
   $('resetBtn').onclick=function(){
@@ -1354,7 +1381,7 @@ function renderFast(){
   setTxt('expTxt',fmt(S.exp)+' / '+fmt(need));
   setW('expFill',Math.min(100,S.exp/need*100)+'%');
   var lvB=Math.pow(S.level,0.5),cnB=1+Math.pow(S.coins,0.5),useB=S.useBonus;
-  var total=p.dmg*lvB*cnB*useB;
+  var total=p.dmg*lvB*cnB*useB*(S.burn?2.5:1);
   setTxt('dPick','x'+fmt(p.dmg));
   setTxt('dLv','x'+fmt(lvB));
   setTxt('dCoin','x'+fmt(cnB));
@@ -1451,6 +1478,10 @@ function renderSmelt(){
     st=hasF?'等待选择配方':'需先合成 熔炉';
   }
   $('fuelStatus').textContent=st;
+  var bb=$('burnBtn');
+  var burnOn=!!S.burn;
+  if(bb._on!==burnOn){bb._on=burnOn;bb.classList.toggle('on',burnOn);bb.querySelector('.as-txt').textContent=burnOn?'燃烧中':'燃烧·关';}
+  setTxt('burnMul','x'+(S.burn?'2.5':'1'));
   smeltRows.forEach(function(x){
     var r=SMELT_MAP[x.rid];
     var active=sm.rid===x.rid;
@@ -1494,6 +1525,7 @@ function advance(sec,done){
         for(var d=0;d<5;d++)doDig(true);
       }
       smeltTick();
+      burnTick();
       pos++;
     }
     if(big)$('loadBar').style.width=Math.min(100,(pos/n)*100)+'%';
@@ -1566,6 +1598,7 @@ function tick(){
   while(S.smAcc>=1000){
     S.smAcc-=1000;
     smeltTick();
+    burnTick();
   }
   if(S.smAcc>10000)S.smAcc=0;
   if(S.auto||holdState){
