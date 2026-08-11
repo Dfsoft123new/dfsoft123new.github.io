@@ -1164,6 +1164,8 @@ function buildCraftCards(){
     card.className='card';
     var outKey=Object.keys(r.out)[0];
     var isPick=outKey.indexOf('pick')===0;
+    var isEquip=isPick||outKey==='bucket';
+    var equipKey=isPick?outKeyToPick(outKey):'bucket';
     var ico=isPick
       ?'<div class="cicon"><svg viewBox="0 0 24 24" fill="none" stroke="'+ITEMS[outKey].c+'" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"><path d="M14.5 3.5l6 6-3.8 3.8-6-6 3.8-3.8z"/><path d="M10.7 7.3L3.8 14.2l6 6 6.9-6.9"/></svg></div>'
       :'<div class="cicon"><span class="iico" style="--c:'+ITEMS[outKey].c+'"></span></div>';
@@ -1181,16 +1183,16 @@ function buildCraftCards(){
     cb.className='btn primary';cb.textContent='合成';
     cb.onclick=function(){craft(r);render();};
     btns.appendChild(cb);
-    if(isPick){
+    if(isEquip){
       var ub=document.createElement('button');
       ub.className='btn';
       ub.textContent='使用';
-      ub.onclick=function(){equip(outKeyToPick(outKey));render();};
+      ub.onclick=function(){equip(equipKey);render();};
       btns.appendChild(ub);
     }
     card.appendChild(top);card.appendChild(recipe);card.appendChild(btns);
     grid.appendChild(card);
-    craftCards.push({el:card,qty:top.querySelector('.card-qty b'),craftBtn:cb,useBtn:isPick?ub:null,useTxt:isPick?ub:null,outKey:outKey,isPick:isPick,top:top});
+    craftCards.push({el:card,qty:top.querySelector('.card-qty b'),craftBtn:cb,useBtn:isEquip?ub:null,useTxt:isEquip?ub:null,outKey:outKey,isPick:isPick,isEquip:isEquip,equipKey:equipKey,top:top});
   });
 }
 function outKeyToPick(k){return k.replace('pick','').toLowerCase();}
@@ -1409,10 +1411,10 @@ function renderSlow(){
   });
   craftCards.forEach(function(c){
     c.craftBtn.disabled=!canCraftByKey(c.outKey);
-    if(c.isPick){
+    if(c.isEquip){
       var q=S.inv[c.outKey]||0;
       var owned=q>0;
-      var pk=outKeyToPick(c.outKey);
+      var pk=c.equipKey;
       c.useBtn.disabled=!owned||S.equipped===pk;
       c.useBtn.textContent=S.equipped===pk?'已装备':'使用';
     }
