@@ -802,19 +802,20 @@ var PICKAXES={
   gold:{n:'金镐',dmg:1,use:0.5,coins:2},
   diamond:{n:'钻石镐',dmg:50,use:0.2,coins:1.5},
   steel:{n:'钢镐',dmg:10,use:0.2,coins:1.5},
+  amethyst:{n:'紫水晶镐',dmg:15,use:0.5,coins:2},
   dural:{n:'硬铝镐',dmg:15,use:0.3,coins:1.6},
   titanium:{n:'钛合金镐',dmg:30,use:0.4,coins:1.8},
   netherite:{n:'下界合金镐',dmg:80,use:0.6,coins:2},
   obsidian:{n:'黑曜石镐',dmg:125,use:0.8,coins:2.2},
   mystic:{n:'神秘镐',dmg:200,use:1,coins:2.5}
 };
-var PICK_ITEMS={wood:'pickWood',stone:'pickStone',iron:'pickIron',bronze:'pickBronze',gold:'pickGold',diamond:'pickDiamond',steel:'pickSteel',dural:'pickDural',titanium:'pickTitanium',netherite:'pickNetherite',obsidian:'pickObsidian',mystic:'pickMystic'};
-var PICK_ORDER=['hands','wood','stone','iron','bronze','gold','diamond','steel','dural','titanium','netherite','obsidian','mystic'];
+var PICK_ITEMS={wood:'pickWood',stone:'pickStone',iron:'pickIron',bronze:'pickBronze',gold:'pickGold',diamond:'pickDiamond',steel:'pickSteel',amethyst:'pickAmethyst',dural:'pickDural',titanium:'pickTitanium',netherite:'pickNetherite',obsidian:'pickObsidian',mystic:'pickMystic'};
+var PICK_ORDER=['hands','wood','stone','iron','bronze','gold','diamond','steel','amethyst','dural','titanium','netherite','obsidian','mystic'];
 
 var ITEMS={
   log:{n:'原木',c:'#8b6a45'},cobble:{n:'圆石',c:'#8a8a8a'},coal:{n:'煤炭',c:'#33383e'},
   rawIron:{n:'粗铁',c:'#d08a5e'},rawGold:{n:'粗金',c:'#e8c04a'},diamond:{n:'钻石',c:'#5fd9e0'},debris:{n:'远古残骸',c:'#7a4a3a'},
-  rawCopper:{n:'粗铜',c:'#d67a5c'},rawMag:{n:'粗镁',c:'#dfe4ea'},rawNickel:{n:'粗镍',c:'#9fb18f'},amethyst:{n:'紫水晶',c:'#b06ad8'},
+  rawCopper:{n:'粗铜',c:'#d67a5c'},rawMag:{n:'粗镁',c:'#dfe4ea'},rawNickel:{n:'粗镍',c:'#9fb18f'},amethyst:{n:'紫水晶',c:'#b06ad8'},pickAmethyst:{n:'紫水晶镐',c:'#b06ad8'},
   rawAlu:{n:'粗铝',c:'#c7ccd6'},rawZinc:{n:'粗锌',c:'#8b98ad'},rawMang:{n:'粗锰',c:'#c08a9c'},rawTitan:{n:'粗钛',c:'#e6ecf5'},
   mysticStone:{n:'神秘石',c:'#6a5ae0'},lava:{n:'岩浆',c:'#ff7a3a'},acid:{n:'硫酸',c:'#cfe85a'},water:{n:'水',c:'#4aa8e8'},
   planks:{n:'木板',c:'#a8845c'},sticks:{n:'木棍',c:'#9c7a52'},
@@ -882,6 +883,7 @@ var CRAFTS=[
   {id:'pickDiamond',out:{pickDiamond:1},in:{diamond:3,sticks:2}},
   {id:'pickNetherite',out:{pickNetherite:1},in:{pickDiamond:1,netheriteIngot:1}},
   {id:'pickBronze',out:{pickBronze:1},in:{bronzeIngot:3,sticks:2}},
+  {id:'pickAmethyst',out:{pickAmethyst:1},in:{amethyst:3,sticks:2}},
   {id:'pickSteel',out:{pickSteel:1},in:{steelIngot:3,sticks:2}},
   {id:'pickDural',out:{pickDural:1},in:{duralIngot:3,sticks:2}},
   {id:'pickTitanium',out:{pickTitanium:1},in:{titaniumIngot:3,sticks:2}},
