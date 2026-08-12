@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>升级你的镐子 v0.01</title>
+<title>升级你的镐子 v0.02</title>
 <style>/* ============================================================
    PICKAXE MINER — v0.1 "FORGE & EMBER" 全新生效设计
    性能优先：无 backdrop-filter / 无大尺寸 blur / 无混合模式动画
@@ -589,6 +589,81 @@ main{
 .srow-mid .btn{padding:5px 14px;font-size:11.5px}
 .lock-note{font-size:10.5px;color:var(--dim2)}
 
+/* ===== 宝石系统 ===== */
+.gem-main{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:16px}
+.gem-box{padding:13px;border-radius:12px;background:var(--bg2);border:1px solid var(--line)}
+.gem-slots{display:grid;grid-template-columns:repeat(auto-fit,minmax(64px,1fr));gap:8px}
+.gslot{
+  position:relative;cursor:pointer;min-height:78px;padding:6px;
+  border-radius:11px;background:var(--bg1);border:1px solid var(--line);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
+  transition:border-color .15s,background .15s;
+}
+.gslot:hover{border-color:var(--line2)}
+.gslot.sel{border-color:var(--acc);box-shadow:inset 0 0 0 2px rgba(242,179,76,.22),0 0 12px rgba(232,163,61,.25)}
+.gslot.locked{border-style:dashed}
+.gslot.locked:hover{border-color:rgba(229,103,79,.55)}
+.gslot .glock{color:var(--dim2);display:flex}
+.gslot .gem-ico{
+  width:26px;height:26px;border-radius:7px;flex:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.35),transparent 45%),var(--c,#888);
+  border:1px solid rgba(255,255,255,.22);
+  box-shadow:inset 0 -4px 7px rgba(0,0,0,.35);
+}
+.gslot .g-label{font-size:8.5px;color:var(--dim2);text-align:center;line-height:1.3;font-family:var(--mono)}
+.gslot .g-cost{font-size:9px;color:var(--acc);font-family:var(--mono)}
+.gslot .g-num{position:absolute;top:4px;left:6px;font-size:8.5px;color:var(--dim2);font-family:var(--mono)}
+.gem-inv{display:flex;flex-wrap:wrap;gap:6px}
+.gbtn{
+  display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:9px;
+  background:var(--bg2);border:1px solid var(--line);font-size:11.5px;color:var(--txt);
+  cursor:pointer;transition:border-color .15s;
+}
+.gbtn:hover{border-color:var(--line2)}
+.gbtn:disabled{opacity:.35;cursor:not-allowed}
+.gbtn i{
+  width:13px;height:13px;border-radius:4px;flex:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.35),transparent 45%),var(--c,#888);
+  border:1px solid rgba(255,255,255,.2);
+}
+.gbtn em{font-style:normal;font-family:var(--mono);color:var(--acc);font-size:10.5px}
+.gem-hint{font-size:11px;color:var(--dim2);line-height:1.5}
+.gem-bonus{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap;
+  padding:9px 12px;border-radius:10px;margin-top:10px;
+  background:linear-gradient(180deg,#1d1710,#15110b);
+  border:1px solid rgba(232,163,61,.4);
+  font-size:11.5px;color:var(--dim);
+}
+.gem-bonus b{font-family:var(--mono);color:#ffd98c}
+.gem-bonus .btn{padding:4px 12px;font-size:11px}
+.synth-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}
+.synth-col{padding:12px;border-radius:12px;background:var(--bg2);border:1px solid var(--line);display:flex;flex-direction:column;gap:7px}
+.synth-title{display:flex;align-items:center;gap:7px;font-size:12.5px;font-weight:800;letter-spacing:.5px;margin-bottom:2px}
+.synth-title i{
+  width:15px;height:15px;border-radius:4px;flex:none;
+  background:linear-gradient(135deg,rgba(255,255,255,.35),transparent 45%),var(--c,#888);
+  border:1px solid rgba(255,255,255,.2);
+}
+.srow2{
+  display:flex;align-items:center;gap:8px;justify-content:space-between;
+  padding:7px 9px;border-radius:9px;background:var(--bg1);border:1px solid var(--line);font-size:10.5px;
+}
+.srow2 .sr-txt{display:flex;flex-direction:column;gap:2px;min-width:0}
+.srow2 .sr-main{font-family:var(--mono);color:var(--txt);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.srow2 .sr-sub{font-size:9px;color:var(--dim2);font-family:var(--mono)}
+.srow2 .btn{padding:3px 9px;font-size:10.5px;flex:none}
+.synth-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:9px}
+.synth-head .sec-t{margin-bottom:0}
+.synth-head .btn{padding:6px 16px;font-size:12px}
+@media (max-width:1020px){
+  .gem-main{grid-template-columns:1fr}
+  .synth-grid{grid-template-columns:repeat(2,1fr)}
+}
+@media (max-width:560px){
+  .synth-grid{grid-template-columns:1fr}
+}
+
 /* ===== 提示与加载 ===== */
 .toasts{
   position:fixed;right:18px;bottom:18px;z-index:50;
@@ -684,7 +759,7 @@ main{
     <div class="brand-ico"></div>
     <div>
       <div class="brand-name">升级你的镐子</div>
-      <div class="brand-sub">v0.01 · 放置挖掘 · 离线结算 100% · 三存档系统</div>
+      <div class="brand-sub">v0.02 · 放置挖掘 · 离线结算 100% · 三存档系统 · 宝石系统</div>
     </div>
   </div>
   <div class="hstats">
@@ -790,6 +865,7 @@ main{
 <nav class="tabs">
   <button class="tab active" data-tab="craft">合成台</button>
   <button class="tab" data-tab="smelt">熔炼系统</button>
+  <button class="tab" data-tab="gem">宝石系统</button>
 </nav>
 
 <section class="panel panel-tab" id="craftPanel">
@@ -820,6 +896,28 @@ main{
     </div>
     <div class="smelt-list" id="smeltList"></div>
   </div>
+</section>
+
+<section class="panel panel-tab hidden" id="gemPanel">
+  <div class="panel-head"><div class="pt">宝石系统</div><div class="ps">花费金币解锁宝石槽（上限 5 个）· 挖掘宝石矿掉落 1 阶宝石 · 3 个同阶宝石合成 1 个高一阶宝石 · 支持一键合成 · 宝石增益互相连乘，直接倍乘镐子属性</div></div>
+  <div class="gem-main">
+    <div class="gem-box">
+      <div class="sec-t"><span>宝石槽</span></div>
+      <div class="gem-slots" id="gemSlots"></div>
+      <div class="gem-bonus"><span id="gemBonusTxt">宝石加成：伤害 x1 · 使用 x1 · 金币 x1</span><button class="btn" id="gemUnequip" style="display:none">卸下宝石</button></div>
+      <div class="gem-hint" style="margin-top:8px">点击已解锁槽位选择镶嵌目标 · 挖掘获得的宝石会进入背包，可手动镶嵌</div>
+    </div>
+    <div class="gem-box">
+      <div class="sec-t"><span>宝石背包</span></div>
+      <div class="gem-inv" id="gemInvStrip"></div>
+      <div class="gem-hint" id="gemSelHint" style="margin-top:8px">先点击上方宝石槽位，再点击背包中的宝石进行镶嵌</div>
+    </div>
+  </div>
+  <div class="synth-head">
+    <div class="sec-t"><span>宝石合成</span></div>
+    <button class="btn primary" id="synthAllBtn">一键合成</button>
+  </div>
+  <div class="synth-grid" id="synthGrid"></div>
 </section>
 
 <script>
@@ -900,9 +998,48 @@ var BLOCKS_BRANCH=[
   {id:'mystery',n:'神秘矿石',hp:5400000000000,coin:15000,def:888800000000,drop:{mysticStone:0.01},tex:{base:['linear-gradient(180deg,#2b2742 0%,#1e1b33 100%)'],spots:[[20,30,'#7a5ae8',5],[65,25,'#7a5ae8',5],[40,70,'#7a5ae8',5],[80,60,'#7a5ae8',4],[10,85,'#7a5ae8',4],[55,85,'#38d8d0',4],[75,90,'#38d8d0',4],[35,15,'#38d8d0',4]]}},
   {id:'volcano',n:'火山',hp:Infinity,coin:null,def:null,drop:{lava:0.005,acid:0.005},bucket:true,hint:'无法摧毁 · 需装备铁桶方可采集 · 每次挖掘 0.5% 概率获得岩浆或硫酸 · 每获得 1 个消耗 1 个铁桶',tex:{base:['linear-gradient(180deg,#4a413c 0%,#2e2825 100%)','repeating-linear-gradient(90deg,transparent 0 14px,rgba(224,85,42,.7) 14px 16px,transparent 16px 30px)'],spots:[[15,25,'#ff8c3a',3],[60,15,'#ff8c3a',3],[75,45,'#ff8c3a',3],[40,65,'#ff8c3a',3],[20,80,'#ff8c3a',3],[70,85,'#ff8c3a',3],[45,40,'#ff8c3a',3]]}}
 ];
+var BLOCKS_GEM=[
+  {id:'gemI',n:'宝石矿I',hp:1e12,coin:10000,def:1.6e11,drop:{gemDmg1:0.003,gemUse1:0.003,gemCoin1:0.003,gemAll1:0.001},hint:'0.3% 掉落 1阶伤害/使用/金币宝石 · 0.1% 掉落 1阶全能宝石',tex:{base:T_STONE.slice(),spots:[[20,30,'#b06ad8',4],[60,55,'#b06ad8',4],[80,25,'#b06ad8',4],[40,75,'#8a5ae0',4],[10,60,'#8a5ae0',3],[70,85,'#b06ad8',3]]}},
+  {id:'gemII',n:'宝石矿II',hp:2e13,coin:25000,def:4e12,drop:{gemDmg1:0.015,gemUse1:0.015,gemCoin1:0.015,gemAll1:0.005},hint:'1.5% 掉落 1阶伤害/使用/金币宝石 · 0.5% 掉落 1阶全能宝石',tex:{base:T_STONE.slice(),spots:[[25,35,'#4ad1d8',5],[65,25,'#4ad1d8',5],[45,70,'#4ad1d8',5],[85,55,'#2a9aa3',4],[15,85,'#2a9aa3',4],[50,15,'#4ad1d8',4]]}},
+  {id:'gemIII',n:'宝石矿III',hp:6e14,coin:60000,def:1.5e14,drop:{gemDmg1:0.06,gemUse1:0.06,gemCoin1:0.06,gemAll1:0.02},hint:'6% 掉落 1阶伤害/使用/金币宝石 · 2% 掉落 1阶全能宝石',tex:{base:T_STONE.slice(),spots:[[20,30,'#f0cf5e',5],[60,55,'#b06ad8',5],[40,70,'#4ad1d8',5],[80,60,'#f0cf5e',4],[10,85,'#b06ad8',4],[70,15,'#4ad1d8',4]]}}
+];
+var GEM_TYPES={
+  dmg:{n:'伤害宝石',c:'#ff6a5e',t1:{dmg:2,use:1,coin:1}},
+  use:{n:'使用宝石',c:'#58cf7f',t1:{dmg:1,use:1.5,coin:1}},
+  coin:{n:'金币宝石',c:'#f2b34c',t1:{dmg:1,use:1,coin:1.2}},
+  all:{n:'全能宝石',c:'#b06ad8',t1:{dmg:1.5,use:1.25,coin:1.1}}
+};
+var MAX_GEM_TIER=12;
+var MAX_GEM_SLOTS=5;
+Object.keys(GEM_TYPES).forEach(function(t){
+  var cap=t==='dmg'?'Dmg':t==='use'?'Use':t==='coin'?'Coin':'All';
+  for(var lv=1;lv<=MAX_GEM_TIER;lv++){
+    ITEMS['gem'+cap+lv]={n:lv+'阶'+GEM_TYPES[t].n,c:GEM_TYPES[t].c};
+  }
+});
+function gemTypeCap(t){return t==='dmg'?'Dmg':t==='use'?'Use':t==='coin'?'Coin':'All';}
+function gemKeyOf(t,lv){return 'gem'+gemTypeCap(t)+lv;}
+function gemTierOf(t,lv,attr){
+  if(!GEM_TYPES[t]||!GEM_TYPES[t].t1||!(attr in GEM_TYPES[t].t1))return 1;
+  if(isNaN(lv)||!isFinite(lv)||lv<1)return 1;
+  return (GEM_TYPES[t].t1[attr]-1)*lv+1;
+}
+function gemMul(attr){
+  var m=1;
+  for(var i=0;i<MAX_GEM_SLOTS;i++){
+    var g=S.gems[i];
+    if(g)m*=gemTierOf(g.t,g.lvl,attr);
+  }
+  return m;
+}
+function gemDmgMul(){return gemMul('dmg');}
+function gemUseMul(){return gemMul('use');}
+function gemCoinMul(){return gemMul('coin');}
+function gemSlotCost(i){return 1e6*Math.pow(100,i);}
 var AREAS={
   main:{n:'主矿区 I',blocks:BLOCKS_MAIN},
-  branch:{n:'支矿区 I',blocks:BLOCKS_BRANCH}
+  branch:{n:'支矿区 I',blocks:BLOCKS_BRANCH},
+  gem:{n:'宝石矿区',blocks:BLOCKS_GEM}
 };
 
 var CRAFTS=[
@@ -955,7 +1092,8 @@ ITEMS.titaniumAlloy={n:'钛合金',c:'#e6ecf5'};
 function freshSlot(){
   return {coins:0,exp:0,level:1,useBonus:1,digs:0,broken:0,online:0,equipped:'hands',auto:true,
     inv:{},hp:{},brk:{},area:'main',idx:{main:0,branch:0},
-    smelt:{rid:null,prog:0,value:0},digAcc:0,smAcc:0,t:Date.now(),v:1,burn:false};
+    smelt:{rid:null,prog:0,value:0},digAcc:0,smAcc:0,t:Date.now(),v:1,burn:false,
+    gems:[],gemUnlocked:0};
 }
 function slotKey(i){return 'pickaxe-save-v1-slot'+i;}
 var ACTIVE_KEY='pickaxe-active-v1';
@@ -966,12 +1104,21 @@ function loadSlot(i){
     if(!raw)return null;
     var d=JSON.parse(raw),f=freshSlot();
     return Object.assign(f,d,{
+      coins:isFinite(+d.coins)?+d.coins:0,
+      exp:isFinite(+d.exp)?+d.exp:0,
+      level:(isFinite(+d.level)&&+d.level>=1)?+d.level:1,
+      useBonus:(isFinite(+d.useBonus)&&+d.useBonus>0)?+d.useBonus:1,
+      digs:isFinite(+d.digs)?+d.digs:0,
+      broken:isFinite(+d.broken)?+d.broken:0,
+      online:isFinite(+d.online)?+d.online:0,
       inv:Object.assign({},d.inv),
       hp:Object.assign({},d.hp),
       brk:Object.assign({},d.brk),
       idx:Object.assign({main:0,branch:0},d.idx),
       smelt:Object.assign({rid:null,prog:0,value:0},d.smelt),
-      digAcc:0,smAcc:0
+      digAcc:0,smAcc:0,
+      gems:(Array.isArray(d.gems)?d.gems.filter(function(g){return !!g&&!!GEM_TYPES[g.t]&&Number.isInteger(g.lvl)&&g.lvl>=1&&g.lvl<=MAX_GEM_TIER;}).slice(0,MAX_GEM_SLOTS):[]),
+      gemUnlocked:Math.min(d.gemUnlocked||0,MAX_GEM_SLOTS)
     });
   }catch(e){return null;}
 }
@@ -993,9 +1140,15 @@ if(!ownsPick(S.equipped))S.equipped='hands';
 
 function needExp(l){return l*l;}
 function gainExp(x,silent){
-  S.exp+=x;
+  if(isNaN(x)||!isFinite(x))x=0;
+  if(x>0)S.exp+=x;
+  if(S.exp>1e21)S.exp=1e21;
+  if(isNaN(S.exp)||!isFinite(S.exp))S.exp=0;
+  if(!isFinite(S.level)||S.level<1)S.level=1;
   var lvBefore=S.level;
-  while(S.exp>=needExp(S.level)){S.exp-=needExp(S.level);S.level++;}
+  var guard=0;
+  while(S.exp>=needExp(S.level)&&guard<10000000){S.exp-=needExp(S.level);S.level++;guard++;}
+  if(guard>=10000000)S.exp=0;
   if(S.level>lvBefore&&!silent&&!document.hidden){
     toast('升级！等级 '+S.level,'lv');
     var lvEl=$('level');
@@ -1008,7 +1161,8 @@ function gainExp(x,silent){
 function curBlock(){return AREAS[S.area].blocks[S.idx[S.area]];}
 function digDamage(b){
   var p=PICKAXES[S.equipped];
-  var total=p.dmg*Math.pow(S.level,0.5)*(1+Math.pow(S.coins,0.5))*S.useBonus*(S.burn?2.5:1);
+  var total=p.dmg*Math.pow(S.level,0.5)*(1+Math.pow(S.coins,0.5))*S.useBonus*(S.burn?2.5:1)*gemDmgMul();
+  if(isNaN(total)||!isFinite(total))total=1e308;
   return Math.max(total-(b.def||0),0.1);
 }
 function addItem(k,q,silent){
@@ -1022,7 +1176,9 @@ function doDig(silent){
     floatDmg(digDamage(b));
   }
   S.digs++;
-  S.useBonus+=p.use;
+  var uAdd=p.use*gemUseMul();
+  if(isNaN(S.useBonus)||!isFinite(S.useBonus))S.useBonus=0;
+  if(!isNaN(uAdd)&&isFinite(uAdd)&&uAdd>=0)S.useBonus+=uAdd;
   if(isFinite(b.hp)){
     var hp=(S.hp[b.id]!==undefined?S.hp[b.id]:b.hp);
     var dealt=digDamage(b);
@@ -1030,7 +1186,8 @@ function doDig(silent){
     if(hp<=0){
       S.broken++;
       S.brk[b.id]=(S.brk[b.id]||0)+1;
-      var g=b.coin*p.coins;
+      var g=b.coin*p.coins*gemCoinMul();
+      if(isNaN(g)||!isFinite(g))g=0;
       S.coins+=g;
       gainExp(g*Math.pow(SQRT2,Math.log(g)),silent);
       if(!document.hidden&&!advancing)floatGold(g);
@@ -1201,6 +1358,13 @@ function buildUI(){
   buildSmeltRows();
   rebuildBlockList();
   rebuildInvStrip();
+  $('gemSlots').onclick=function(e){
+    var el=e.target;
+    while(el&&el!==$('gemSlots')&&!el.classList.contains('gslot'))el=el.parentNode;
+    if(el&&el.classList.contains('gslot'))onGemSlot(parseInt(el.dataset.idx,10));
+  };
+  $('gemUnequip').onclick=unequipGem;
+  $('synthAllBtn').onclick=synthAll;
 }
 function buildPickList(){
   var box=$('pickList');
@@ -1284,6 +1448,182 @@ function buildSmeltRows(){
       smeltRows.push({el:row,rid:r.id,tier:r.tier,fill:mid.querySelector('.spfill'),btn:btn,note:note,spbar:mid.querySelector('.spbar'),costTxt:mid.querySelector('.cost-txt')});
     });
   });
+}
+var selGemSlot=-1;
+var lastGemSig='';
+var lastGemInvSig='';
+var lastSynthSig='';
+function setGemSelHint(){
+  var el=$('gemSelHint');
+  if(selGemSlot<0){el.textContent='先点击上方宝石槽位，再点击背包中的宝石进行镶嵌';return;}
+  if(S.gems[selGemSlot]){
+    el.textContent='已选择槽'+(selGemSlot+1)+'（'+S.gems[selGemSlot].lvl+'阶'+GEM_TYPES[S.gems[selGemSlot].t].n+'）· 点击背包宝石替换 · 可点击「卸下宝石」';
+  }else{
+    el.textContent='已选择槽'+(selGemSlot+1)+' · 点击背包中的宝石进行镶嵌';
+  }
+}
+function onGemSlot(i){
+  if(i>=S.gemUnlocked){
+    if(i>S.gemUnlocked){toast('请先解锁宝石槽'+(S.gemUnlocked+1),'');return;}
+    var cost=gemSlotCost(S.gemUnlocked);
+    if(S.coins<cost){toast('金币不足，解锁槽'+(i+1)+'需要 '+fmt(cost)+' 金币','');return;}
+    S.coins-=cost;
+    S.gemUnlocked=i+1;
+    selGemSlot=i;
+    toast('已解锁宝石槽 '+(i+1),'lv');
+    render();
+    return;
+  }
+  selGemSlot=(selGemSlot===i?-1:i);
+  var cs=$('gemSlots').children;
+  for(var j=0;j<cs.length;j++)cs[j].classList.toggle('sel',selGemSlot===j);
+  setGemSelHint();
+  $('gemUnequip').style.display=(selGemSlot>=0&&!!S.gems[selGemSlot])?'inline-block':'none';
+}
+function equipGem(t,lv){
+  if(selGemSlot<0){toast('请先点击选择一个宝石槽位','');return;}
+  if(selGemSlot>=S.gemUnlocked)return;
+  var k=gemKeyOf(t,lv);
+  if((S.inv[k]||0)<1){toast('没有可镶嵌的宝石','');return;}
+  S.inv[k]--;
+  S.gems[selGemSlot]={t:t,lvl:lv};
+  toast('已镶嵌 '+lv+'阶'+GEM_TYPES[t].n+' 到槽'+(selGemSlot+1),'gain');
+  render();
+}
+function unequipGem(){
+  if(selGemSlot<0||!S.gems[selGemSlot])return;
+  var g=S.gems[selGemSlot];
+  S.inv[gemKeyOf(g.t,g.lvl)]=(S.inv[gemKeyOf(g.t,g.lvl)]||0)+1;
+  toast('已卸下 '+g.lvl+'阶'+GEM_TYPES[g.t].n,'');
+  S.gems[selGemSlot]=null;
+  render();
+}
+function rebuildGemSlots(){
+  var box=$('gemSlots');
+  box.innerHTML='';
+  for(var i=0;i<MAX_GEM_SLOTS;i++){
+    var el=document.createElement('button');
+    el.className='gslot'+(selGemSlot===i?' sel':'');
+    el.dataset.idx=''+i;
+    if(i>=S.gemUnlocked){
+      el.classList.add('locked');
+      el.innerHTML='<span class="glock"><svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></span><span class="g-label">槽'+(i+1)+'</span><span class="g-cost">解锁 '+fmt(gemSlotCost(i))+' 金币</span>';
+    }else if(S.gems[i]){
+      var g=S.gems[i];
+      el.innerHTML='<span class="gem-ico" style="--c:'+GEM_TYPES[g.t].c+'"></span><span class="g-label">'+g.lvl+'阶'+GEM_TYPES[g.t].n+'</span><span class="g-num">槽'+(i+1)+'</span>';
+    }else{
+      el.innerHTML='<span class="gem-ico" style="--c:#685f4c"></span><span class="g-label">空槽</span><span class="g-num">槽'+(i+1)+'</span>';
+    }
+    box.appendChild(el);
+  }
+}
+function rebuildGemInv(){
+  var box=$('gemInvStrip');
+  box.innerHTML='';
+  var any=false;
+  for(var t in GEM_TYPES){
+    for(var lv=1;lv<=MAX_GEM_TIER;lv++){
+      var q=S.inv[gemKeyOf(t,lv)]||0;
+      if(q<1)continue;
+      any=true;
+      var b=document.createElement('button');
+      b.className='gbtn';
+      b.innerHTML='<i style="--c:'+GEM_TYPES[t].c+'"></i>'+lv+'阶'+GEM_TYPES[t].n+' <em>x'+q+'</em>';
+      (function(tt,ll){b.onclick=function(){equipGem(tt,ll);};})(t,lv);
+      box.appendChild(b);
+    }
+  }
+  if(!any)box.innerHTML='<span class="gem-hint">背包无宝石 · 前往 宝石矿区 挖掘获取</span>';
+}
+function synthGem(t,lv){
+  var k=gemKeyOf(t,lv),k2=gemKeyOf(t,lv+1);
+  if((S.inv[k]||0)<3){toast('需要 3 个 '+lv+'阶'+GEM_TYPES[t].n,'');return;}
+  S.inv[k]-=3;
+  S.inv[k2]=(S.inv[k2]||0)+1;
+  toast('合成 '+(lv+1)+'阶'+GEM_TYPES[t].n,'gain');
+  render();
+}
+function synthAll(){
+  var total=0,done=false;
+  while(!done){
+    done=true;
+    for(var t in GEM_TYPES){
+      for(var lv=1;lv<MAX_GEM_TIER;lv++){
+        var k=gemKeyOf(t,lv),k2=gemKeyOf(t,lv+1);
+        var q=S.inv[k]||0;
+        while(q>=3){
+          S.inv[k]=q-3;
+          q-=3;
+          S.inv[k2]=(S.inv[k2]||0)+1;
+          total++;
+          done=false;
+        }
+      }
+    }
+  }
+  if(total>0)toast('一键合成完成：共 '+total+' 次','gain');
+  else toast('没有可合成的宝石','');
+  render();
+}
+function rebuildGemSynth(){
+  var sig='';
+  for(var t in GEM_TYPES){
+    var mx=0;
+    for(var lv=1;lv<=MAX_GEM_TIER;lv++){if((S.inv[gemKeyOf(t,lv)]||0)>0)mx=lv;}
+    sig+=t+':'+mx+';';
+  }
+  if(sig===lastSynthSig)return;
+  lastSynthSig=sig;
+  var grid=$('synthGrid');
+  grid.innerHTML='';
+  for(var t2 in GEM_TYPES){
+    var col=document.createElement('div');
+    col.className='synth-col';
+    col.innerHTML='<div class="synth-title"><i style="--c:'+GEM_TYPES[t2].c+'"></i>'+GEM_TYPES[t2].n+'</div>';
+    var maxT=0;
+    for(var lv2=1;lv2<=MAX_GEM_TIER;lv2++){if((S.inv[gemKeyOf(t2,lv2)]||0)>0)maxT=lv2;}
+    var rows=0;
+    for(var lv3=1;lv3<=maxT&&lv3<MAX_GEM_TIER;lv3++){
+      rows++;
+      var qa=S.inv[gemKeyOf(t2,lv3)]||0;
+      var qb=S.inv[gemKeyOf(t2,lv3+1)]||0;
+      var row=document.createElement('div');
+      row.className='srow2';
+      var txt=document.createElement('div');
+      txt.className='sr-txt';
+      txt.innerHTML='<span class="sr-main">3× '+lv3+'阶'+GEM_TYPES[t2].n+' → '+(lv3+1)+'阶</span><span class="sr-sub">持有 '+qa+' · 高阶已有 '+qb+'</span>';
+      var btn=document.createElement('button');
+      btn.className='btn primary';
+      btn.textContent='合成';
+      btn.disabled=qa<3;
+      (function(tt,ll){btn.onclick=function(){synthGem(tt,ll);};})(t2,lv3);
+      row.appendChild(txt);
+      row.appendChild(btn);
+      col.appendChild(row);
+    }
+    if(!rows)col.innerHTML+='<div class="gem-hint">暂无可合成的宝石</div>';
+    grid.appendChild(col);
+  }
+}
+function renderGem(){
+  var sig='u'+S.gemUnlocked;
+  for(var i=0;i<MAX_GEM_SLOTS;i++){
+    var g=S.gems[i];
+    sig+=(g?g.t+g.lvl:'-');
+  }
+  if(sig!==lastGemSig){lastGemSig=sig;rebuildGemSlots();}
+  var isig='';
+  for(var t in GEM_TYPES){
+    for(var lv=1;lv<=MAX_GEM_TIER;lv++){
+      var q=S.inv[gemKeyOf(t,lv)]||0;
+      if(q)isig+=t+lv+':'+q+';';
+    }
+  }
+  if(isig!==lastGemInvSig){lastGemInvSig=isig;rebuildGemInv();}
+  rebuildGemSynth();
+  setTxt('gemBonusTxt','已解锁槽 '+S.gemUnlocked+'/'+MAX_GEM_SLOTS+' · 宝石加成：伤害 x'+fmt(gemDmgMul())+' · 使用 x'+fmt(gemUseMul())+' · 金币 x'+fmt(gemCoinMul()));
+  $('gemUnequip').style.display=(selGemSlot>=0&&!!S.gems[selGemSlot])?'inline-block':'none';
+  setGemSelHint();
 }
 function rebuildBlockList(){
   var box=$('blockList');
@@ -1389,7 +1729,7 @@ function renderFast(){
   if(hp>=trailHp)trailHp=hp;
   setW('hpTrail',isFinite(b.hp)?Math.max(0,Math.min(100,trailHp/(b.hp||1)*100))+'%':'100%');
   setTxt('bDef',b.def===null?'—':fmt(b.def));
-  setTxt('bCoin',b.coin===null?'—':fmt(b.coin*p.coins));
+  setTxt('bCoin',b.coin===null?'—':fmt(b.coin*p.coins*gemCoinMul()));
   setTxt('bDrop',dropTxt(b));
   setTxt('bCnt',fmt(S.brk[b.id]||0));
   setTxt('bHint',b.hint||'');
@@ -1411,12 +1751,12 @@ function renderFast(){
   setTxt('expTxt',fmt(S.exp)+' / '+fmt(need));
   setW('expFill',Math.min(100,S.exp/need*100)+'%');
   var lvB=Math.pow(S.level,0.5),cnB=1+Math.pow(S.coins,0.5),useB=S.useBonus;
-  var total=p.dmg*lvB*cnB*useB*(S.burn?2.5:1);
+  var total=p.dmg*lvB*cnB*useB*(S.burn?2.5:1)*gemDmgMul();
   setTxt('dPick','x'+fmt(p.dmg));
   setTxt('dLv','x'+fmt(lvB));
   setTxt('dCoin','x'+fmt(cnB));
   setTxt('dUse','x'+fmt(useB));
-  setTxt('dGem','x1');
+  setTxt('dGem','x'+fmt(gemDmgMul()));
   setTxt('dTotal',fmt(total));
   setTxt('dReal',b.def===null?'—':fmt(Math.max(total-(b.def||0),0.1)));
   setTxt('dRealBlock',b.n);
@@ -1451,7 +1791,7 @@ function renderSlow(){
   setTxt('sDigs',fmt(S.digs));
   setTxt('sBroken',fmt(S.broken));
   setTxt('sUse',fmt(S.useBonus));
-  setTxt('sUseInc','+'+fmt(p.use));
+  setTxt('sUseInc','+'+fmt(p.use*gemUseMul()));
   setTxt('sOnline',timeFull(S.online));
   if(_c.slotAct!==activeSlot){
     _c.slotAct=activeSlot;
@@ -1478,6 +1818,7 @@ function renderSlow(){
   });
   renderSmelt();
   renderBlocks();
+  renderGem();
 }
 function render(){
   renderFast();
@@ -1684,8 +2025,8 @@ document.querySelectorAll('.tab').forEach(function(t){
   t.onclick=function(){
     document.querySelectorAll('.tab').forEach(function(x){x.classList.remove('active');});
     t.classList.add('active');
-    $('craftPanel').classList.toggle('hidden',t.dataset.tab!=='craft');
-    $('smeltPanel').classList.toggle('hidden',t.dataset.tab!=='smelt');
+    document.querySelectorAll('.panel-tab').forEach(function(p){p.classList.add('hidden');});
+    $({craft:'craftPanel',smelt:'smeltPanel',gem:'gemPanel'}[t.dataset.tab]).classList.remove('hidden');
   };
 });
 
