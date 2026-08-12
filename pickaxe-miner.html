@@ -940,16 +940,17 @@ var PICKAXES={
   netherite:{n:'下界合金镐',dmg:80,use:0.6,coins:2},
   obsidian:{n:'黑曜石镐',dmg:125,use:0.8,coins:2.2},
   mystic:{n:'神秘镐',dmg:200,use:1,coins:2.5},
+  iridium:{n:'铱镐',dmg:300,use:1.5,coins:3},
   bucket:{n:'铁桶',dmg:0,use:0,coins:1}
 };
-var PICK_ITEMS={wood:'pickWood',stone:'pickStone',iron:'pickIron',bronze:'pickBronze',gold:'pickGold',diamond:'pickDiamond',steel:'pickSteel',amethyst:'pickAmethyst',dural:'pickDural',titanium:'pickTitanium',netherite:'pickNetherite',obsidian:'pickObsidian',mystic:'pickMystic',bucket:'bucket'};
-var PICK_ORDER=['hands','wood','stone','iron','bronze','gold','diamond','steel','amethyst','dural','titanium','netherite','obsidian','mystic','bucket'];
+var PICK_ITEMS={wood:'pickWood',stone:'pickStone',iron:'pickIron',bronze:'pickBronze',gold:'pickGold',diamond:'pickDiamond',steel:'pickSteel',amethyst:'pickAmethyst',dural:'pickDural',titanium:'pickTitanium',netherite:'pickNetherite',obsidian:'pickObsidian',mystic:'pickMystic',iridium:'pickIridium',bucket:'bucket'};
+var PICK_ORDER=['hands','wood','stone','iron','bronze','gold','diamond','steel','amethyst','dural','titanium','netherite','obsidian','mystic','iridium','bucket'];
 
 var ITEMS={
   log:{n:'原木',c:'#8b6a45'},cobble:{n:'圆石',c:'#8a8a8a'},coal:{n:'煤炭',c:'#33383e'},
   rawIron:{n:'粗铁',c:'#d08a5e'},rawGold:{n:'粗金',c:'#e8c04a'},diamond:{n:'钻石',c:'#5fd9e0'},debris:{n:'远古残骸',c:'#7a4a3a'},
   rawCopper:{n:'粗铜',c:'#d67a5c'},rawMag:{n:'粗镁',c:'#dfe4ea'},rawNickel:{n:'粗镍',c:'#9fb18f'},amethyst:{n:'紫水晶',c:'#b06ad8'},pickAmethyst:{n:'紫水晶镐',c:'#b06ad8'},
-  rawAlu:{n:'粗铝',c:'#c7ccd6'},rawZinc:{n:'粗锌',c:'#8b98ad'},rawMang:{n:'粗锰',c:'#c08a9c'},rawTitan:{n:'粗钛',c:'#e6ecf5'},
+  rawAlu:{n:'粗铝',c:'#c7ccd6'},rawZinc:{n:'粗锌',c:'#8b98ad'},rawMang:{n:'粗锰',c:'#c08a9c'},rawTitan:{n:'粗钛',c:'#e6ecf5'},rawIridium:{n:'粗铱',c:'#aebdd6'},
   mysticStone:{n:'神秘石',c:'#6a5ae0'},lava:{n:'岩浆',c:'#ff7a3a'},acid:{n:'硫酸',c:'#cfe85a'},water:{n:'水',c:'#4aa8e8'},
   planks:{n:'木板',c:'#a8845c'},sticks:{n:'木棍',c:'#9c7a52'},
   ironIngot:{n:'生铁锭',c:'#cfd4dc'},goldIngot:{n:'金锭',c:'#f0cf5e'},copperIngot:{n:'铜锭',c:'#e09068'},nickelIngot:{n:'镍锭',c:'#aebfa0'},
@@ -959,7 +960,8 @@ var ITEMS={
   furnace:{n:'熔炉',c:'#5a5a5a'},bucket:{n:'铁桶',c:'#b9c2cf'},furnaceHigh:{n:'高温熔炼炉',c:'#3a3a46'},
   pickWood:{n:'木镐',c:'#a8845c'},pickStone:{n:'石镐',c:'#9a9a9a'},pickIron:{n:'生铁镐',c:'#cfd4dc'},pickBronze:{n:'青铜镐',c:'#c98a4a'},
   pickGold:{n:'金镐',c:'#f0cf5e'},pickDiamond:{n:'钻石镐',c:'#5fd9e0'},pickSteel:{n:'钢镐',c:'#b8bfcc'},pickDural:{n:'硬铝镐',c:'#d0d8e2'},
-  pickTitanium:{n:'钛合金镐',c:'#e6ecf5'},pickNetherite:{n:'下界合金镐',c:'#5a4a58'},pickObsidian:{n:'黑曜石镐',c:'#2a2a36'},pickMystic:{n:'神秘镐',c:'#8a7ae8'}
+  pickTitanium:{n:'钛合金镐',c:'#e6ecf5'},pickNetherite:{n:'下界合金镐',c:'#5a4a58'},pickObsidian:{n:'黑曜石镐',c:'#2a2a36'},pickMystic:{n:'神秘镐',c:'#8a7ae8'},
+  iridiumIngot:{n:'铱锭',c:'#c8d4e4'},pickIridium:{n:'铱镐',c:'#c8d4e4'}
 };
 
 function tex(t){
@@ -984,7 +986,8 @@ var BLOCKS_MAIN=[
   {id:'ironCompact',n:'致密铁矿',hp:80000000,coin:250,def:3800000,drop:{rawIron:0.25},tex:{base:['linear-gradient(180deg,#7a7a7a 0%,#5c5c5c 100%)'],spots:[[15,20,'#b06a3c',5],[40,35,'#b06a3c',5],[65,25,'#b06a3c',5],[30,55,'#b06a3c',5],[55,70,'#b06a3c',5],[80,60,'#b06a3c',5],[20,85,'#b06a3c',4],[75,90,'#b06a3c',4]]}},
   {id:'goldOre',n:'金矿',hp:380000000,coin:1000,def:18000000,drop:{rawGold:0.1},tex:{base:T_STONE.slice(),spots:[[20,30,'#e6c04a',4],[55,20,'#e6c04a',4],[75,55,'#e6c04a',4],[35,70,'#e6c04a',4],[65,85,'#e6c04a',4],[10,60,'#e6c04a',3]]}},
   {id:'diamondOre',n:'钻石矿',hp:21000000000,coin:2000,def:800000000,drop:{diamond:0.01},tex:{base:['linear-gradient(180deg,#5a6a76 0%,#44525e 100%)'],spots:[[25,35,'#57d6de',5],[65,25,'#57d6de',5],[40,70,'#57d6de',5],[80,60,'#57d6de',5],[15,80,'#57d6de',4],[60,90,'#57d6de',4]]}},
-  {id:'debris',n:'远古残骸',hp:1600000000000,coin:10000,def:230000000000,drop:{debris:0.01},tex:{base:['linear-gradient(180deg,#4d4038 0%,#392e28 100%)'],spots:[[20,25,'#8a5c3c',4],[65,40,'#8a5c3c',4],[40,70,'#8a5c3c',4],[80,60,'#8a5c3c',4],[10,80,'#8a5c3c',4],[70,90,'#8a5c3c',4],[50,15,'#2c231f',6],[85,20,'#2c231f',5],[30,90,'#2c231f',5]]}}
+  {id:'debris',n:'远古残骸',hp:1600000000000,coin:10000,def:230000000000,drop:{debris:0.01},tex:{base:['linear-gradient(180deg,#4d4038 0%,#392e28 100%)'],spots:[[20,25,'#8a5c3c',4],[65,40,'#8a5c3c',4],[40,70,'#8a5c3c',4],[80,60,'#8a5c3c',4],[10,80,'#8a5c3c',4],[70,90,'#8a5c3c',4],[50,15,'#2c231f',6],[85,20,'#2c231f',5],[30,90,'#2c231f',5]]}},
+  {id:'iridium',n:'铱矿',hp:1e17,coin:250000,def:5e16,drop:{rawIridium:0.005},hint:'0.5% 掉落 1 粗铱',tex:{base:T_STONE.slice(),spots:[[20,30,'#c8d4e4',4],[60,55,'#c8d4e4',4],[80,25,'#c8d4e4',4],[40,75,'#8fa3c4',4],[10,60,'#8fa3c4',3],[70,85,'#c8d4e4',3]]}}
 ];
 var BLOCKS_BRANCH=[
   {id:'copper',n:'铜矿',hp:9000000,coin:125,def:300000,drop:{rawCopper:0.05},tex:{base:T_STONE.slice(),spots:[[20,30,'#d07a5a',4],[60,20,'#d07a5a',4],[80,55,'#d07a5a',4],[35,75,'#d07a5a',4],[65,90,'#d07a5a',4],[10,60,'#d07a5a',3]]}},
@@ -1001,23 +1004,25 @@ var BLOCKS_BRANCH=[
 var BLOCKS_GEM=[
   {id:'gemI',n:'宝石矿I',hp:1e12,coin:10000,def:1.6e11,drop:{gemDmg1:0.003,gemUse1:0.003,gemCoin1:0.003,gemAll1:0.001},hint:'0.3% 掉落 1阶伤害/使用/金币宝石 · 0.1% 掉落 1阶全能宝石',tex:{base:T_STONE.slice(),spots:[[20,30,'#b06ad8',4],[60,55,'#b06ad8',4],[80,25,'#b06ad8',4],[40,75,'#8a5ae0',4],[10,60,'#8a5ae0',3],[70,85,'#b06ad8',3]]}},
   {id:'gemII',n:'宝石矿II',hp:2e13,coin:25000,def:4e12,drop:{gemDmg1:0.015,gemUse1:0.015,gemCoin1:0.015,gemAll1:0.005},hint:'1.5% 掉落 1阶伤害/使用/金币宝石 · 0.5% 掉落 1阶全能宝石',tex:{base:T_STONE.slice(),spots:[[25,35,'#4ad1d8',5],[65,25,'#4ad1d8',5],[45,70,'#4ad1d8',5],[85,55,'#2a9aa3',4],[15,85,'#2a9aa3',4],[50,15,'#4ad1d8',4]]}},
-  {id:'gemIII',n:'宝石矿III',hp:6e14,coin:60000,def:1.5e14,drop:{gemDmg1:0.06,gemUse1:0.06,gemCoin1:0.06,gemAll1:0.02},hint:'6% 掉落 1阶伤害/使用/金币宝石 · 2% 掉落 1阶全能宝石',tex:{base:T_STONE.slice(),spots:[[20,30,'#f0cf5e',5],[60,55,'#b06ad8',5],[40,70,'#4ad1d8',5],[80,60,'#f0cf5e',4],[10,85,'#b06ad8',4],[70,15,'#4ad1d8',4]]}}
+  {id:'gemIII',n:'宝石矿III',hp:6e14,coin:60000,def:1.5e14,drop:{gemDmg1:0.06,gemUse1:0.06,gemCoin1:0.06,gemAll1:0.02},hint:'6% 掉落 1阶伤害/使用/金币宝石 · 2% 掉落 1阶全能宝石',tex:{base:T_STONE.slice(),spots:[[20,30,'#f0cf5e',5],[60,55,'#b06ad8',5],[40,70,'#4ad1d8',5],[80,60,'#f0cf5e',4],[10,85,'#b06ad8',4],[70,15,'#4ad1d8',4]]}},
+  {id:'gemIV',n:'宝石矿IV',hp:2.5e16,coin:150000,def:1e16,drop:{gemDmg1:0.297,gemUse1:0.297,gemCoin1:0.297,gemAll1:0.099,gemMyth1:0.01},hint:'29.7% 掉落 1阶伤害/使用/金币宝石 · 9.9% 掉落 1阶全能宝石 · 1% 掉落 1阶神话宝石',tex:{base:T_STONE.slice(),spots:[[30,25,'#ff4dd2',5],[65,40,'#ff4dd2',5],[45,70,'#d4148f',4],[85,70,'#ff4dd2',4],[15,85,'#d4148f',4],[55,15,'#ff4dd2',4]]}}
 ];
 var GEM_TYPES={
   dmg:{n:'伤害宝石',c:'#ff6a5e',t1:{dmg:2,use:1,coin:1}},
   use:{n:'使用宝石',c:'#58cf7f',t1:{dmg:1,use:1.5,coin:1}},
   coin:{n:'金币宝石',c:'#f2b34c',t1:{dmg:1,use:1,coin:1.2}},
-  all:{n:'全能宝石',c:'#b06ad8',t1:{dmg:1.5,use:1.25,coin:1.1}}
+  all:{n:'全能宝石',c:'#b06ad8',t1:{dmg:1.5,use:1.25,coin:1.1}},
+  myth:{n:'神话宝石',c:'#ff4dd2',t1:{dmg:3,use:2,coin:1.4}}
 };
 var MAX_GEM_TIER=12;
 var MAX_GEM_SLOTS=5;
 Object.keys(GEM_TYPES).forEach(function(t){
-  var cap=t==='dmg'?'Dmg':t==='use'?'Use':t==='coin'?'Coin':'All';
+  var cap=gemTypeCap(t);
   for(var lv=1;lv<=MAX_GEM_TIER;lv++){
     ITEMS['gem'+cap+lv]={n:lv+'阶'+GEM_TYPES[t].n,c:GEM_TYPES[t].c};
   }
 });
-function gemTypeCap(t){return t==='dmg'?'Dmg':t==='use'?'Use':t==='coin'?'Coin':'All';}
+function gemTypeCap(t){return t==='dmg'?'Dmg':t==='use'?'Use':t==='coin'?'Coin':t==='myth'?'Myth':'All';}
 function gemKeyOf(t,lv){return 'gem'+gemTypeCap(t)+lv;}
 function gemTierOf(t,lv,attr){
   if(!GEM_TYPES[t]||!GEM_TYPES[t].t1||!(attr in GEM_TYPES[t].t1))return 1;
@@ -1062,7 +1067,8 @@ var CRAFTS=[
   {id:'hydrogen',out:{hydrogen:1},in:{zincIngot:1,acid:1}},
   {id:'obsidianBlock',out:{obsidian:1},in:{water:1,lava:1}},
   {id:'pickObsidian',out:{pickObsidian:1},in:{obsidian:3,sticks:2}},
-  {id:'pickMystic',out:{pickMystic:1},in:{mysticStone:3,sticks:2}}
+  {id:'pickMystic',out:{pickMystic:1},in:{mysticStone:3,sticks:2}},
+  {id:'pickIridium',out:{pickIridium:1},in:{iridiumIngot:3,sticks:2}}
 ];
 
 var SMELTS=[
@@ -1081,7 +1087,8 @@ var SMELTS=[
   {id:'duralIngot',in:{aluIngot:8,copperIngot:2,magIngot:1,mangIngot:1},out:{duralIngot:1},cost:15,tier:'high'},
   {id:'titaniumIngot',in:{rawTitan:1},out:{titaniumIngot:1},cost:2.5,tier:'high'},
   {id:'titaniumAlloy',in:{titaniumIngot:4,aluIngot:1,ironIngot:1},out:{titaniumAlloy:1},cost:18,tier:'high'},
-  {id:'water',in:{hydrogen:2},out:{water:1},cost:0.5,tier:'high'}
+  {id:'water',in:{hydrogen:2},out:{water:1},cost:0.5,tier:'high'},
+  {id:'iridiumIngot',in:{rawIridium:1},out:{iridiumIngot:1},cost:128,tier:'high'}
 ];
 var SMELT_MAP={};
 SMELTS.forEach(function(r){SMELT_MAP[r.id]=r;});
