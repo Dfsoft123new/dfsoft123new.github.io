@@ -575,6 +575,7 @@ main{
 .tier-tag{font-size:9px;padding:2px 8px;border-radius:6px;letter-spacing:.5px}
 .tier-tag.basic{color:#58cf7f;background:rgba(88,207,127,.12);border:1px solid rgba(88,207,127,.35)}
 .tier-tag.high{color:#ffb35c;background:rgba(255,138,61,.12);border:1px solid rgba(255,138,61,.35)}
+.tier-tag.iridium{color:#c8d4e4;background:rgba(200,212,228,.12);border:1px solid rgba(200,212,228,.35)}
 .srow{
   padding:11px;border-radius:11px;background:var(--bg2);border:1px solid var(--line);
   display:flex;flex-direction:column;gap:8px;
@@ -1303,7 +1304,7 @@ function itemName(o){for(var k in o)return ITEMS[k].n;return '';}
 function equip(k){
   if(ownsPick(k)){S.equipped=k;toast('已装备 '+PICKAXES[k].n,'');}
 }
-var UNITS=['万','亿','万亿','兆','万兆','京','万京','亿京','万亿京','兆京','万兆京','亿兆京','万亿兆京','垓','万垓','亿垓','万亿垓','兆垓','万兆垓'];
+var UNITS=['万','亿','万亿','兆','万兆','亿兆','万亿兆','京','万京','亿京','万亿京','兆京','万兆京','亿兆京','万亿兆京','垓','万垓','亿垓','万亿垓','兆垓','万兆垓','亿兆垓','万亿兆垓'];
 function fmt(n){
   if(n===null||n===undefined)return '—';
   if(!isFinite(n))return '∞';
@@ -1450,11 +1451,11 @@ function buildCraftCards(){
 function outKeyToPick(k){return k.replace('pick','').toLowerCase();}
 function buildSmeltRows(){
   var box=$('smeltList');
-  var groups=[['basic','熔炉可熔炼'],['high','高温熔炼炉专属']];
+  var groups=[['basic','熔炉可熔炼'],['high','高温熔炼炉专属'],['iridium','铱制熔炼炉专属']];
   groups.forEach(function(g){
     var head=document.createElement('div');
     head.className='sgroup-title';
-    head.innerHTML=g[1]+' <span class="tier-tag '+(g[0]==='basic'?'basic':'high')+'">'+(g[0]==='basic'?'基础':'高温')+'</span>';
+    head.innerHTML=g[1]+' <span class="tier-tag '+(g[0]==='basic'?'basic':'high')+'">'+(g[0]==='basic'?'基础':g[0]==='high'?'高温':'铱制')+'</span>';
     box.appendChild(head);
     SMELTS.forEach(function(r){
       if(r.tier!==g[0])return;
