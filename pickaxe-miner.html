@@ -875,7 +875,7 @@ main{
 </section>
 
 <section class="panel panel-tab hidden" id="smeltPanel">
-  <div class="panel-head"><div class="pt">熔炼系统</div><div class="ps">每秒消耗 1 点熔炼值 · 每块煤炭提供 8 点熔炼值 · 燃料耗尽时自动添加煤炭 · 燃烧开关：每秒消耗 5 点熔炼值（自动用煤炭充能），挖掘伤害 ×2.5</div></div>
+  <div class="panel-head"><div class="pt">熔炼系统</div><div class="ps">每秒消耗 1 点熔炼值 · 每块煤炭提供 8 点熔炼值 · 燃料耗尽时自动添加煤炭 · 燃烧开关：熔炼值消耗速度 ×2.5（自动用煤炭充能）</div></div>
   <div class="smelt-top">
     <div class="fuel-card"><div class="flame"></div>
       <div class="sec-t" style="margin:0">熔炼值</div>
@@ -889,8 +889,12 @@ main{
           <span>燃烧</span>
           <button class="autoswitch" id="burnBtn"><span class="knob"></span><span class="as-txt">燃烧·关</span></button>
         </div>
+        <div class="burn-row">
+          <span>自动熔炼</span>
+          <button class="autoswitch on" id="asmeltBtn"><span class="knob"></span><span class="as-txt">自动熔炼·开</span></button>
+        </div>
         <div><span>燃烧消耗</span><span>5 熔炼值/秒</span></div>
-        <div><span>燃烧增益</span><span id="burnMul">x1</span></div>
+        <div><span>燃烧熔炼速度</span><span id="burnMul">x1</span></div>
       </div>
       <div class="fuel-status" id="fuelStatus"></div>
     </div>
@@ -1117,7 +1121,7 @@ ITEMS.titaniumIngot={n:'钛锭',c:'#e6ecf5'};
 ITEMS.titaniumAlloy={n:'钛合金',c:'#e6ecf5'};
 
 function freshSlot(){
-  return {coins:0,exp:0,level:1,useBonus:1,digs:0,broken:0,online:0,equipped:'hands',auto:true,
+  return {coins:0,exp:0,level:1,useBonus:1,digs:0,broken:0,online:0,equipped:'hands',auto:true,autoSmelt:true,
     inv:{},hp:{},brk:{},area:'main',idx:{main:0,branch:0},
     smelt:{rid:null,prog:0,value:0},digAcc:0,smAcc:0,t:Date.now(),v:1,burn:false,
     gems:[],gemUnlocked:0};
@@ -1188,7 +1192,7 @@ function gainExp(x,silent){
 function curBlock(){return AREAS[S.area].blocks[S.idx[S.area]];}
 function digDamage(b){
   var p=PICKAXES[S.equipped];
-  var total=p.dmg*Math.pow(S.level,0.5)*(1+Math.pow(S.coins,0.5))*S.useBonus*(S.burn?2.5:1)*gemDmgMul();
+  var total=p.dmg*Math.pow(S.level,0.5)*(1+Math.pow(S.coins,0.5))*S.useBonus*gemDmgMul();
   if(isNaN(total)||!isFinite(total))total=1e308;
   return Math.max(total-(b.def||0),0.1);
 }
@@ -1246,21 +1250,17 @@ function doDig(silent){
 }
 function burnTick(){
   if(!S.burn)return;
-  if((S.smelt.value||0)<5&&(S.inv.coal||0)>0){S.inv.coal--;S.smelt.value=(S.smelt.value||0)+8;}
-  if((S.smelt.value||0)>=5){
-    S.smelt.value-=5;
-  }else{
-    S.smelt.value=0;
-    S.burn=false;
-  }
+  if((S.smelt.value||0)<1&&(S.inv.coal||0)>0){S.inv.coal--;S.smelt.value=(S.smelt.value||0)+8;}
+  if((S.smelt.value||0)<1)S.burn=false;
 }
 function smeltTick(){
   var sm=S.smelt;
-  if(!sm.rid)return;
+  if(!sm.rid||!S.autoSmelt)return;
   var r=SMELT_MAP[sm.rid];
   if(sm.value<1&&(S.inv.coal||0)>0){S.inv.coal--;sm.value+=8;}
   if(sm.value<1)return;
   var rate=(S.inv.furnaceIridium||0)>0?3:1;
+  if(S.burn)rate*=2.5;
   sm.value-=rate;
   sm.prog+=rate;
   if(sm.prog>=r.cost){
@@ -1371,11 +1371,12 @@ function buildUI(){
     if(S.burn){
       S.burn=false;
     }else{
-      if((S.smelt.value||0)<5){toast('熔炼值不足，无法启动燃烧','');return;}
+      if((S.smelt.value||0)<1){toast('熔炼值不足，无法启动燃烧','');return;}
       S.burn=true;
     }
     render();
   };
+  $('asmeltBtn').onclick=function(){S.autoSmelt=!S.autoSmelt;render();};
   $('oClaim').onclick=function(){$('offlineBox').classList.remove('on');};
   $('resetBtn').onclick=function(){
     resetSlot();
@@ -1788,7 +1789,7 @@ function renderFast(){
   setTxt('expTxt',fmt(S.exp)+' / '+fmt(need));
   setW('expFill',Math.min(100,S.exp/need*100)+'%');
   var lvB=Math.pow(S.level,0.5),cnB=1+Math.pow(S.coins,0.5),useB=S.useBonus;
-  var total=p.dmg*lvB*cnB*useB*(S.burn?2.5:1)*gemDmgMul();
+  var total=p.dmg*lvB*cnB*useB*gemDmgMul();
   setTxt('dPick','x'+fmt(p.dmg));
   setTxt('dLv','x'+fmt(lvB));
   setTxt('dCoin','x'+fmt(cnB));
@@ -1889,6 +1890,9 @@ function renderSmelt(){
   var bb=$('burnBtn');
   var burnOn=!!S.burn;
   if(bb._on!==burnOn){bb._on=burnOn;bb.classList.toggle('on',burnOn);bb.querySelector('.as-txt').textContent=burnOn?'燃烧中':'燃烧·关';}
+  var ab2=$('asmeltBtn');
+  var smOn=!!S.autoSmelt;
+  if(ab2._on!==smOn){ab2._on=smOn;ab2.classList.toggle('on',smOn);ab2.querySelector('.as-txt').textContent=smOn?'自动熔炼·开':'自动熔炼·关';}
   setTxt('burnMul','x'+(S.burn?'2.5':'1'));
   smeltRows.forEach(function(x){
     var r=SMELT_MAP[x.rid];
