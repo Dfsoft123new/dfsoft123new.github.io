@@ -1272,12 +1272,14 @@ function smeltTick(){
   }
 }
 function canSmelt(r){
+  var hasIr=(S.inv.furnaceIridium||0)>0;
+  var hasHigh=(S.inv.furnaceHigh||0)>0;
   if(r.tier==='iridium'){
-    if((S.inv.furnaceIridium||0)<1)return false;
+    if(!hasIr)return false;
   }else if(r.tier==='high'){
-    if((S.inv.furnaceHigh||0)<1)return false;
+    if(!hasHigh&&!hasIr)return false;
   }else{
-    if((S.inv.furnace||0)<1&&(S.inv.furnaceHigh||0)<1)return false;
+    if((S.inv.furnace||0)<1&&!hasHigh&&!hasIr)return false;
   }
   for(var k in r.in){if((S.inv[k]||0)<r.in[k])return false;}
   return true;
@@ -1451,7 +1453,7 @@ function buildCraftCards(){
 function outKeyToPick(k){return k.replace('pick','').toLowerCase();}
 function buildSmeltRows(){
   var box=$('smeltList');
-  var groups=[['basic','熔炉可熔炼'],['high','高温熔炼炉专属'],['iridium','铱制熔炼炉专属']];
+  var groups=[['basic','熔炉可熔炼'],['high','高温/铱制熔炼炉可熔炼'],['iridium','铱制熔炼炉专属']];
   groups.forEach(function(g){
     var head=document.createElement('div');
     head.className='sgroup-title';
@@ -1912,8 +1914,8 @@ function renderSmelt(){
     }
     if(x.tier==='iridium'&&(S.inv.furnaceIridium||0)<1){
       x.note.textContent='需先合成 铱制熔炼炉';
-    }else if(x.tier==='high'&&(S.inv.furnaceHigh||0)<1){
-      x.note.textContent='需先合成 高温熔炼炉';
+    }else if(x.tier==='high'&&(S.inv.furnaceHigh||0)<1&&(S.inv.furnaceIridium||0)<1){
+      x.note.textContent='需先合成 高温熔炼炉或铱制熔炼炉';
     }else if(!ok){
       var missing=[];
       for(var k in r.in){if((S.inv[k]||0)<r.in[k])missing.push(ITEMS[k].n+' x'+r.in[k]);}
