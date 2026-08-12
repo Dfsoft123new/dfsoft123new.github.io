@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="color-scheme" content="dark">
-<title>升级你的镐子 v0.02</title>
+<title>升级你的镐子 v0.0.3</title>
 <style>/* ============================================================
    PICKAXE MINER — v0.1 "FORGE & EMBER" 全新生效设计
    性能优先：无 backdrop-filter / 无大尺寸 blur / 无混合模式动画
@@ -759,7 +759,7 @@ main{
     <div class="brand-ico"></div>
     <div>
       <div class="brand-name">升级你的镐子</div>
-      <div class="brand-sub">v0.02 · 放置挖掘 · 离线结算 100% · 三存档系统 · 宝石系统</div>
+      <div class="brand-sub">v0.0.3 · 放置挖掘 · 离线结算 100% · 三存档系统 · 宝石系统</div>
     </div>
   </div>
   <div class="hstats">
@@ -941,10 +941,12 @@ var PICKAXES={
   obsidian:{n:'黑曜石镐',dmg:125,use:0.8,coins:2.2},
   mystic:{n:'神秘镐',dmg:200,use:1,coins:2.5},
   iridium:{n:'铱镐',dmg:300,use:1.5,coins:3},
+  rainbow:{n:'彩曜石镐',dmg:500,use:2,coins:4},
+  bedrock:{n:'基岩镐',dmg:1000,use:3,coins:5},
   bucket:{n:'铁桶',dmg:0,use:0,coins:1}
 };
-var PICK_ITEMS={wood:'pickWood',stone:'pickStone',iron:'pickIron',bronze:'pickBronze',gold:'pickGold',diamond:'pickDiamond',steel:'pickSteel',amethyst:'pickAmethyst',dural:'pickDural',titanium:'pickTitanium',netherite:'pickNetherite',obsidian:'pickObsidian',mystic:'pickMystic',iridium:'pickIridium',bucket:'bucket'};
-var PICK_ORDER=['hands','wood','stone','iron','bronze','gold','diamond','steel','amethyst','dural','titanium','netherite','obsidian','mystic','iridium','bucket'];
+var PICK_ITEMS={wood:'pickWood',stone:'pickStone',iron:'pickIron',bronze:'pickBronze',gold:'pickGold',diamond:'pickDiamond',steel:'pickSteel',amethyst:'pickAmethyst',dural:'pickDural',titanium:'pickTitanium',netherite:'pickNetherite',obsidian:'pickObsidian',mystic:'pickMystic',iridium:'pickIridium',rainbow:'pickRainbow',bedrock:'pickBedrock',bucket:'bucket'};
+var PICK_ORDER=['hands','wood','stone','iron','bronze','gold','diamond','steel','amethyst','dural','titanium','netherite','obsidian','mystic','iridium','rainbow','bedrock','bucket'];
 
 var ITEMS={
   log:{n:'原木',c:'#8b6a45'},cobble:{n:'圆石',c:'#8a8a8a'},coal:{n:'煤炭',c:'#33383e'},
@@ -961,7 +963,10 @@ var ITEMS={
   pickWood:{n:'木镐',c:'#a8845c'},pickStone:{n:'石镐',c:'#9a9a9a'},pickIron:{n:'生铁镐',c:'#cfd4dc'},pickBronze:{n:'青铜镐',c:'#c98a4a'},
   pickGold:{n:'金镐',c:'#f0cf5e'},pickDiamond:{n:'钻石镐',c:'#5fd9e0'},pickSteel:{n:'钢镐',c:'#b8bfcc'},pickDural:{n:'硬铝镐',c:'#d0d8e2'},
   pickTitanium:{n:'钛合金镐',c:'#e6ecf5'},pickNetherite:{n:'下界合金镐',c:'#5a4a58'},pickObsidian:{n:'黑曜石镐',c:'#2a2a36'},pickMystic:{n:'神秘镐',c:'#8a7ae8'},
-  iridiumIngot:{n:'铱锭',c:'#c8d4e4'},pickIridium:{n:'铱镐',c:'#c8d4e4'}
+  iridiumIngot:{n:'铱锭',c:'#c8d4e4'},pickIridium:{n:'铱镐',c:'#c8d4e4'},
+  redObsidian:{n:'红曜石',c:'#ff5a5a'},blueObsidian:{n:'蓝曜石',c:'#5a8aff'},yellowObsidian:{n:'黄曜石',c:'#ffd94a'},
+  rainbowObsidian:{n:'彩曜石',c:'#8fd8ff'},bedrock:{n:'基岩',c:'#2a2a35'},iridiumStick:{n:'铱棍',c:'#c8d4e4'},
+  furnaceIridium:{n:'铱制熔炼炉',c:'#454556'},pickRainbow:{n:'彩曜石镐',c:'#8fd8ff'},pickBedrock:{n:'基岩镐',c:'#2a2a35'}
 };
 
 function tex(t){
@@ -988,6 +993,13 @@ var BLOCKS_MAIN=[
   {id:'diamondOre',n:'钻石矿',hp:21000000000,coin:2000,def:800000000,drop:{diamond:0.01},tex:{base:['linear-gradient(180deg,#5a6a76 0%,#44525e 100%)'],spots:[[25,35,'#57d6de',5],[65,25,'#57d6de',5],[40,70,'#57d6de',5],[80,60,'#57d6de',5],[15,80,'#57d6de',4],[60,90,'#57d6de',4]]}},
   {id:'debris',n:'远古残骸',hp:1600000000000,coin:10000,def:230000000000,drop:{debris:0.01},tex:{base:['linear-gradient(180deg,#4d4038 0%,#392e28 100%)'],spots:[[20,25,'#8a5c3c',4],[65,40,'#8a5c3c',4],[40,70,'#8a5c3c',4],[80,60,'#8a5c3c',4],[10,80,'#8a5c3c',4],[70,90,'#8a5c3c',4],[50,15,'#2c231f',6],[85,20,'#2c231f',5],[30,90,'#2c231f',5]]}},
   {id:'iridium',n:'铱矿',hp:1e17,coin:250000,def:5e16,drop:{rawIridium:0.005},hint:'0.5% 掉落 1 粗铱',tex:{base:T_STONE.slice(),spots:[[20,30,'#c8d4e4',4],[60,55,'#c8d4e4',4],[80,25,'#c8d4e4',4],[40,75,'#8fa3c4',4],[10,60,'#8fa3c4',3],[70,85,'#c8d4e4',3]]}}
+];
+var BLOCKS_MAIN2=[
+  {id:'coal2',n:'煤块',hp:1e20,coin:1000000,def:1e19,drop:{coal:1},hint:'100% 掉落 1 煤炭',tex:{base:['linear-gradient(180deg,#4a4a52 0%,#33333a 100%)'],spots:[[20,30,'#15151b',6],[60,55,'#15151b',6],[80,25,'#15151b',5],[40,75,'#15151b',5],[10,60,'#15151b',4],[70,85,'#15151b',4]]}},
+  {id:'redObsidian',n:'红曜石块',hp:1e20,coin:1000000,def:5e19,drop:{redObsidian:0.01},hint:'1% 掉落 1 红曜石',tex:{base:['linear-gradient(180deg,#3a2430 0%,#241620 100%)'],spots:[[20,30,'#ff5a5a',5],[60,55,'#ff5a5a',5],[80,25,'#ff5a5a',4],[40,75,'#c23a3a',4],[10,60,'#c23a3a',4],[70,85,'#ff5a5a',3]]}},
+  {id:'blueObsidian',n:'蓝曜石块',hp:2.5e21,coin:3200000,def:1.5e21,drop:{blueObsidian:0.01},hint:'1% 掉落 1 蓝曜石',tex:{base:['linear-gradient(180deg,#20283c 0%,#141a2a 100%)'],spots:[[25,35,'#5a8aff',5],[65,25,'#5a8aff',5],[45,70,'#5a8aff',5],[85,55,'#3a5ac2',4],[15,85,'#3a5ac2',4],[50,15,'#5a8aff',4]]}},
+  {id:'yellowObsidian',n:'黄曜石块',hp:1e23,coin:10000000,def:8e22,drop:{yellowObsidian:0.01},hint:'1% 掉落 1 黄曜石',tex:{base:['linear-gradient(180deg,#3c3420 0%,#2a2414 100%)'],spots:[[20,30,'#ffd94a',5],[60,55,'#ffd94a',5],[80,25,'#ffd94a',4],[40,75,'#c2a23a',4],[10,60,'#c2a23a',4],[70,85,'#ffd94a',3]]}},
+  {id:'bedrock',n:'基岩',hp:2.4e25,coin:100000000,def:2.4e25,drop:{bedrock:0.001},hint:'0.1% 掉落 1 基岩',tex:{base:['linear-gradient(180deg,#232329 0%,#17171c 100%)'],spots:[[20,30,'#0e0e14',7],[60,55,'#0e0e14',6],[80,25,'#0e0e14',6],[40,75,'#0e0e14',6],[10,60,'#0e0e14',5],[70,85,'#0e0e14',5]]}}
 ];
 var BLOCKS_BRANCH=[
   {id:'copper',n:'铜矿',hp:9000000,coin:125,def:300000,drop:{rawCopper:0.05},tex:{base:T_STONE.slice(),spots:[[20,30,'#d07a5a',4],[60,20,'#d07a5a',4],[80,55,'#d07a5a',4],[35,75,'#d07a5a',4],[65,90,'#d07a5a',4],[10,60,'#d07a5a',3]]}},
@@ -1045,6 +1057,7 @@ function gemCoinMul(){return gemMul('coin');}
 function gemSlotCost(i){return 1e6*Math.pow(100,i);}
 var AREAS={
   main:{n:'主矿区 I',blocks:BLOCKS_MAIN},
+  main2:{n:'主矿区 II',blocks:BLOCKS_MAIN2},
   branch:{n:'支矿区 I',blocks:BLOCKS_BRANCH},
   gem:{n:'宝石矿区',blocks:BLOCKS_GEM}
 };
@@ -1070,7 +1083,10 @@ var CRAFTS=[
   {id:'obsidianBlock',out:{obsidian:1},in:{water:1,lava:1}},
   {id:'pickObsidian',out:{pickObsidian:1},in:{obsidian:3,sticks:2}},
   {id:'pickMystic',out:{pickMystic:1},in:{mysticStone:3,sticks:2}},
-  {id:'pickIridium',out:{pickIridium:1},in:{iridiumIngot:3,sticks:2}}
+  {id:'pickIridium',out:{pickIridium:1},in:{iridiumIngot:3,sticks:2}},
+  {id:'furnaceIridium',out:{furnaceIridium:1},in:{furnaceHigh:6,iridiumIngot:48}},
+  {id:'pickRainbow',out:{pickRainbow:1},in:{rainbowObsidian:3,iridiumStick:2}},
+  {id:'pickBedrock',out:{pickBedrock:1},in:{bedrock:3,iridiumStick:2}}
 ];
 
 var SMELTS=[
@@ -1090,7 +1106,9 @@ var SMELTS=[
   {id:'titaniumIngot',in:{rawTitan:1},out:{titaniumIngot:1},cost:2.5,tier:'high'},
   {id:'titaniumAlloy',in:{titaniumIngot:4,aluIngot:1,ironIngot:1},out:{titaniumAlloy:1},cost:18,tier:'high'},
   {id:'water',in:{hydrogen:2},out:{water:1},cost:0.5,tier:'high'},
-  {id:'iridiumIngot',in:{rawIridium:1},out:{iridiumIngot:1},cost:128,tier:'high'}
+  {id:'iridiumIngot',in:{rawIridium:1},out:{iridiumIngot:1},cost:128,tier:'high'},
+  {id:'iridiumStick',in:{iridiumIngot:2},out:{iridiumStick:1},cost:512,tier:'iridium'},
+  {id:'rainbowObsidian',in:{redObsidian:10,blueObsidian:10,yellowObsidian:10},out:{rainbowObsidian:1},cost:3600,tier:'iridium'}
 ];
 var SMELT_MAP={};
 SMELTS.forEach(function(r){SMELT_MAP[r.id]=r;});
@@ -1242,8 +1260,9 @@ function smeltTick(){
   var r=SMELT_MAP[sm.rid];
   if(sm.value<1&&(S.inv.coal||0)>0){S.inv.coal--;sm.value+=8;}
   if(sm.value<1)return;
-  sm.value-=1;
-  sm.prog+=1;
+  var rate=(S.inv.furnaceIridium||0)>0?3:1;
+  sm.value-=rate;
+  sm.prog+=rate;
   if(sm.prog>=r.cost){
     sm.prog=0;
     if(!canSmelt(r)){sm.rid=null;return;}
@@ -1252,7 +1271,9 @@ function smeltTick(){
   }
 }
 function canSmelt(r){
-  if(r.tier==='high'){
+  if(r.tier==='iridium'){
+    if((S.inv.furnaceIridium||0)<1)return false;
+  }else if(r.tier==='high'){
     if((S.inv.furnaceHigh||0)<1)return false;
   }else{
     if((S.inv.furnace||0)<1&&(S.inv.furnaceHigh||0)<1)return false;
@@ -1856,7 +1877,7 @@ function renderSmelt(){
   var sm=S.smelt;
   setTxt('fuelVal',fmt(sm.value));
   setW('fuelFill',Math.min(100,sm.value/128*100)+'%');
-  var hasF=(S.inv.furnace||0)>0||(S.inv.furnaceHigh||0)>0;
+  var hasF=(S.inv.furnace||0)>0||(S.inv.furnaceHigh||0)>0||(S.inv.furnaceIridium||0)>0;
   var st='';
   if(sm.rid){
     var r=SMELT_MAP[sm.rid];
@@ -1884,7 +1905,9 @@ function renderSmelt(){
       x.btn.disabled=!ok;
       x.spbar.style.display='none';
     }
-    if(x.tier==='high'&&(S.inv.furnaceHigh||0)<1){
+    if(x.tier==='iridium'&&(S.inv.furnaceIridium||0)<1){
+      x.note.textContent='需先合成 铱制熔炼炉';
+    }else if(x.tier==='high'&&(S.inv.furnaceHigh||0)<1){
       x.note.textContent='需先合成 高温熔炼炉';
     }else if(!ok){
       var missing=[];
