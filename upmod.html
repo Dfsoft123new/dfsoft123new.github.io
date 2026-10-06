@@ -537,7 +537,7 @@ button{font:inherit;color:inherit}
 const ZONES = [
   { n: 1, name: '区域 1', ready: true },
   { n: 2, name: '区域 2', ready: true, need: 'whiteP' },
-  { n: 3, name: '区域 3', ready: false },
+  { n: 3, name: '区域 3', ready: false, need: 'doomP' },
 ];
 
 const BLOCKS = [
@@ -586,6 +586,7 @@ const BLOCKS = [
   { id:'ya', zone:2, name:'阳',          hp:4e12,   coin:1.2e6,  drop:{item:'yang', p:0.02}, tex:{type:'yang'} },
   { id:'t7', zone:2, name:'奖杯方块 VII', hp:2e13,  coin:1.8e6,  drop:{item:'trophy', p:1, n:60}, tex:{type:'trophy', bg:'#170808', c:'#ff5a1f'} },
   { id:'as', zone:2, name:'灰烬',        hp:1e14,   coin:2.5e6,  drop:{item:'ash',  p:1}, tex:{type:'ash'} },
+  { id:'rc', zone:2, name:'毁灭核心',    hp:1e15,   coin:3e6,    drop:{item:'ruinCore', p:0.01}, tex:{type:'ruincore'} },
 ];
 BLOCKS.forEach(b => { if (!b.zone) b.zone = 1; });
 
@@ -615,12 +616,13 @@ const ITEMS = {
   yin:      { name:'阴',     icon:'yin',    c:'#c9d2ff' },
   yang:     { name:'阳',     icon:'yang',   c:'#ffb21f' },
   ash:      { name:'灰烬',   icon:'ash',    c:'#6a6560', note:'用来解锁和升级毁灭能量' },
+  ruinCore: { name:'毁灭核心', icon:'ruincore', c:'#ff2a3a' },
   sapphire: { name:'蓝宝石', icon:'jewel',  c:'#2f6bff', note:'持有越多，神秘之镐伤害越高' },
   ruby:     { name:'红宝石', icon:'jewel',  c:'#ff2f4f', note:'持有越多，神秘之镐使用越高' },
   emeraldGem:{ name:'绿宝石', icon:'jewel', c:'#1fd36a', note:'持有越多，神秘之镐金币倍率越高' },
 };
 const MAT_KEYS = ['mithril','aurum','amethyst','bedrock','super','ultimate','shard','red','orange','yellow','green','blue','indigo','violet','prism',
-  'core','sapphire','ruby','emeraldGem','jin','mu','shui','huo','tu','yin','yang','ash'];
+  'core','sapphire','ruby','emeraldGem','jin','mu','shui','huo','tu','yin','yang','ash','ruinCore'];
 
 // 石英镐属性原表缺失，这里按红石镐与下界合金镐之间取值，可自行修改
 const PICKS = [
@@ -670,6 +672,7 @@ PICKS.push(
   { id:'yinyangP',  zone:2, name:'阴阳镐',   dmg:1.4e7, use:380, coin:20,   c:'#f4f4f4', look:'yinyang', cost:{picks:{yinP:1, yangP:1}, items:{yin:100, yang:100}} },
   { id:'yinyuanP',  zone:2, name:'隐元镐',   dmg:3.2e7, use:600, coin:30,   c:'#6fd1b0', look:'yinyuan', cost:{picks:{yinyangP:10}} },
   { id:'ruinP',     zone:2, name:'毁灭镐',   dmg:6e7,   use:800, coin:36,   c:'#2a1414', look:'ruin',    cost:{energy:1e6} },
+  { id:'doomP',     zone:2, name:'末日镐',   dmg:1.5e8, use:1200, coin:50,  c:'#5a0a18', look:'doom',    cost:{picks:{ruinP:1}, items:{ruinCore:10}} },
 );
 PICKS.forEach(p => { if (!p.zone) p.zone = 1; });
 
@@ -1150,6 +1153,32 @@ function paintYang(ctx, r) {
 }
 // 灰烬：灰黑色的余烬，夹着还没熄灭的火星
 const ASH = ['#4a4744','#5a5652','#3c3a38','#6a6560','#2e2c2a'];
+// 毁灭核心：黑曜石般的底，红色裂纹汇向中间一颗带尖刺的炽热核心
+const RUINCORE_MASK = [
+  '................',
+  '.......k........',
+  '.......k........',
+  '..k...kRk...k...',
+  '...k.kRRRk.k....',
+  '....kRROORRk....',
+  '...kRROWWORRk...',
+  'kkkRROWWWWORRkkk',
+  '...kRROWWORRk...',
+  '....kRROORRk....',
+  '...k.kRRRk.k....',
+  '..k...kRk...k...',
+  '.......k........',
+  '.......k........',
+];
+function paintRuinCore(ctx, r) {
+  paintNoise(ctx, ['#120a0e','#1a0f14','#0b0609','#22131a'], r);
+  for (let i = 0; i < 6; i++) {          // 汇向中心的红色裂纹
+    let x = r() < .5 ? 0 : 15, y = r() * 16 | 0;
+    for (let k = 0; k < 7; k++) { px(ctx, x, y, k % 2 ? '#7a0f18' : '#b0182a'); x += x < 7 ? 1 : -1; y += y < 7 ? 1 : (y > 8 ? -1 : 0); }
+  }
+  drawMask(ctx, RUINCORE_MASK, { k: '#3a0a12', R: '#d81e34', O: '#ff6a3a', W: '#fff0d0' }, 0, 1);
+  for (let i = 0; i < 16; i++) { px(ctx, i, 0, '#3a1a22'); px(ctx, 0, i, '#3a1a22'); px(ctx, i, 15, '#050203'); px(ctx, 15, i, '#050203'); }
+}
 function paintAsh(ctx, r) {
   paintNoise(ctx, ASH, r);
   for (let i = 0; i < 4; i++) {          // 暗红色的裂纹
@@ -1197,6 +1226,7 @@ function blockTexture(b) {
   else if (t.type === 'yin') paintYin(ctx, r);
   else if (t.type === 'yang') paintYang(ctx, r);
   else if (t.type === 'ash') paintAsh(ctx, r);
+  else if (t.type === 'ruincore') paintRuinCore(ctx, r);
   return upscale(c);
 }
 function blockParticles(b) {
@@ -1211,6 +1241,7 @@ function blockParticles(b) {
   if (t.type === 'core') return ['#5fe8ff','#9a5cff','#ffffff','#2b1450','#c4fbff'];
   if (t.type === 'element') { const c = ELEMENTS[t.el].c; return [c, shade(c, .4), shade(c, -.5), shade(c, -.75)]; }
   if (t.type === 'ash') return ['#4a4744','#6a6560','#2e2c2a','#ff5a1f','#ff8a24'];
+  if (t.type === 'ruincore') return ['#d81e34','#ff6a3a','#fff0d0','#3a0a12','#120a0e'];
   if (t.type === 'yin') return ['#141730','#c9d2ff','#7a86b8','#dfe5ff'];
   if (t.type === 'yang') return ['#ffb21f','#ff6a1f','#fff3a0','#ffe04a'];
   if (t.type === 'metal') return [t.c, shade(t.c, -.2), shade(t.c, .3)];
@@ -1234,6 +1265,9 @@ function pickSprite(p, mirror) {
     H: (x, y) => (x === 8 && y === 3) ? '#1c1c24' : (x === 13 && y === 8) ? '#f4f4f4' : y <= 3 ? '#f4f4f4' : '#1c1c24',
     L: '#ffffff', h: (x, y) => y <= 3 ? '#1c1c24' : '#bdbdc6', S: '#a3271f', b: '#4a0e0a' };
   else if (p.look === 'yinyuan') map = { H: (x, y) => (x * 5 + y * 3) % 11 === 0 ? '#eafff6' : '#6fd1b0', L: '#eafff6', h: '#c99a2e', S: (x, y) => (x + y) % 4 === 0 ? '#d9a441' : '#1e1e1e', b: '#000000' };
+  else if (p.look === 'doom') map = {   // 末日镐：从镐尖的血红渐变到根部的漆黑，骨白色镐柄
+    H: (x, y) => { const t = y <= 3 ? (x - 3) / 10 : 1 - (y - 4) / 8; return t < .3 ? '#c8142e' : t < .65 ? '#7a0a1c' : '#2a0308'; },
+    L: '#ff6a7a', h: '#000000', S: '#f2e8d2', b: '#7a6a52' };
   else if (p.look === 'ruin') map = { H: (x, y) => ((x * 7 + y * 3) % 5 === 0 || (x === 13 && y % 3 === 1)) ? '#ff6a1f' : '#2a1414', L: '#ffb070', h: '#e0261b', S: '#3a1a1a', b: '#0e0505' };
   else if (p.look === 'mystic') map = { H: (x, y) => (x + 2 * y) % 5 === 0 ? '#5fe8ff' : '#5a24d6', L: '#c4fbff', h: '#1e0850', S: '#4a3d66', b: '#1a1428' };
   drawMask(ctx, PICK_MASK, map);
@@ -1254,6 +1288,7 @@ function itemIcon(id) {
   }
   else if (it.icon === 'jewel') drawMask(ctx, JEWEL_MASK, { M: base, L: shade(base, .5), W: '#ffffff', D: shade(base, -.3), d: shade(base, -.6) }, 0, 1);
   else if (ELEMENTS[it.icon]) drawElement(ctx, it.icon);
+  else if (it.icon === 'ruincore') drawMask(ctx, RUINCORE_MASK, { k: '#2a0610', R: '#d81e34', O: '#ff6a3a', W: '#fff0d0' }, 0, 1);
   else if (it.icon === 'ash') { const rr = mulberry(51); drawMask(ctx, ASH_MASK, { X: () => choose(ASH, rr), e: '#ff6a1f', d: '#24221f' }, 0, 1); }
   else if (it.icon === 'yin') drawMoon(ctx, 7.5, 8, 6.4, '#dfe5ff', '#6a76a8');
   else if (it.icon === 'yang') drawSun(ctx, 7.5, 8, 4, '#ffb21f', '#fff3a0', '#ff8a24');
@@ -2232,7 +2267,7 @@ const HELP = `
 <p>长按挖掘和自动挖掘都是每秒 10 次，同时开启也不会叠加。进度每 5 秒自动保存在这个浏览器里。</p>
 <p><b>后台运行</b>：开着自动挖掘时，切到别的标签页或最小化窗口，照常每秒 10 次。浏览器在后台放慢或暂停页面也没关系，回来时会按实际经过的时间补齐。</p>
 <p><b>离线挖掘</b>：开着自动挖掘关掉页面，离开期间按每秒 4 次继续挖当前方块，规则和在线完全一样，掉落、升级、巨额财富转化都照算，下次打开时结算。自动挖掘关着时离线不挖。</p>
-<p><b>区域 2</b>：合成极光镐后解锁（之后极光镐用掉也不会再锁上），方块和商店都按区域分开。在区域 2 挖矿，伤害要开 2 次方。区域 3 下次更新开放。</p>
+<p><b>区域 2</b>：合成极光镐后解锁（之后极光镐用掉也不会再锁上），方块和商店都按区域分开。在区域 2 挖矿，伤害要开 2 次方。<b>区域 3</b> 要合成末日镐才能解锁，内容下次更新开放。</p>
 <p><b>毁灭能量</b>：用 10 个灰烬解锁，每秒产出 1 点。升级第一次要 100 灰烬，之后每次花费 ×10，每升一级产速翻倍。<b>毁灭增益</b> = <code>毁灭能量^0.12</code>（不足 1 时按 1 算）。不管在哪个区域、开没开自动挖掘都会产出；关掉页面后按在线 40% 的速度继续产出。毁灭镐要花掉 100万 毁灭能量，花掉后增益会跟着变小。</p>
 <p><b>神秘之镐</b>的属性随身上的宝石变化，宝石不会被消耗：伤害 = <code>50万 × log₄(蓝宝石 + 4)</code>，使用 = <code>30 × lg(红宝石 + 10)</code>，金币 = <code>4 × log₄₀(绿宝石 + 40)</code>。</p>
 <p><b>数字单位</b>：万、亿、兆、京、垓、秭、穰……每一级是上一级的平方（万万得亿，亿亿得兆，兆兆得京）。中间的数组合着念，比如万亿 = 10¹²，万兆 = 10²⁰，亿兆 = 10²⁴，万亿兆 = 10²⁸。</p>
