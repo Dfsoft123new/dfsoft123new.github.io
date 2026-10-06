@@ -1415,7 +1415,7 @@ function checkLevel() {
 const newAgg = () => ({ n: 0, d: 0, broke: 0, gain: 0, xp: 0, conv: 0, drops: {} });
 
 // 连续挖 n 次。在线、后台、离线都走这一个函数，规则完全一样：
-// 每一下按当前伤害扣血、累加使用增益、单独判定掉落；挖掉就结算奖励并刷新方块。
+// 每一下按当前伤害扣血、累加使用增益；挖掉方块时结算奖励、判定掉落，然后刷新方块。
 // ePerDig：大段补算时，每挖一下顺带产出的毁灭能量（让毁灭增益随时间逐步上涨）
 function simulate(n, agg, ePerDig) {
   const b = curBlock(), p = curPick(), zone = S.zone, inv = 1 / zone, it = S.items, st = S.stats;
@@ -1428,11 +1428,6 @@ function simulate(n, agg, ePerDig) {
     let d = mult * usage; if (zone !== 1) d = Math.pow(d, inv);
     d *= rb;
     usage += use; hp -= d; agg.d += d;
-    if (dropItem !== null && Math.random() < dropP) {
-      it[dropItem] = (it[dropItem] || 0) + dropN; agg.drops[dropItem] = (agg.drops[dropItem] || 0) + dropN;
-      // 奖杯影响伤害；神秘之镐的属性随宝石变化，掉落后立即生效
-      if (dropItem === 'trophy' || p.dyn) { mult = dmgMult(); use = stat(p).use; ({ gain, xp } = rewardOf(b, p)); }
-    }
     if (hp <= 0) {
       hp = b.hp; agg.broke++; st.broken++;
       if (b.wealth) {
@@ -1441,6 +1436,12 @@ function simulate(n, agg, ePerDig) {
       } else {
         S.coins += gain; S.exp += xp; st.earned += gain; st.xp += xp; agg.gain += gain; agg.xp += xp;
         if (S.exp >= expNeed(S.level)) { checkLevel(); mult = dmgMult(); }
+      }
+      // 挖掉方块时判定掉落
+      if (dropItem !== null && Math.random() < dropP) {
+        it[dropItem] = (it[dropItem] || 0) + dropN; agg.drops[dropItem] = (agg.drops[dropItem] || 0) + dropN;
+        // 奖杯影响伤害；神秘之镐的属性随宝石变化，掉落后立即生效
+        if (dropItem === 'trophy' || p.dyn) { mult = dmgMult(); use = stat(p).use; ({ gain, xp } = rewardOf(b, p)); }
       }
     }
   }
@@ -1754,7 +1755,7 @@ function renderZones() {
   renderTabs(zoneRefs.mine, S.zone, E.zoneHint, '');
   renderTabs(zoneRefs.shop, shopZone, E.shopHint, '的商品');
 }
-const dropHtml = d => `每次挖掘 <b>${pct(d.p)}%</b> 掉落 ${d.n > 1 ? '<b>' + d.n + '</b> ' : ''}<img class="ico-s pix" src="${ICON.items[d.item]}" alt="">${ITEMS[d.item].name}`;
+const dropHtml = d => `每挖掉一块 <b>${pct(d.p)}%</b> 掉落 ${d.n > 1 ? '<b>' + d.n + '</b> ' : ''}<img class="ico-s pix" src="${ICON.items[d.item]}" alt="">${ITEMS[d.item].name}`;
 
 function buildBlocks() {
   const list = $('blockList');
@@ -1824,7 +1825,7 @@ function applyBlock() {
     const tile = S.zone === 2 ? ICON.stone2 : ICON.stone;
     E.stage.style.backgroundImage = `linear-gradient(rgba(12,10,8,.74),rgba(12,10,8,.9)),url(${tile})`;
   }
-  E.bDrop.innerHTML = b.drop ? `<span class="droptag"><img class="pix" src="${ICON.items[b.drop.item]}" alt="">每次挖掘 ${pct(b.drop.p)}% 掉落 ${b.drop.n > 1 ? b.drop.n + ' 个' : ''}${ITEMS[b.drop.item].name}</span>`
+  E.bDrop.innerHTML = b.drop ? `<span class="droptag"><img class="pix" src="${ICON.items[b.drop.item]}" alt="">每挖掉一块 ${pct(b.drop.p)}% 掉落 ${b.drop.n > 1 ? b.drop.n + ' 个' : ''}${ITEMS[b.drop.item].name}</span>`
     : b.wealth ? `<span class="droptag"><img class="pix" src="${ICON.coin}" alt="">挖掉后金币清空，转化为财富增益</span>` : '';
   lastCrack = null;
 }
@@ -2133,7 +2134,7 @@ const HELP = `
 <p><b>巨额财富</b>不给金币和经验，挖掉的那一下会把身上的金币全部清空，计入总转化金币。</p>
 <p><b>挖掉方块</b>获得金币 = <code>方块金币 × 镐子金币倍率</code>，经验 = <code>金币 × log₂(金币)</code>。注意金币正好为 1 时 log₂(1) = 0，没有经验，去挖普通方块 II 吧。</p>
 <p><b>升级</b>所需经验 = <code>等级³ × lg(等级 + 1)</code>，从 1 级开始。</p>
-<p>奖杯方块、各种锭、紫水晶、基岩、棱镜碎片、七色光、棱镜、神秘之核、宝石、五行和阴阳<b>每挖一下</b>都有概率掉落对应材料，用来合成高级镐子。拿到的材料显示在「材料」栏里，点「全部材料」能看到每种材料从哪来、能合成什么。</p>
+<p>奖杯方块、各种锭、紫水晶、基岩、棱镜碎片、七色光、棱镜、神秘之核、宝石、五行、阴阳和灰烬<b>每挖掉一块</b>都有概率掉落对应材料（挖的过程中不掉），用来合成高级镐子。拿到的材料显示在「材料」栏里，点「全部材料」能看到每种材料从哪来、能合成什么。</p>
 <p>长按挖掘和自动挖掘都是每秒 10 次，同时开启也不会叠加。进度每 5 秒自动保存在这个浏览器里。</p>
 <p><b>后台运行</b>：开着自动挖掘时，切到别的标签页或最小化窗口，照常每秒 10 次。浏览器在后台放慢或暂停页面也没关系，回来时会按实际经过的时间补齐。</p>
 <p><b>离线挖掘</b>：开着自动挖掘关掉页面，离开期间按每秒 4 次继续挖当前方块，规则和在线完全一样，掉落、升级、巨额财富转化都照算，下次打开时结算。自动挖掘关着时离线不挖。</p>
