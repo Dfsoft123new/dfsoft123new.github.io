@@ -112,8 +112,8 @@ button{font:inherit;color:inherit}
   border:2px solid var(--line);box-shadow:inset 2px 2px 0 var(--lo);cursor:pointer;touch-action:manipulation}
 .tab.on{background:var(--hi);color:var(--text);box-shadow:inset 0 -3px 0 var(--sel)}
 .tab.dot::after{content:'';position:absolute;top:4px;right:4px;width:8px;height:8px;background:#4ea32e;border:1px solid #000}
-.zones{display:flex;gap:6px;margin-bottom:10px}
-.zones .btn{flex:1 1 0;min-width:0;font-size:14px;padding:5px 6px;display:inline-flex;align-items:center;justify-content:center;gap:4px}
+.zones{display:flex;gap:4px;margin-bottom:10px}
+.zones .btn{flex:1 1 0;min-width:0;font-size:14px;padding:5px 2px;display:inline-flex;align-items:center;justify-content:center;gap:3px;white-space:nowrap}
 .zones .btn.locked{background:#3b3b3b;color:#b5b5b5;text-shadow:none;box-shadow:inset 2px 2px 0 #4c4c4c,inset -2px -2px 0 #2a2a2a}
 @media (hover:hover){ .zones .btn.locked:hover{background:#444;box-shadow:inset 2px 2px 0 #555,inset -2px -2px 0 #2a2a2a} }
 .zone-hint{display:flex;align-items:center;gap:4px;font-size:12px;color:var(--muted);margin:-4px 0 10px}
@@ -165,6 +165,11 @@ button{font:inherit;color:inherit}
 .zone-tag{flex:none;font-family:var(--f-display);font-size:14px;color:#fff;background:rgba(0,0,0,.55);border:2px solid #000;box-shadow:inset 0 0 0 1px #5a4d40;padding:3px 8px;white-space:nowrap}
 .droptag{margin-top:6px;max-width:100%;display:inline-block;line-height:1.35;font-size:12px;color:#fff;background:rgba(80,40,140,.55);border:2px solid #000;padding:2px 7px}
 .droptag img{width:16px;height:16px;vertical-align:-3px;margin-right:4px}
+.droptag.conv{background:rgba(20,80,120,.6)}
+.droptag.conv.no{background:rgba(130,40,30,.6)}
+.modes{display:flex;gap:6px;margin-top:8px}
+.modes .btn{flex:1 1 0;min-width:0;white-space:normal;font-size:13px;line-height:1.3;padding:6px 6px}
+.bi-drop.conv{color:var(--text)}
 .scene{position:absolute;left:var(--cx);top:var(--cy);width:var(--s);height:var(--s);margin:calc(var(--s) / -2) 0 0 calc(var(--s) / -2);z-index:2}
 .scene.pop{animation:pop .32s cubic-bezier(.3,1.6,.5,1)}
 @keyframes pop{0%{transform:scale(.55);opacity:.4}100%{transform:scale(1);opacity:1}}
@@ -258,9 +263,10 @@ button{font:inherit;color:inherit}
 .ruin-act small.no b{color:var(--bad)}
 .ruin-note{margin-top:6px}
 .ruin.flash .ruin-amt{animation:lvflash .9s ease-out}
-.zones .btn img{width:16px;height:16px;flex:none}
+.zones .btn img{width:14px;height:14px;flex:none}
 .zones .btn.locked img{opacity:.85}
 .stage[data-zone="2"] .glow{background:radial-gradient(circle,rgba(130,90,255,.28),rgba(80,210,255,.08) 45%,transparent 68%)}
+.stage[data-zone="4"] .glow{background:radial-gradient(circle,rgba(150,120,255,.26),rgba(90,160,255,.08) 45%,transparent 68%)}
 .stage[data-zone="3"] .glow{background:radial-gradient(circle,rgba(140,255,90,.24),rgba(60,220,170,.07) 45%,transparent 68%)}
 /* 反应堆（区域 3） */
 .nk .ph{flex-wrap:wrap}
@@ -288,6 +294,15 @@ button{font:inherit;color:inherit}
 .nk-bar i.b{background:linear-gradient(#5ab4ff,#1f5fc0)}
 .nk-bar i.p{background:linear-gradient(#c88aff,#7a35c8)}
 .nk-bar i.w{background:linear-gradient(#ffffff,#c4d6ff)}
+.nk-bar i.c{background:linear-gradient(#7ff0ff,#1f9ab8)}
+.nk-bar i.o{background:linear-gradient(#ff6b55,#b51f17);animation:nkblink .5s steps(2,jump-none) infinite}
+@keyframes nkblink{0%{opacity:1}100%{opacity:.45}}
+.nk-bar u{position:absolute;top:0;bottom:0;width:2px;margin-left:-1px;background:#ffe27a;box-shadow:0 0 0 1px #000}
+.nk-lattice{display:block;width:100%;max-width:528px;height:auto;margin:0 auto 8px;background:#0b0e14;border:2px solid #000;box-shadow:inset 0 0 0 2px #232a3a}
+.nk-cold-acts{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+.nk-cold-acts .btn{flex:1 1 auto;white-space:normal}
+.nk-autob{margin:6px 0 0}
+.nk-up small b{font:inherit;color:var(--bad)}
 .nk-bar span{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;padding:0 6px;font-family:var(--f-num);font-weight:600;font-size:12px;color:#fff;
   text-shadow:1px 1px 0 #000,-1px -1px 0 #000,1px -1px 0 #000,-1px 1px 0 #000;white-space:nowrap;overflow:hidden}
 .nk-rods{display:grid;grid-template-columns:repeat(auto-fit,minmax(min(100%,150px),1fr));gap:6px;margin-top:8px}
@@ -530,6 +545,7 @@ button{font:inherit;color:inherit}
           <div class="bname"><span id="bName"></span><span class="blv" id="bLv"></span></div>
           <div class="bsub" id="bSub"></div>
           <div id="bDrop"></div>
+          <div id="bConv"></div>
         </div>
         <div class="zone-tag" id="zoneTag"></div>
       </div>
@@ -546,6 +562,7 @@ button{font:inherit;color:inherit}
       <button class="btn big" id="holdBtn" type="button">按住挖掘</button>
       <button class="btn big" id="autoBtn" type="button">自动挖掘：关</button>
     </div>
+    <div class="modes" id="modeRow" hidden></div>
     <div class="keys">按住方块或按钮即可连续挖掘<span class="kbd-hint">，键盘 <kbd>空格</kbd> 长按挖掘、<kbd>A</kbd> 切换自动</span>。两种方式不叠加，最多每秒 <span id="keysRate">10</span> 次。<span class="offnote" id="offNote"></span></div>
   </section>
 
@@ -566,10 +583,12 @@ button{font:inherit;color:inherit}
         <button type="button" class="tab" data-nk="fis" role="tab">裂变<small></small></button>
         <button type="button" class="tab" data-nk="fus" role="tab">聚变<small></small></button>
         <button type="button" class="tab" data-nk="brd" role="tab">增殖<small></small></button>
+        <button type="button" class="tab" data-nk="cold" role="tab" hidden>冷聚变<small></small></button>
       </div>
       <div class="nk-pane" id="nkFis">
         <div class="nk-bar"><i id="nkHeatFill"></i><span id="nkHeatText"></span></div>
         <div class="nk-rods" id="nkRods"></div>
+        <div class="nk-cold-acts nk-autob"><button type="button" class="btn sm" id="nkAutoB"></button></div>
         <div class="nk-line" id="nkFisInfo"></div>
         <div class="nk-slots" id="nkFisSlots"></div>
         <div class="nk-ups" id="nkHw"></div>
@@ -583,6 +602,14 @@ button{font:inherit;color:inherit}
         <div class="nk-line" id="nkBrdInfo"></div>
         <div class="nk-slots" id="nkBrdSlots"></div>
         <div class="nk-ups" id="nkUps"></div>
+      </div>
+      <div class="nk-pane" id="nkCold" hidden>
+        <div class="nk-bar" id="nkColdBar"><i id="nkColdFill"></i><u id="nkColdCap"></u><span id="nkColdText"></span></div>
+        <div class="nk-line" id="nkColdInfo"></div>
+        <canvas class="nk-lattice pix" id="nkLattice" width="176" height="57" aria-hidden="true"></canvas>
+        <div class="nk-cold-acts"><button type="button" class="btn sm" id="nkColdOn"></button><button type="button" class="btn sm" id="nkColdTop"></button><button type="button" class="btn sm green" id="nkColdFix" hidden></button></div>
+        <div class="nk-line" id="nkColdOut"></div>
+        <div class="nk-ups" id="nkColdUps"></div>
       </div>
     </div>
     <div class="panel ruin" id="ruinPanel" aria-label="毁灭能量" hidden>
@@ -610,14 +637,16 @@ button{font:inherit;color:inherit}
         </div>
       </div>
       <div class="panel">
-        <div class="ph"><h2>增益</h2><span class="hint">伤害 =（镐子伤害 × 增益）开方后 × 毁灭增益</span></div>
+        <div class="ph"><h2>增益</h2><span class="hint" id="bfFormula"></span></div>
         <div class="kvs">
           <div class="kv"><span>使用增益<small>初始 0.1，每次挖掘累加</small></span><b id="bfUse"></b></div>
-          <div class="kv"><span>等级增益<small>等级^0.5</small></span><b id="bfLv"></b></div>
-          <div class="kv"><span>奖杯增益<small>1 + 奖杯数量^0.36</small></span><b id="bfTr"></b></div>
-          <div class="kv"><span>财富增益<small id="bfWlNote">总转化金币^0.24</small></span><b id="bfWl"></b></div>
-          <div class="kv"><span>区域修正<small id="bfZoneNote"></small></span><b id="bfZone"></b></div>
-          <div class="kv"><span>毁灭增益<small>毁灭能量^0.12，开方之后再乘</small></span><b id="bfRuin"></b></div>
+          <div class="kv" id="bfLvRow"><span>等级增益<small>等级^0.5</small></span><b id="bfLv"></b></div>
+          <div class="kv" id="bfTrRow"><span>奖杯增益<small>1 + 奖杯数量^0.36</small></span><b id="bfTr"></b></div>
+          <div class="kv" id="bfWlRow"><span>财富增益<small id="bfWlNote">总转化金币^0.24</small></span><b id="bfWl"></b></div>
+          <div class="kv" id="bfDgRow" hidden><span>压缩增益<small>1 + 简并态中子簇^0.84</small></span><b id="bfDg"></b></div>
+          <div class="kv" id="bfBhRow" hidden><span>黑洞增益<small>1 + 微型黑洞^1.26</small></span><b id="bfBh"></b></div>
+          <div class="kv" id="bfZoneRow"><span>区域修正<small id="bfZoneNote"></small></span><b id="bfZone"></b></div>
+          <div class="kv" id="bfRuinRow"><span>毁灭增益<small>毁灭能量^0.12，开方之后再乘</small></span><b id="bfRuin"></b></div>
           <div class="kv" id="bfNukeRow" hidden><span>核能增益<small id="bfNukeNote"></small></span><b id="bfNuke"></b></div>
           <div class="kv total"><span>单次伤害</span><b id="bfDmg"></b></div>
           <div class="kv"><span>每秒伤害<small id="bfDpsNote">每秒 10 次</small></span><b id="bfDps"></b></div>
@@ -632,7 +661,7 @@ button{font:inherit;color:inherit}
     <div class="ph"><div class="side-tabs" role="tablist"><button type="button" class="tab" data-tab="blocks" role="tab">方块</button><button type="button" class="tab" data-tab="shop" role="tab">商店</button></div><h2>商店</h2><span class="hint">按住合成可连续购买</span></div>
     <div class="zones" id="shopZones"></div>
     <div class="zone-hint" id="shopHint"></div>
-    <div class="scroll"><div class="shop-list" id="shopList"></div><div class="soon" id="shopSoon" hidden>区域 2 还有更多镐子，敬请期待</div></div>
+    <div class="scroll"><div class="shop-list" id="shopList"></div><div class="soon" id="shopSoon" hidden>这个区域还没有镐子，敬请期待</div></div>
   </section>
 </main>
 <footer class="credit">创意来源：<b>升镐UYPickaxe</b></footer>
@@ -652,6 +681,7 @@ const ZONES = [
   { n: 1, name: '区域 1', ready: true },
   { n: 2, name: '区域 2', ready: true, need: 'whiteP' },
   { n: 3, name: '区域 3', ready: true, need: 'doomP' },
+  { n: 4, name: '区域 4', ready: true, need: 'neutronUP' },
 ];
 
 const BLOCKS = [
@@ -717,8 +747,29 @@ const BLOCKS = [
   { id:'k10', zone:3, name:'浓缩铀',   hp:1e15,   coin:2.4e12, drop:{item:'u235',     p:0.05}, tex:{type:'rad', c:'#b6ff3b'} },
   { id:'k11', zone:3, name:'武器级钚', hp:1e17,   coin:2.4e13, drop:{item:'pu241',    p:1, n:5}, tex:{type:'rad', c:'#ff3d5a'} },
   { id:'k12', zone:3, name:'恒星核心', hp:1e20,   coin:2.4e15, drop:{items:['he3','deut','trit'], p:1, n:20}, tex:{type:'star'} },
+  // ---------- 区域 4（伤害开 4 次方）：每个矿掉 1 种主材料（10%）和 2 种副材料（各 5%），8 种材料都是冷聚变用的 ----------
+  { id:'t11', zone:4, name:'奖杯方块 XI', hp:3e12,   coin:3e15,   drop:{item:'trophy', p:0.005, n:1e9}, tex:{type:'trophy', bg:'#0a0f24', c:'#b08cff'} },
+  { id:'t12', zone:4, name:'奖杯方块 XII', hp:2e16,  coin:1.2e18, drop:{item:'trophy', p:1, n:1e12}, tex:{type:'trophy', bg:'#07060c', c:'#ffb03a'} },
+  { id:'q01', zone:4, name:'钯矿', hp:1e13,   coin:4e15,   drop:{item:'pd', p:0.10, more:[{item:'ti', p:0.05}, {item:'ni', p:0.05}]}, tex:{type:'ore', rock:4, c:'#ffd9a8'} },
+  { id:'q02', zone:4, name:'钛矿', hp:3e13,   coin:7e15,   drop:{item:'ti', p:0.10, more:[{item:'zr', p:0.05}, {item:'ag', p:0.05}]}, tex:{type:'ore', rock:4, c:'#9cc8ff'} },
+  { id:'q03', zone:4, name:'镍矿', hp:8e13,   coin:1.5e16, drop:{item:'ni', p:0.10, more:[{item:'pd', p:0.05}, {item:'la', p:0.05}]}, tex:{type:'ore', rock:4, c:'#b8d86a'} },
+  { id:'q04', zone:4, name:'锆矿', hp:2e14,   coin:2.5e16, drop:{item:'zr', p:0.10, more:[{item:'vn', p:0.05}, {item:'pt', p:0.05}]}, tex:{type:'ore', rock:4, c:'#5fe0e0'} },
+  { id:'q05', zone:4, name:'镧矿', hp:7e14,   coin:8e16,   drop:{item:'la', p:0.10, more:[{item:'ni', p:0.05}, {item:'ag', p:0.05}]}, tex:{type:'ore', rock:4, c:'#ff9ec4'} },
+  { id:'q06', zone:4, name:'铂矿', hp:2.4e15, coin:3.2e17, drop:{item:'pt', p:0.10, more:[{item:'zr', p:0.05}, {item:'vn', p:0.05}]}, tex:{type:'ore', rock:4, c:'#eafcff'} },
+  { id:'q07', zone:4, name:'银矿', hp:9e15,   coin:7.5e17, drop:{item:'ag', p:0.10, more:[{item:'la', p:0.05}, {item:'pd', p:0.05}]}, tex:{type:'ore', rock:4, c:'#c0c8d4'} },
+  { id:'q08', zone:4, name:'钒矿', hp:3e16,   coin:1.6e18, drop:{item:'vn', p:0.10, more:[{item:'pt', p:0.05}, {item:'ti', p:0.05}]}, tex:{type:'ore', rock:4, c:'#a78bff'} },
+  // ---------- 区域 4 第一部分：中子物质、胶球、黑洞 ----------
+  // conv：每挖掉一块，把 n 个 from 变成 1 个 to（不够就不变）；modes：可以切换的几种 conv。中子、合成器、坍缩器的金币是按区域 4 的血量-金币曲线估的
+  { id:'x01', zone:4, name:'中子',       hp:5e12,   coin:3.4e15, drop:{item:'neutron', p:0.10, n:100}, tex:{type:'nball'} },
+  { id:'x02', zone:4, name:'中子压缩机', hp:2e13,   coin:5.4e15, conv:{from:'neutron', n:10000, to:'degen'}, drop:{item:'ndust', p:0.001}, tex:{type:'machine', c:'#9fb4ff', k:0} },
+  { id:'x03', zone:4, name:'中子合成器', hp:1.2e14, coin:2e16,   modes:[{from:'ndust', n:10, to:'ngrain'}, {from:'ngrain', n:10, to:'ningot'}], tex:{type:'machine', c:'#5fe8ff', k:1} },
+  { id:'x04', zone:4, name:'胶球',       hp:5e15,   coin:5e17,   drop:{item:'glue', p:0.01}, tex:{type:'glue', n:1} },
+  { id:'x05', zone:4, name:'胶球群',     hp:1e17,   coin:4e18,   drop:{item:'glue', p:0.10}, tex:{type:'glue', n:6} },
+  { id:'x06', zone:4, name:'坍缩器',     hp:3e17,   coin:9e18,   modes:[{from:'degen', n:100, to:'strange'}, {from:'strange', n:100, to:'mbh'}], tex:{type:'machine', c:'#b06bff', k:2} },
+  { id:'x07', zone:4, name:'黑洞',       hp:1e19,   coin:1e20,   drop:{item:'mbh', p:0.005}, tex:{type:'hole'} },
 ];
 BLOCKS.forEach(b => { if (!b.zone) b.zone = 1; });
+const blockConvs = b => b.modes || (b.conv ? [b.conv] : []);   // 这个方块能做的全部转化
 // 每个区域里的方块永远按基础血量从小到大排：新方块不管写在表里哪个位置，都会自动排到该在的地方
 BLOCKS.sort((a, b) => a.zone - b.zone || a.hp - b.hp);
 const dropKeys = d => d.items || [d.item];   // 一次掉落的材料种类（恒星核心一次掉三种）
@@ -767,14 +818,32 @@ const ITEMS = {
   boron:    { name:'硼',     icon:'gem',    c:'#c9a27a', note:'制造、升级和维护裂变堆的控制棒' },
   beryl:    { name:'铍',     icon:'gem',    c:'#6fe0c8', note:'升级裂变堆的中子反射层，留住更多中子' },
   tungsten: { name:'钨',     icon:'ingot',  c:'#a9b6d0', note:'升级裂变堆的结构，提高热量上限和冷却' },
+  // ---------- 区域 4：冷聚变的 8 种材料，升级用，运行时也会慢慢消耗 ----------
+  pd: { name:'钯', icon:'ingot', c:'#ffd9a8', note:'冷聚变：钯晶格（空位数量）；修复崩坏的晶格也要用' },
+  ti: { name:'钛', icon:'ingot', c:'#9cc8ff', note:'冷聚变：钛容器（过载耐受）；修复崩坏的晶格也要用' },
+  ni: { name:'镍', icon:'ingot', c:'#b8d86a', note:'冷聚变：镍催化层（省氘）' },
+  zr: { name:'锆', icon:'ingot', c:'#5fe0e0', note:'冷聚变：锆包壳（中子保留）' },
+  la: { name:'镧', icon:'ingot', c:'#ff9ec4', note:'冷聚变：镧储氘层（最大负载率）' },
+  pt: { name:'铂', icon:'ingot', c:'#eafcff', note:'冷聚变：铂催化网（反应速率）' },
+  ag: { name:'银', icon:'ingot', c:'#c0c8d4', note:'冷聚变：银导热层（过载耐受加成）' },
+  vn: { name:'钒', icon:'ingot', c:'#a78bff', note:'冷聚变：钒储氘合金（爬升速度）' },
+  // ---------- 区域 4 第一部分 ----------
+  degen:   { name:'简并态中子簇', icon:'pellet', c:'#e8ecff', note:'中子压缩机每挖掉一块，把 1万 中子压成 1 个。压缩增益 = 1 + 数量^0.84，花掉后增益会变小' },
+  ndust:   { name:'中子态素尘埃', icon:'dust',   c:'#9fb4ff' },
+  ngrain:  { name:'中子态素颗粒', icon:'gem',    c:'#9fb4ff' },
+  ningot:  { name:'中子锭',       icon:'ingot',  c:'#9fb4ff' },
+  glue:    { name:'胶球',         icon:'glue',   c:'#ff5fa8' },
+  strange: { name:'奇异物质',     icon:'jewel',  c:'#7dffb0' },
+  mbh:     { name:'微型黑洞',     icon:'hole',   c:'#ff9a3a', note:'黑洞增益 = 1 + 数量^1.26，花掉后增益会变小' },
   // 下面三种是反应堆的产物，不是整数
-  nuke:     { name:'核能',   icon:'rad',    c:'#7dff5a', frac:true, note:'裂变、聚变产出。核能增益 = 1 + 核能^0.5，合成镐子花掉后增益会变小' },
+  nuke:     { name:'核能',   icon:'rad',    c:'#7dff5a', frac:true, note:'裂变、聚变产出。核能增益 = 1 + 核能^0.64，合成镐子花掉后增益会变小' },
   power:    { name:'能量',   icon:'bolt',   c:'#ffd23f', frac:true, note:'裂变、聚变产出。用于聚变点火和维持、增殖堆升级' },
   neutron:  { name:'中子',   icon:'spark',  c:'#cfd8ff', frac:true, note:'裂变、聚变产出。中子越多裂变越快，也是增殖堆的原料' },
 };
 const MAT_KEYS = ['mithril','aurum','amethyst','bedrock','super','ultimate','shard','red','orange','yellow','green','blue','indigo','violet','prism',
   'core','sapphire','ruby','emeraldGem','jin','mu','shui','huo','tu','yin','yang','ash','ruinCore',
-  'u238','th232','u233','u235','pu239','pu241','deut','trit','he3','boron','beryl','tungsten','nuke','power','neutron'];
+  'u238','th232','u233','u235','pu239','pu241','deut','trit','he3','boron','beryl','tungsten','nuke','power','neutron',
+  'pd','ti','ni','zr','la','pt','ag','vn','degen','ndust','ngrain','ningot','glue','strange','mbh'];
 
 // 石英镐属性原表缺失，这里按红石镐与下界合金镐之间取值，可自行修改
 const PICKS = [
@@ -834,6 +903,20 @@ PICKS.push(
   { id:'nk4P',     zone:3, name:'核能镐 K4', dmg:2.5e9, use:7000,  coin:250, c:'#ff8a3a', look:'nuke',    cost:{picks:{nk3P:1}, items:{nuke:2000}} },
   { id:'neutronP', zone:3, name:'中子镐',    dmg:5e9,   use:10000, coin:320, c:'#9fb4ff', look:'neutron', cost:{picks:{nk4P:1}, items:{neutron:10000}} },
   { id:'thermalP', zone:3, name:'热中子镐',  dmg:1e10,  use:15000, coin:500, c:'#ffb03a', look:'thermal', cost:{picks:{neutronP:1, nk4P:1}, items:{power:50000}} },
+  { id:'neutronUP', zone:3, name:'中子镐 U', dmg:2.4e10, use:20000, coin:700, c:'#b08cff', look:'neutronU', cost:{picks:{thermalP:1, neutronP:1}, items:{neutron:100000}} },
+);
+// ---------- 区域 4 第一部分 ----------
+PICKS.push(
+  { id:'m1P', zone:4, name:'中子镐 M1', dmg:6.4e10, use:5e4,   coin:1200,  c:'#9fd0ff', look:'dense', cost:{picks:{neutronUP:1}, items:{degen:100}} },
+  { id:'m2P', zone:4, name:'中子镐 M2', dmg:2e11,   use:1.5e5, coin:3000,  c:'#7fa8ff', look:'dense', cost:{picks:{m1P:1, neutronUP:1}, items:{ndust:10}} },
+  { id:'m3P', zone:4, name:'中子镐 M3', dmg:7e11,   use:3.6e5, coin:6400,  c:'#6a7dff', look:'dense', cost:{picks:{m2P:1, m1P:1}, items:{ngrain:25}} },
+  { id:'m4P', zone:4, name:'中子镐 M4', dmg:3.2e12, use:1e6,   coin:16000, c:'#e8ecff', look:'dense', cost:{picks:{m3P:3}, items:{ningot:100}} },
+  { id:'f1P', zone:4, name:'力之镐 K1', dmg:1.2e13, use:3.4e6, coin:4e4,   c:'#8a8f9c', look:'force', cost:{picks:{m4P:1}, items:{glue:100}} },
+  { id:'f2P', zone:4, name:'力之镐 K2', dmg:5.4e13, use:1.2e7, coin:1.5e5, c:'#f4f4ff', look:'force', cost:{picks:{f1P:1}, items:{glue:5000}} },
+  // 下面三把的伤害、使用、金币还没给，先按前面每把 3～5 倍的涨幅暂定
+  { id:'strangeP',   zone:4, name:'奇异镐',     dmg:2.5e14, use:4e7,   coin:5e5,   c:'#7dffb0', look:'strange',   cost:{picks:{f2P:1}, items:{strange:10}} },
+  { id:'holeP',      zone:4, name:'黑洞镐',     dmg:1.2e15, use:1.5e8, coin:1.8e6, c:'#ff9a3a', look:'hole',      cost:{picks:{strangeP:2}, items:{mbh:50}} },
+  { id:'superHoleP', zone:4, name:'超级黑洞镐', dmg:6e15,   use:5e8,   coin:6e6,   c:'#9fd0ff', look:'hole',      cost:{picks:{holeP:1}, items:{mbh:1000}} },
 );
 PICKS.forEach(p => { if (!p.zone) p.zone = 1; });
 
@@ -899,16 +982,47 @@ const REFL_BASE = 0.6, REFL_STEP = 0.05, REFL_COST = [30, 120, 500, 2000, 8000, 
 // 反应堆结构（钨）：决定热量上限和每秒冷却
 const STRUCT_CAP = [100, 120, 140, 160, 180, 200, 220], STRUCT_COOL = [5, 7, 9, 11, 13, 15, 23], STRUCT_COST = [20, 80, 320, 1280, 5120, 20480];
 const FLUX_DIV = 1000;                                     // 反应速率 ×(1 + 中子 / 1000)
+const FLUX_CAP = 100;                                      // 中子裂变指数硬上限：反应速率倍率最多 ×100（中子到 99000 就到顶）
+const fluxOf = it => Math.min(FLUX_CAP, 1 + ((it && it.neutron) || 0) / FLUX_DIV);   // 中子通量 / 1000 的裂变倍率，唯一入口、统一封顶
 const FIS_AUTO_LO = 0.72, FIS_AUTO_HI = 0.88;              // 自动控温：热量到上限的 88% 开始插控制棒，降到 72% 再拔出
 const FUS_KEEP = 5, FUS_SPARE = 10, FUS_RESUME = 20;       // 每槽每秒维持能量；点火要留的余量；暂停后恢复所需能量
 const FUS_UP = 10, FUS_DOWN = 5, FUS_FULL = 1.5;           // 等离子体每秒升温 / 降温；满温时的产出与持续时间倍率
 const BRD_EFF = 0.2, BRD_REC = 0.15;
-const NUKE_EXP = 0.5;                                      // 核能增益 = 1 + 核能^0.5
+const NUKE_EXP = 0.64;                                     // 核能增益 = 1 + 核能^0.64
 const NK_STEP = 0.25;                                      // 反应堆补算时每一步最多这么多秒
+const NK_STEP_QUIET = 1;                                   // 离线 / 后台大段补算时用粗一点的步长，结算更快
+// ---------- 区域 4 解锁后的冷核聚变 ----------
+// 8 条升级线，各用一种区域 4 的材料：val 是 Lv.0～5 的数值，cum 是升到各级的累计消耗，maint 是满级时每分钟的维护消耗（按 等级/5 折算）
+const COLD_LINES = {
+  pd: { name:'钯晶格',     dim:'空位',         val:[100, 110, 125, 145, 165, 180],    cum:[300, 1500, 6000, 15000, 30000], maint:7,   show: v => v + ' 个', lack:'空位退回 100 个' },
+  ti: { name:'钛容器',     dim:'过载耐受',     val:[10, 15, 20, 30, 45, 60],          cum:[200, 1000, 4000, 10000, 18000], maint:4,   show: v => v + ' 秒', lack:'耐受退回 10 秒' },
+  ni: { name:'镍催化层',   dim:'氘消耗',       val:[0, 0.1, 0.2, 0.3, 0.4, 0.5],      cum:[100, 500, 2000, 6000, 12000],   maint:3,   show: v => v ? '−' + pct(v) + '%' : '不减', lack:'氘消耗不再减少' },
+  zr: { name:'锆包壳',     dim:'中子保留',     val:[0.8, 0.83, 0.86, 0.9, 0.94, 0.98], cum:[100, 500, 2000, 5000, 9000],    maint:2,   show: v => pct(v) + '%', lack:'中子保留退回 80%' },
+  la: { name:'镧储氘层',   dim:'最大负载率',   val:[1, 1.1, 1.2, 1.35, 1.5, 1.8],     cum:[200, 1000, 4000, 10000, 24000], maint:2,   show: v => pct(v) + '%', lack:'最大负载率退回 100%' },
+  pt: { name:'铂催化网',   dim:'反应速率',     val:[1, 1.1, 1.2, 1.3, 1.4, 1.5],      cum:[50, 250, 1000, 2500, 6000],     maint:1.5, show: v => '×' + v, lack:'反应速率退回 ×1' },
+  ag: { name:'银导热层',   dim:'过载耐受加成', val:[1, 1.1, 1.25, 1.45, 1.7, 2],      cum:[60, 300, 1200, 3000, 7200],     maint:1.5, show: v => '×' + v, lack:'耐受加成退回 ×1' },
+  vn: { name:'钒储氘合金', dim:'爬升速度',     val:[1, 1.1, 1.25, 1.45, 1.7, 2],      cum:[100, 500, 2000, 5000, 12000],   maint:1.5, show: v => '+' + v + '%/秒', lack:'爬升退回 +1%/秒' },
+};
+const COLD_MAX = 5;                                        // 每条线 5 级
+const COLD_K = 5, COLD_REF = Math.exp(COLD_K);             // 反应速率 = exp(负载率 × 5)；负载率 100% 时是 148.4
+const COLD_NUKE = 25;                                      // 负载率 100%、铂 Lv.0 时每秒 25 核能
+const COLD_OUT = { power: 40, he3: 1, trit: 1, neutron: 6 }; // 其他产物 = 核能 × 系数（中子还要乘锆的保留率）
+const COLD_FEED = 10, COLD_KEEP = 2;                       // 每秒氘消耗：加载时 / 到上限后维持
+const COLD_CLIMB = 0.01, COLD_DECAY = 0.005;               // 每秒负载率：加载 +1% × 钒系数；没有氘喂时 −0.5%
+const COLD_TOP_D = 100, COLD_TOP = 0.2;                    // 手动加注：100 氘换 +20% 负载率
+const COLD_OVER = 10;                                      // 过载时反应速率 ×10
+const COLD_FIX = { pd: 50, ti: 20 };                       // 晶格崩坏后的修复消耗
+const coldCost = (k, lv) => COLD_LINES[k].cum[lv] - (lv ? COLD_LINES[k].cum[lv - 1] : 0);   // 从 lv 升到 lv+1 要的材料
+function freshCold() {
+  const z = () => { const o = {}; for (const k in COLD_LINES) o[k] = 0; return o; };
+  // on：开关；load：负载率（1 = 100%）；over / stress：是否过载、已经过载了几秒；dbuf / mbuf：已经从材料栏取出来、还没用完的氘和维护材料；carry：还不满 1 个的氦3、氚
+  return { on: false, load: 0, over: false, stress: 0, broken: false, lv: z(), dbuf: 0, mbuf: z(), carry: { he3: 0, trit: 0 } };
+}
 function freshNk() {
   return {
     tab: 'fis',
-    fis: { slots: Array(FIS_SLOTS).fill(null), rods: Array.from({ length: FIS_ROD_N }, () => ({ lv: 0, dur: 0, in: false })), heat: 0, melt: 0, melts: 0, refl: 0, struct: 0 },
+    cold: freshCold(),
+    fis: { slots: Array(FIS_SLOTS).fill(null), rods: Array.from({ length: FIS_ROD_N }, () => ({ lv: 0, dur: 0, in: false })), heat: 0, melt: 0, melts: 0, refl: 0, struct: 0, autoB: true },
     fus: { slots: Array(FUS_SLOTS).fill(null), temp: 0 },
     brd: { slots: Array(BRD_MAX).fill(null), up: { slot: 0, eff: 0, rec: 0 } },
   };
@@ -931,6 +1045,7 @@ function sanitizeNk(d) {
   f.fis.refl = clamp(Math.floor(num(a.refl, 0)), 0, REFL_COST.length);
   f.fis.struct = clamp(Math.floor(num(a.struct, 0)), 0, STRUCT_COST.length);
   f.fis.melts = Math.max(0, Math.floor(num(a.melts, 0)));
+  f.fis.autoB = a.autoB !== false;   // 自动补硼，默认开
   f.fis.heat = clamp(num(a.heat, 0), 0, STRUCT_CAP[f.fis.struct]);
   f.fis.melt = clamp(num(a.melt, 0), 0, FIS_MELT_S);
   f.fus.slots = f.fus.slots.map((_, i) => {
@@ -941,6 +1056,16 @@ function sanitizeNk(d) {
   f.fus.temp = clamp(num(b.temp, 0), 0, 100);
   f.brd.slots = f.brd.slots.map((_, i) => { const s = at(c, i); return s && BRD_CHAINS[s.t] ? { t: s.t, has: !!s.has, n: s.has ? clamp(num(s.n, 0), 0, BRD_CHAINS[s.t].need) : 0 } : null; });
   for (const k in BRD_UP) f.brd.up[k] = clamp(Math.floor(num(c.up && c.up[k], 0)), 0, BRD_UP[k].cost.length);
+  const e = (d.cold && typeof d.cold === 'object') ? d.cold : {}, g = f.cold;
+  g.on = !!e.on; g.broken = !!e.broken;
+  for (const k in COLD_LINES) {
+    g.lv[k] = clamp(Math.floor(num(e.lv && e.lv[k], 0)), 0, COLD_MAX);
+    g.mbuf[k] = clamp(num(e.mbuf && e.mbuf[k], 0), 0, 1);
+  }
+  g.load = g.broken ? 0 : clamp(num(e.load, 0), 0, 2.5);
+  g.over = !!e.over && g.load > 0; g.stress = g.over ? Math.max(0, num(e.stress, 0)) : 0;
+  g.dbuf = clamp(num(e.dbuf, 0), 0, 200);
+  for (const k in g.carry) g.carry[k] = clamp(num(e.carry && e.carry[k], 0), 0, 1);
   return f;
 }
 const DIG_MS = 100;      // 在线 / 后台：每秒 10 次
@@ -949,7 +1074,9 @@ const RUIN_OFFLINE = 0.4; // 离线产出为在线的 40%
 const OFFLINE_MS = 250;  // 离线：每秒 4 次
 const SAVE_KEY = 'upgrade-your-pickaxe/mod-save-v1';   // 修改版单独存档，不影响原版
 const ORIGINAL_SAVE_KEY = 'upgrade-your-pickaxe/save-v1';
-const SPEED_MAX = 10;
+// 游戏速度上限跟着到过的最远区域走：区域 1 最高 ×10，到达区域 2 ×20，区域 3 ×40，区域 4 ×80
+const SPEED_TIERS = [10, 20, 40, 80];
+const speedMaxOf = reach => SPEED_TIERS[Math.max(1, Math.min(SPEED_TIERS.length, reach)) - 1];
 
 /* =====================================================================
    工具函数
@@ -1346,7 +1473,7 @@ function paintPrism(ctx, r) {
 const SLATE = ['#3a3f4a','#444a56','#323640','#4d5361','#2b2f37'];
 // 宝石矿：深色岩石里嵌着几簇宝石
 function paintOre(ctx, c, r, rock) {
-  paintNoise(ctx, rock === 3 ? BASALT : SLATE, r);
+  paintNoise(ctx, rockPal(rock), r);
   for (let gy = 0; gy < 3; gy++) for (let gx = 0; gx < 3; gx++) {
     if (r() < .28) continue;
     const x = gx * 5 + 1 + (r() * 2 | 0), y = gy * 5 + 1 + (r() * 2 | 0);
@@ -1466,6 +1593,8 @@ function paintWealth(ctx, r) {
 
 // ---------- 区域 3 的贴图 ----------
 const BASALT = ['#2e3531','#38403b','#262c29','#434c46','#1f2422'];   // 区域 3 的墨绿色岩石
+const ABYSS = ['#2a2d48','#343859','#22253c','#3f4468','#1a1c30'];    // 区域 4 的靛蓝色岩石
+const rockPal = rock => rock === 4 ? ABYSS : rock === 3 ? BASALT : SLATE;
 // 辐射标志：圆盘上三片扇叶
 function drawRad(ctx, cx, cy, R, col, bg, edge) {
   for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
@@ -1485,6 +1614,56 @@ function paintRadBlock(ctx, c, r) {
   paintMetal(ctx, '#3d444c', r);
   drawRad(ctx, 7.5, 7.5, 5.9, c, '#12161a', shade(c, -.45));
   [[1,1],[14,1],[1,14],[14,14]].forEach(([x, y]) => px(ctx, x, y, shade(c, .2)));
+}
+// ---- 区域 4 第一部分的贴图 ----
+const VOID = ['#0a0714','#100a1e','#07050e','#150d28'];
+function ball(ctx, cx, cy, R, c) {    // 带高光的小球
+  for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+    const dx = x - cx, dy = y - cy, d = Math.hypot(dx, dy);
+    if (d > R) continue;
+    px(ctx, x, y, d > R - 1 ? shade(c, -.5) : dx + dy < -R * .55 ? shade(c, .65) : dx + dy > R * .7 ? shade(c, -.25) : c);
+  }
+}
+// 中子：一大团挤得严严实实的中子
+function paintNBall(ctx, r) {
+  paintNoise(ctx, VOID, r);
+  ball(ctx, 7.5, 7.5, 6.3, '#aebcff');
+  for (let i = 0; i < 26; i++) { const a = r() * 6.283, d = r() * 4.6, x = Math.round(7.5 + Math.cos(a) * d), y = Math.round(7.5 + Math.sin(a) * d); px(ctx, x, y, r() < .5 ? '#ffffff' : '#7f8fe0'); }
+}
+// 压缩机 / 合成器 / 坍缩器：钢壳中间一个发光的腔，k 决定腔里的图案
+function paintMachine(ctx, c, r, k) {
+  paintMetal(ctx, '#3d444c', r);
+  for (let y = 4; y < 12; y++) for (let x = 4; x < 12; x++) px(ctx, x, y, (x === 4 || y === 4) ? '#07090c' : '#11151b');
+  const dots = k === 0 ? [[7,5],[8,5],[7,10],[8,10],[5,7],[5,8],[10,7],[10,8],[7,7],[8,7],[7,8],[8,8]]            // 四面往中间压
+    : k === 1 ? [[5,5],[6,6],[10,5],[9,6],[7,7],[8,7],[7,8],[8,8],[7,9],[8,9],[7,10],[8,10]]                        // 两股合成一股
+    : [[6,5],[7,5],[8,5],[9,5],[5,6],[10,6],[5,7],[10,7],[5,8],[10,8],[5,9],[10,9],[6,10],[7,10],[8,10],[9,10]];    // 一圈往里塌
+  dots.forEach(([x, y]) => px(ctx, x, y, c));
+  if (k === 2) { px(ctx, 7, 7, '#000000'); px(ctx, 8, 7, '#000000'); px(ctx, 7, 8, '#000000'); px(ctx, 8, 8, '#000000'); }
+  else { px(ctx, 7, 7, '#ffffff'); px(ctx, 8, 8, shade(c, .5)); }
+  [[1,1],[14,1],[1,14],[14,14]].forEach(([x, y]) => px(ctx, x, y, shade(c, .2)));
+}
+// 胶球：红绿蓝三色的胶子抱成团；n 是画几个
+function paintGlue(ctx, r, n) {
+  paintNoise(ctx, VOID, r);
+  const cols = ['#ff4d5e', '#45d96a', '#4d8cff'];
+  if (n <= 1) { ball(ctx, 5.5, 6, 3.4, cols[0]); ball(ctx, 10.5, 6.5, 3.2, cols[1]); ball(ctx, 8, 10.5, 3.4, cols[2]); px(ctx, 8, 7, '#ffffff'); px(ctx, 7, 8, '#ffffff'); }
+  else for (let i = 0; i < n; i++) ball(ctx, 3 + (i % 3) * 5 + (r() - .5), 4 + (i / 3 | 0) * 7 + (r() - .5) * 2, 2.6, cols[(i + (i / 3 | 0)) % 3]);
+}
+// 黑洞：全黑的视界外面一圈吸积盘
+function drawHole(ctx, cx, cy, R) {
+  for (let y = 0; y < 16; y++) for (let x = 0; x < 16; x++) {
+    const d = Math.hypot(x - cx, y - cy);
+    if (d < R * .55) px(ctx, x, y, '#000000');
+    else if (d < R * .72) px(ctx, x, y, '#fff0b0');
+    else if (d < R * .88) px(ctx, x, y, '#ffb03a');
+    else if (d < R) px(ctx, x, y, '#c8421a');
+  }
+  for (let x = Math.ceil(cx - R - 1); x <= cx + R + 1; x++) if (x >= 0 && x < 16 && Math.abs(x - cx) > R * .5) px(ctx, x, Math.round(cy), '#ffe9a8');
+}
+function paintHole(ctx, r) {
+  paintNoise(ctx, VOID, r);
+  for (let i = 0; i < 6; i++) px(ctx, r() * 16 | 0, r() * 16 | 0, '#8a86b8');
+  drawHole(ctx, 7.5, 7.5, 6.4);
 }
 // 恒星核心：漆黑的太空里一颗白热的恒星，外圈是翻滚的日冕
 function paintStar(ctx, r) {
@@ -1553,6 +1732,10 @@ function blockTexture(b) {
   else if (t.type === 'ore') paintOre(ctx, t.c, r, t.rock);
   else if (t.type === 'rad') paintRadBlock(ctx, t.c, r);
   else if (t.type === 'star') paintStar(ctx, r);
+  else if (t.type === 'nball') paintNBall(ctx, r);
+  else if (t.type === 'machine') paintMachine(ctx, t.c, r, t.k);
+  else if (t.type === 'glue') paintGlue(ctx, r, t.n);
+  else if (t.type === 'hole') paintHole(ctx, r);
   else if (t.type === 'gemblock') paintGemBlock(ctx, t.c, r);
   else if (t.type === 'core') paintCore(ctx, r);
   else if (t.type === 'element') paintElement(ctx, t.el, r);
@@ -1569,9 +1752,13 @@ function blockParticles(b) {
   if (t.type === 'light') return [t.c, shade(t.c, .4), shade(t.c, .75), shade(t.c, -.3)];
   if (t.type === 'shards') return ['#c9f1ff','#ffffff','#3b4a66','#ffc2e0','#c2ffd9'];
   if (t.type === 'wealth') return ['#ffcf33','#fff2a6','#c98f00','#ffe066','#2f6b3a'];
-  if (t.type === 'ore') return (t.rock === 3 ? BASALT : SLATE).slice(0, 3).concat([t.c, shade(t.c, .4), shade(t.c, -.3)]);
+  if (t.type === 'ore') return rockPal(t.rock).slice(0, 3).concat([t.c, shade(t.c, .4), shade(t.c, -.3)]);
   if (t.type === 'rad') return ['#3d444c','#12161a','#6a747e', t.c, shade(t.c, .4)];
   if (t.type === 'star') return ['#ffffff','#fff6b0','#ffc83a','#ff7a1f','#150d28'];
+  if (t.type === 'nball') return ['#aebcff','#ffffff','#7f8fe0','#150d28'];
+  if (t.type === 'machine') return ['#3d444c','#11151b','#6a747e', t.c, shade(t.c, .4)];
+  if (t.type === 'glue') return ['#ff4d5e','#45d96a','#4d8cff','#150d28'];
+  if (t.type === 'hole') return ['#000000','#fff0b0','#ffb03a','#c8421a','#150d28'];
   if (t.type === 'gemblock') return [t.c, shade(t.c, .35), shade(t.c, -.35), shade(t.c, .7)];
   if (t.type === 'core') return ['#5fe8ff','#9a5cff','#ffffff','#2b1450','#c4fbff'];
   if (t.type === 'element') { const c = ELEMENTS[t.el].c; return [c, shade(c, .4), shade(c, -.5), shade(c, -.75)]; }
@@ -1609,6 +1796,15 @@ function pickSprite(p, mirror) {
     H: (x, y) => (x + y) % 4 === 0 ? base : (x + y) % 4 === 1 ? shade(base, -.45) : '#39424e',
     L: shade(base, .6), h: '#12161c', S: (x, y) => (x + y) % 4 < 2 ? '#f2c230' : '#22242a', b: '#000000' };
   else if (p.look === 'neutron') map = { H: (x, y) => (x * 3 + y * 5) % 7 === 0 ? '#ffffff' : '#9fb4ff', L: '#ffffff', h: '#34449a', S: '#5a6078', b: '#20243a' };
+  else if (p.look === 'neutronU') map = {  // 中子镐 U：紫外色的镐头上闪着白点
+    H: (x, y) => (x * 3 + y * 5) % 7 === 0 ? '#ffffff' : (x + y) % 3 === 0 ? '#d2bcff' : '#8f6bff',
+    L: '#ffffff', h: '#3a1f8a', S: (x, y) => (x + y) % 4 === 0 ? '#b08cff' : '#3c3f52', b: '#16182a' };
+  else if (p.look === 'dense') map = { H: (x, y) => (x * 5 + y * 3) % 6 === 0 ? '#ffffff' : (x + y) % 2 ? base : shade(base, -.18), L: '#ffffff', h: shade(base, -.6), S: '#3a4058', b: '#14172a' };
+  else if (p.look === 'force') map = {     // 力之镐：红绿蓝三色的胶子条纹
+    H: (x, y) => ['#ff4d5e', '#45d96a', '#4d8cff'][(x + y) % 3], L: base, h: shade(base, -.6), S: (x, y) => (x + y) % 4 === 0 ? base : '#2a2d3a', b: '#0e0f16' };
+  else if (p.look === 'strange') map = { H: (x, y) => (x * 3 + y * 7) % 5 === 0 ? '#e8fff0' : (x + y) % 2 ? base : '#b06bff', L: '#ffffff', h: '#1f5a3a', S: '#3a2d5a', b: '#120e22' };
+  else if (p.look === 'hole') map = {      // 黑洞镐：漆黑的镐头，边缘一圈吸积盘的光
+    H: (x, y) => (x * 7 + y * 3) % 11 === 0 ? shade(base, .5) : '#07060c', L: base, h: shade(base, -.35), S: (x, y) => (x + y) % 3 === 0 ? shade(base, -.3) : '#1a1826', b: '#000000' };
   else if (p.look === 'thermal') map = {   // 热中子镐：镐尖白热，往根部烧成橙红
     H: (x, y) => { const t = y <= 3 ? (x - 3) / 10 : 1 - (y - 4) / 8; return t < .3 ? '#ff4a1f' : t < .65 ? '#ffb03a' : '#fff7d0'; },
     L: '#ffffff', h: '#7a1a08', S: '#4a5058', b: '#1c1f24' };
@@ -1652,6 +1848,9 @@ function itemIcon(id) {
   else if (it.icon === 'drop') drawMask(ctx, ELEMENTS.shui.mask, { M: base, L: shade(base, .65), d: shade(base, -.55) }, 0, 1);
   else if (it.icon === 'bolt') drawMask(ctx, BOLT_MASK, { Y: base, L: shade(base, .6), d: shade(base, -.6) }, 0, 1);
   else if (it.icon === 'rad') drawRad(ctx, 7.5, 7.5, 7.2, base, '#132010', '#050a04');
+  else if (it.icon === 'dust') [[4,5],[5,5],[9,4],[10,5],[7,7],[8,7],[7,8],[3,9],[4,10],[11,9],[12,9],[11,10],[7,12],[8,12],[6,11]].forEach(([x, y], i) => px(ctx, x, y, i % 4 === 0 ? '#ffffff' : i % 3 === 0 ? shade(base, -.4) : base));
+  else if (it.icon === 'glue') { ball(ctx, 5, 5.5, 3.2, '#ff4d5e'); ball(ctx, 10.5, 6, 3.2, '#45d96a'); ball(ctx, 7.5, 10.5, 3.2, '#4d8cff'); }
+  else if (it.icon === 'hole') drawHole(ctx, 7.5, 7.5, 6.6);
   else drawMask(ctx, TROPHY_MASK, { T: '#ffd23f', L: '#fff5b8', d: '#a8740a' }, 0, 1);
   return upscale(c);
 }
@@ -1724,6 +1923,7 @@ function buildIcons() {
   ICON.stone = stoneTile();
   ICON.stone2 = stoneTile(SLATE, 78);
   ICON.stone3 = stoneTile(BASALT, 79);
+  ICON.stone4 = stoneTile(ABYSS, 80);
   ICON.energy = energyIcon();
   ICON.lock = lockIcon();
   ICON.cracks = crackStages();
@@ -1755,12 +1955,14 @@ function fresh() {
     v: 2, coins: 0, exp: 0, level: 1, usage: 0.1,
     items, picks: { wood: 1 }, equipped: 'wood', block: 'n1', zone: 1, reach: 1, hp: {}, auto: false,
     wealth: 0,     // 巨额财富累计转化的金币
-    speed: 1,      // 修改版：游戏速度 1–10 倍
+    speed: 1,      // 修改版：游戏速度，上限看 SPEED_TIERS
     ruin: 0,       // 毁灭能量等级，0 = 未解锁
     energy: 0,     // 当前毁灭能量
     lastSeen: 0,   // 页面最后一次在运行的时间，用来算离线时长
     bk: {},        // 每种方块累计挖掉的块数，决定方块等级
+    bmode: {},     // 能切换模式的方块（合成器、坍缩器）现在用的是第几种
     nk: freshNk(), // 区域 3 的反应堆
+    seen: { trophy: false, nuke: false, degen: false, mbh: false },   // 有没有获得过奖杯 / 核能：没获得过、数值还是 ×1 的增益不显示
     stats: { digs: 0, broken: 0, earned: 0, xp: 0 },
   };
 }
@@ -1784,16 +1986,23 @@ function sanitize(d) {
   f.auto = !!d.auto;
   f.wealth = Math.max(0, num(d.wealth, 0));
   f.ruin = Math.max(0, Math.floor(num(d.ruin, 0)));
-  f.speed = Math.max(1, Math.min(SPEED_MAX, Math.round(num(d.speed, 1))));
   f.energy = Math.max(0, num(d.energy, 0));
   f.lastSeen = Math.max(0, num(d.lastSeen, 0));
   f.reach = Math.max(1, Math.min(ZONES.length, Math.floor(num(d.reach, 1))));
   for (const z of ZONES) if (z.need && (f.picks[z.need] || 0) >= 1) f.reach = Math.max(f.reach, z.n);
+  f.speed = Math.max(1, Math.min(speedMaxOf(f.reach), Math.round(num(d.speed, 1))));
   const zn = Math.floor(num(d.zone, 1)), zz = ZONES.find(z => z.n === zn);
   f.zone = (zz && zz.ready && zn <= f.reach) ? zn : 1;
   if (BLOCK[f.block].zone !== f.zone) f.block = BLOCKS.find(b => b.zone === f.zone).id;
   if (d.stats) for (const k in f.stats) f.stats[k] = Math.max(0, num(d.stats[k], 0));
   f.nk = sanitizeNk(d.nk);
+  if (d.bmode && typeof d.bmode === 'object') for (const b of BLOCKS) if (b.modes) { const m = Math.floor(num(d.bmode[b.id], 0)); if (m > 0 && m < b.modes.length) f.bmode[b.id] = m; }
+  // 旧存档没有这条记录：手上有，或者已经走到必须用过它的进度，就算获得过
+  const seen = d.seen || {};
+  f.seen.trophy = !!seen.trophy || f.items.trophy > 0 || f.reach >= 2 || BLOCKS.some(b => b.drop && b.drop.item === 'trophy' && f.bk[b.id] > 0);
+  f.seen.degen = !!seen.degen || f.items.degen > 0 || f.items.strange > 0 || PICKS.some(p => p.zone === 4 && (f.picks[p.id] || 0) >= 1);
+  f.seen.mbh = !!seen.mbh || f.items.mbh > 0 || ['holeP', 'superHoleP'].some(k => (f.picks[k] || 0) >= 1);
+  f.seen.nuke = !!seen.nuke || f.items.nuke > 0 || PICKS.some(p => p.cost.items && p.cost.items.nuke && (f.picks[p.id] || 0) >= 1) || ['neutronP', 'thermalP', 'neutronUP'].some(k => (f.picks[k] || 0) >= 1);
   return f;
 }
 function load() { try { const raw = localStorage.getItem(SAVE_KEY); return raw ? sanitize(JSON.parse(raw)) : fresh(); } catch (e) { return fresh(); } }
@@ -1813,6 +2022,7 @@ const curBlock = () => BLOCK[S.block] || BLOCKS[0];
 const blkLv = b => blvOf(S.bk[b.id] || 0);
 const blkHp = b => blvHpOf(b, blkLv(b));       // 当前等级下的满血量
 const blkCoin = b => blvCoinOf(b, blkLv(b));   // 当前等级下的方块金币
+const blkConv = b => b.modes ? b.modes[S.bmode[b.id] || 0] : (b.conv || null);   // 这个方块现在挖掉时做的转化
 const getHp = b => { const m = blkHp(b), v = S.hp[b.id]; return (typeof v === 'number' && v > 0 && v <= m) ? v : m; };
 const levelBuff = () => Math.sqrt(S.level);
 const trophyBuff = () => 1 + Math.pow(S.items.trophy, 0.36);
@@ -1825,12 +2035,18 @@ const ruinCost = () => S.ruin > 0 ? 100 * Math.pow(10, S.ruin - 1) : RUIN_UNLOCK
 const ruinBuffOf = e => e > 1 ? Math.pow(e, 0.12) : 1;
 // 修改版：游戏速度。挖掘间隔、离线挖掘间隔、毁灭能量产出都按倍数换算
 const spd = () => S.speed || 1;
+const speedMax = () => speedMaxOf(S.reach);
 const digMs = () => DIG_MS / spd();
 const offMs = () => OFFLINE_MS / spd();
 const ruinRateNow = () => ruinRate() * spd();
 const BATCH_MS = 80;   // 倍速很高时把几下合成一批处理，特效不会刷屏
 const ruinBuff = () => ruinBuffOf(S.energy);
-const dmgMult = () => stat(curPick()).dmg * levelBuff() * trophyBuff() * wealthBuff(); // 除使用增益外的部分
+// 压缩增益、黑洞增益：看手上现有的简并态中子簇 / 微型黑洞，和奖杯增益一样乘在开方之前
+const DEGEN_EXP = 0.84, MBH_EXP = 1.26;
+const degenBuff = () => 1 + Math.pow(S.items.degen || 0, DEGEN_EXP);
+const mbhBuff = () => 1 + Math.pow(S.items.mbh || 0, MBH_EXP);
+const BUFF_ITEMS = { trophy: 1, degen: 1, mbh: 1 };   // 数量一变就要重算伤害的材料
+const dmgMult = () => stat(curPick()).dmg * levelBuff() * trophyBuff() * wealthBuff() * degenBuff() * mbhBuff(); // 除使用增益外的部分
 const rawDamage = () => dmgMult() * S.usage;
 // 伤害 =（镐子伤害 × 普通增益）^(1/区域) × 毁灭增益 × 核能增益 —— 后两个不参与开方
 const damage = () => { const d = rawDamage(); return (S.zone === 1 ? d : Math.pow(d, 1 / S.zone)) * ruinBuff() * nukeBuff(); };
@@ -1865,7 +2081,60 @@ function nkAutoRods(f, gen1, cap, cool, dt) {
 const brdSlots = () => BRD_BASE + S.nk.brd.up.slot;
 const brdNeed = c => c.need * (1 - BRD_EFF * S.nk.brd.up.eff);
 // 只用于显示的运行时数据，不进存档
-const NKRT = { rate: 0, gen: 0, hot: false, dNuke: 0, dPower: 0, dNeutron: 0, fusOut: 0, fusKeep: 0, fusNuke: 0, brdFlow: 0 };
+const NKRT = { coldLack: {}, coldD: 0, coldNuke: 0, rate: 0, gen: 0, hot: false, dNuke: 0, dPower: 0, dNeutron: 0, fusOut: 0, fusKeep: 0, fusNuke: 0, brdFlow: 0 };
+
+// ---- 冷聚变 ----
+// 某条线现在实际生效的等级：维护材料断了就按 Lv.0 算
+const coldEff = k => NKRT.coldLack[k] ? 0 : S.nk.cold.lv[k];
+const coldVal = k => COLD_LINES[k].val[coldEff(k)];
+const coldCap = () => Math.min(coldVal('pd') / 100, coldVal('la'));   // 负载率上限 = min(钯的硬顶, 镧的软顶)
+const coldTol = () => coldVal('ti') * coldVal('ag');                  // 过载能撑多少秒
+const coldRate = c => c.load > 0 ? Math.exp(c.load * COLD_K) * (c.over ? COLD_OVER : 1) : 0;
+const coldNukeRate = c => COLD_NUKE * coldRate(c) / COLD_REF * coldVal('pt');   // 每秒核能
+function coldStep(dt, auto, quiet) {
+  const it = S.items, c = S.nk.cold, lack = NKRT.coldLack;
+  NKRT.coldD = 0; NKRT.coldNuke = 0;
+  if (S.reach < 4) return;
+  if (c.broken) { c.load = 0; c.over = false; return; }
+  // 维护：晶格里有氘时，8 种材料按等级慢慢消耗；哪种断了，哪条线就先按 Lv.0 生效
+  const running = c.load > 0;
+  for (const k in COLD_LINES) {
+    const lv = c.lv[k];
+    if (!lv || !running) { lack[k] = false; continue; }
+    c.mbuf[k] -= COLD_LINES[k].maint / 60 * lv / COLD_MAX * dt;
+    while (c.mbuf[k] < 0 && (it[k] || 0) >= 1) { it[k] -= 1; c.mbuf[k] += 1; }
+    lack[k] = c.mbuf[k] < 0;
+    if (lack[k]) c.mbuf[k] = 0;
+  }
+  const cap = coldCap(), dMul = 1 - coldVal('ni');
+  // 氘是整数材料，先整个整个取进缓冲再慢慢用
+  const takeD = n => {
+    if (c.dbuf < n) { const got = Math.min(Math.ceil(n - c.dbuf), Math.floor(it.deut || 0)); it.deut -= got; c.dbuf += got; }
+    if (c.dbuf + 1e-9 < n) return false;
+    c.dbuf = Math.max(0, c.dbuf - n); NKRT.coldD += n / dt;
+    return true;
+  };
+  if (c.over) {
+    // 过载：负载率钉在 上限 + 20%，一直烧到耐受时间用完
+    takeD(COLD_KEEP * dMul * dt);
+    c.stress += dt;
+  } else {
+    if (c.load > cap) c.load = cap;                       // 上限掉下来了（材料断供），多出来的氘直接散掉
+    const feed = auto && c.on;
+    if (feed && c.load < cap && takeD(COLD_FEED * dMul * dt)) c.load = Math.min(cap, c.load + COLD_CLIMB * coldVal('vn') * dt);
+    else if (!(feed && takeD(COLD_KEEP * dMul * dt))) c.load = Math.max(0, c.load - COLD_DECAY * dt);
+  }
+  if (c.load > 0) {
+    const nuke = coldNukeRate(c) * dt;
+    it.nuke += nuke; it.power += nuke * COLD_OUT.power; it.neutron += nuke * COLD_OUT.neutron * coldVal('zr');
+    for (const k in c.carry) { c.carry[k] += nuke * COLD_OUT[k]; const w = Math.floor(c.carry[k]); if (w > 0) { it[k] = (it[k] || 0) + w; c.carry[k] -= w; } }
+    NKRT.coldNuke = nuke / dt;
+  }
+  if (c.over && c.stress >= coldTol()) {
+    c.broken = true; c.load = 0; c.over = false; c.stress = 0;
+    if (!quiet) toast('nk-cold', ICON.items.pd, '晶格崩坏！负载清零，修复要钯 ' + COLD_FIX.pd + ' + 钛 ' + COLD_FIX.ti, 0, 'info');
+  }
+}
 
 // 反应堆走一步（dt 秒）。auto：自动挖掘开着，三个堆自动控温、点火、补料；quiet：补算时不弹提示
 function nkStep(dt, auto, quiet) {
@@ -1874,16 +2143,17 @@ function nkStep(dt, auto, quiet) {
   // ---- 裂变 ----
   const f = nk.fis, cap = fisCap(), cool = fisCool();
   NKRT.rate = 0; NKRT.gen = 0;
+  // 自动补硼：已经失效的控制棒，只要有硼就补满。不管自动挖掘开没开、堆是不是在冷却都补；补好的棒不会自己插回去
+  if (f.autoB) for (const r of f.rods) if (r.lv > 0 && r.dur <= 0 && nkCan({ boron: ROD_FIX })) { nkPay({ boron: ROD_FIX }); r.dur = ROD_DUR; }
   if (f.melt > 0) {
     f.melt = Math.max(0, f.melt - dt);
     f.heat = Math.max(0, f.heat - cool * dt);
   } else {
     if (auto) {
-      // 耗尽的槽自动换上同种燃料棒，失效的控制棒自动补硼
+      // 耗尽的槽自动换上同种燃料棒
       for (const s of f.slots) if (s && s.dur <= 0 && nkCan(FIS_RODS[s.t].cost)) { nkPay(FIS_RODS[s.t].cost); s.dur = FIS_RODS[s.t].dur; }
-      for (const r of f.rods) if (r.lv > 0 && r.dur <= 0 && nkCan({ boron: ROD_FIX })) { nkPay({ boron: ROD_FIX }); r.dur = ROD_DUR; }
     }
-    const flux = 1 + (it.neutron || 0) / FLUX_DIV;
+    const flux = fluxOf(it);
     let gen1 = 0;
     for (const s of f.slots) if (s && s.dur > 0) gen1 += flux * FIS_RODS[s.t].heat;
     if (auto) nkAutoRods(f, gen1, cap, cool, dt);
@@ -1897,7 +2167,13 @@ function nkStep(dt, auto, quiet) {
     it.power += e; it.nuke += nuke; it.neutron += neu * fisUtil();   // 反射层留不住的中子直接逃掉
     NKRT.rate = rate; NKRT.gen = gen1 * rm;
     // 控制棒只有插着并且堆在裂变时才掉耐久，掉光就失效弹出
-    if (made > 0) for (const r of f.rods) if (rodOn(r)) { r.dur -= dt; if (r.dur <= 0) { r.dur = 0; r.in = false; } }
+    // 开着自动补硼并且有硼时，耐久用完的那一刻当场补满，控制棒不用退出来
+    if (made > 0) for (const r of f.rods) if (rodOn(r)) {
+      r.dur -= dt;
+      if (r.dur > 0) continue;
+      if (f.autoB && nkCan({ boron: ROD_FIX })) { nkPay({ boron: ROD_FIX }); r.dur = ROD_DUR; }
+      else { r.dur = 0; r.in = false; }
+    }
     f.heat = Math.max(0, f.heat + made - cool * dt);
     if (f.heat >= cap) {
       // 熔毁：燃料棒全部损失、燃料槽清空（免得自动补料后接着熔），冷却 60 秒；核能不清零
@@ -1954,13 +2230,15 @@ function nkStep(dt, auto, quiet) {
     }
   }
   NKRT.brdFlow = flow / dt;
+
+  coldStep(dt, auto, quiet);
 }
 
 // 反应堆推进 sec 秒（已含倍速 / 离线折算）。区域 3 解锁后才运行
 function nkAdvance(sec, auto, quiet) {
   if (S.reach < 3 || !(sec > 0)) return;
   const it = S.items, a0 = it.nuke, b0 = it.power, c0 = it.neutron;
-  const steps = Math.min(200000, Math.ceil(sec / NK_STEP)), dt = sec / steps;
+  const steps = Math.min(200000, Math.ceil(sec / (quiet ? NK_STEP_QUIET : NK_STEP))), dt = sec / steps;
   for (let i = 0; i < steps; i++) nkStep(dt, auto, quiet);
   if (quiet) return;
   // 面板上的「每秒」是按真实时间算的平滑值
@@ -1985,6 +2263,7 @@ function simulate(n, agg, ePerDig) {
   const b = curBlock(), p = curPick(), zone = S.zone, inv = 1 / zone, it = S.items, st = S.stats;
   let rb = ruinBuff() * nukeBuff();   // 开方之后再乘的两个增益
   const rolls = dropRolls(b).map(d => ({ keys: dropKeys(d), p: d.p, n: d.n || 1 }));
+  const cv = blkConv(b);
   let { gain, xp } = rewardOf(b, p);
   let cnt = S.bk[b.id] || 0, lv = blvOf(cnt), nextAt = blvTotal(lv + 1), maxHp = blvHpOf(b, lv);
   let hp = getHp(b), usage = S.usage, mult = dmgMult(), use = stat(p).use;
@@ -2010,7 +2289,12 @@ function simulate(n, agg, ePerDig) {
       for (const dr of rolls) if (Math.random() < dr.p) {
         for (const dk of dr.keys) { it[dk] = (it[dk] || 0) + dr.n; agg.drops[dk] = (agg.drops[dk] || 0) + dr.n; }
         // 奖杯影响伤害；神秘之镐的属性随宝石变化，掉落后立即生效
-        if (dr.keys[0] === 'trophy' || p.dyn) { mult = dmgMult(); use = stat(p).use; ({ gain, xp } = rewardOf(b, p)); }
+        if (BUFF_ITEMS[dr.keys[0]] || p.dyn) { mult = dmgMult(); use = stat(p).use; ({ gain, xp } = rewardOf(b, p)); }
+      }
+      // 压缩机、合成器、坍缩器：材料够就转化一次
+      if (cv !== null && (it[cv.from] || 0) >= cv.n) {
+        it[cv.from] -= cv.n; it[cv.to] = (it[cv.to] || 0) + 1; agg.drops[cv.to] = (agg.drops[cv.to] || 0) + 1;
+        if (BUFF_ITEMS[cv.from] || BUFF_ITEMS[cv.to]) mult = dmgMult();   // 簇、微型黑洞的数量变了，压缩增益 / 黑洞增益跟着变
       }
     }
   }
@@ -2166,7 +2450,7 @@ function craft(p) {
   toast('craft-' + p.id, ICON.picks[p.id], '获得 ' + p.name, 1);
   for (const z of ZONES) if (z.need === p.id && S.reach < z.n) {
     S.reach = z.n;
-    toast('zone-' + z.n, ICON.picks[p.id], z.name + ' 已解锁' + (z.ready ? '' : '，下次更新开放'), 0, 'lvl');
+    toast('zone-' + z.n, ICON.picks[p.id], z.name + ' 已解锁' + (z.ready ? '' : '，下次更新开放') + '，速度上限提高到 ×' + speedMaxOf(z.n), 0, 'lvl');
     save();
   }
   if ((S.picks[S.equipped] || 0) < 1) {
@@ -2229,9 +2513,10 @@ const E = {};
 ['coins','level','xpFill','xpText','trophies','bName','bSub','bDrop','zoneTag','hpFill','hpText','eqIcon','eqName','eqOwn','eqDmg','eqUse','eqCoin',
  'bfUse','bfLv','bfTr','bfWl','bfWlNote','bfZone','bfZoneNote','bfDmg','bfDps','bfDpsNote','keysRate','setBtn','bfEta','statLine','autoBtn','holdBtn','stage','cube','squish','scene','swing','fx','offNote','zones','zoneHint',
  'shopZones','shopHint','shopSoon','blockSoon','bagStrip','bagEmpty','bagHint','bagAll','brandSub','eqDmgNote','eqUseNote','eqCoinNote',
- 'bLv','bfBlv','bfBlvNote','bfRuin',
- 'bfNuke','bfNukeNote','bfNukeRow','nkPanel','nkMode','nkNuke','nkNukeLbl','nkNukeSub','nkPower','nkPowerSub','nkNeutron','nkNeutronSub','nkFis','nkFus','nkBrd',
- 'nkHeatFill','nkHeatText','nkFisInfo','nkTempFill','nkTempText','nkFusInfo','nkBrdInfo','ruinPanel','ruinLv','ruinIcon','ruinAmt','ruinRate','ruinBuff','ruinBtn','ruinCost'].forEach(k => E[k] = $(k));
+ 'bLv','bfBlv','bfBlvNote','bfRuin','bConv','modeRow','bfFormula','bfLvRow','bfTrRow','bfWlRow','bfDgRow','bfBhRow','bfDg','bfBh','bfZoneRow','bfRuinRow',
+ 'bfNuke','bfNukeNote','bfNukeRow','nkPanel','nkMode','nkNuke','nkNukeLbl','nkNukeSub','nkPower','nkPowerSub','nkNeutron','nkNeutronSub','nkFis','nkFus','nkBrd','nkCold',
+ 'nkColdBar','nkColdFill','nkColdCap','nkColdText','nkColdInfo','nkLattice','nkColdOn','nkColdTop','nkColdFix','nkColdOut',
+ 'nkHeatFill','nkHeatText','nkFisInfo','nkAutoB','nkTempFill','nkTempText','nkFusInfo','nkBrdInfo','ruinPanel','ruinLv','ruinIcon','ruinAmt','ruinRate','ruinBuff','ruinBtn','ruinCost'].forEach(k => E[k] = $(k));
 const bagRefs = {}, blockRefs = {}, shopRefs = {};
 let lastCrack = null, lastEq = null;
 
@@ -2247,9 +2532,13 @@ function buildHeader() {
 // 材料从哪些方块掉、能合成什么，用在全部材料的弹窗里
 function itemInfo(k) {
   const from = BLOCKS.filter(b => dropRolls(b).some(d => dropKeys(d).includes(k))).map(b => b.name);
+  const made = BLOCKS.filter(b => blockConvs(b).some(c => c.to === k)).map(b => { const c = blockConvs(b).find(c => c.to === k); return b.name + '（' + fmt(c.n) + ' ' + ITEMS[c.from].name + ' → 1）'; });
+  const into = BLOCKS.filter(b => blockConvs(b).some(c => c.from === k)).map(b => { const c = blockConvs(b).find(c => c.from === k); return b.name + '（' + fmt(c.n) + ' 个 → 1 ' + ITEMS[c.to].name + '）'; });
   const to = PICKS.filter(p => p.cost.items && p.cost.items[k]).map(p => p.name + ' ×' + p.cost.items[k]);
   let h = '';
   if (from.length) h += '掉落自 <i>' + from.join('、') + '</i>';
+  if (made.length) h += (h ? '<br>' : '') + '挖掉这些方块时转化得到 <i>' + made.join('、') + '</i>';
+  if (into.length) h += (h ? '<br>' : '') + '挖掉这些方块时会被转化 <i>' + into.join('、') + '</i>';
   if (to.length) h += (h ? '<br>' : '') + '用于合成 <i>' + to.join('、') + '</i>';
   if (ITEMS[k].note) h += (h ? '<br>' : '') + ITEMS[k].note;
   return h;
@@ -2337,18 +2626,29 @@ function renderZones() {
   renderTabs(zoneRefs.shop, shopZone, E.shopHint, '的商品');
 }
 const dropHtml = d => {
-  const one = (x, first) => {
-    const ks = dropKeys(x);
-    return `<b>${pct(x.p)}%</b> ${first ? '掉落 ' : ''}${ks.length > 1 ? '各 ' : ''}${x.n > 1 ? '<b>' + fmt(x.n) + '</b> ' : ''}` + ks.map(k => `<span class="dn"><img class="ico-s pix" src="${ICON.items[k]}" alt="">${ITEMS[k].name}</span>`).join('');
-  };
-  return '每挖掉一块 ' + one(d, true) + (d.more || []).map(x => '，' + one(x)).join('');
+  // 主掉落后面跟着附带掉落；逗号挂在前一项的名字后面，每个附带掉落整体不拆行
+  const rolls = [d].concat(d.more || []);
+  return '每挖掉一块 ' + rolls.map((x, i) => {
+    const ks = dropKeys(x), tail = i < rolls.length - 1 ? '，' : '';
+    const head = `<b>${pct(x.p)}%</b> ${i === 0 ? '掉落 ' : ''}${ks.length > 1 ? '各 ' : ''}${x.n > 1 ? '<b>' + fmt(x.n) + '</b> ' : ''}`;
+    const names = ks.map((k, j) => `<span class="dn"><img class="ico-s pix" src="${ICON.items[k]}" alt="">${ITEMS[k].name}${j === ks.length - 1 ? tail : ''}</span>`).join('');
+    return i === 0 ? head + names : `<span class="dn">${head}${names}</span>`;
+  }).join('');
 };
 
+// 转化的写法：「100 简并态中子簇 → 1 奇异物质」
+const convHtml = c => `<b>${fmt(c.n)}</b> <span class="dn"><img class="ico-s pix" src="${ICON.items[c.from]}" alt="">${ITEMS[c.from].name}</span> → <b>1</b> <span class="dn"><img class="ico-s pix" src="${ICON.items[c.to]}" alt="">${ITEMS[c.to].name}</span>`;
+function setMode(b, i) {
+  if (busy || !b.modes || !b.modes[i]) return;
+  if (i) S.bmode[b.id] = i; else delete S.bmode[b.id];
+  update(); save();
+}
 function buildBlocks() {
   const list = $('blockList');
   BLOCKS.forEach(b => {
     const it = el('div', 'bi'); it.tabIndex = 0; it.setAttribute('role', 'button');
     let drop = b.drop ? `<div class="bi-drop">${dropHtml(b.drop)}</div>` : '';
+    if (blockConvs(b).length) drop += '<div class="bi-drop conv"></div>';   // 转化内容随模式变，在 update() 里填
     if (b.wealth) drop = `<div class="bi-drop wealth">挖掉后金币清空，转化为财富增益</div>`;
     // 等级、升级进度（本级已挖/本级需要）、血量、金币随方块等级变化，在 update() 里填
     const coin = b.wealth ? '' : `<span class="cv"><img class="ico-s pix" src="${ICON.coin}" alt="金币"><span class="cn"></span></span>`;
@@ -2357,7 +2657,7 @@ function buildBlocks() {
     it.addEventListener('click', () => selectBlock(b.id));
     it.addEventListener('keydown', e => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); e.stopPropagation(); selectBlock(b.id); } });
     list.appendChild(it);
-    blockRefs[b.id] = { el: it, prog: it.querySelector('.bi-prog i'), lv: it.querySelector('.bi-lv'), hp: it.querySelector('.hpv'), coin: it.querySelector('.cn'), nx: it.querySelector('.nx') };
+    blockRefs[b.id] = { el: it, prog: it.querySelector('.bi-prog i'), lv: it.querySelector('.bi-lv'), hp: it.querySelector('.hpv'), coin: it.querySelector('.cn'), nx: it.querySelector('.nx'), cv: it.querySelector('.bi-drop.conv') };
   });
 }
 
@@ -2517,7 +2817,53 @@ function nkOpenPicker(kind, i) {
   document.querySelectorAll('#mBody .nk-opt').forEach(b => b.addEventListener('click', () => { closeModal(); nkAssign(kind, i, b.dataset.t); }));
 }
 
-const nkRefs = { fis: [], fus: [], brd: [], rods: [], up: {}, hw: {}, tabs: {} };
+const nkRefs = { fis: [], fus: [], brd: [], rods: [], up: {}, hw: {}, cold: {}, tabs: {} };
+// ---- 冷聚变的操作 ----
+function nkColdToggle() { if (busy) return; const c = S.nk.cold; c.on = !c.on; update(); save(); }
+// 手动加注：100 氘换 +20% 负载率；加完超过上限就进入过载
+function nkColdTop() {
+  const c = S.nk.cold;
+  if (busy || c.broken || c.over) return;
+  if ((S.items.deut || 0) < COLD_TOP_D) { toast('nk-cold-d', ICON.items.deut, '氘不够：加注一次要 ' + COLD_TOP_D + ' 个', 0, 'info'); return; }
+  S.items.deut -= COLD_TOP_D;
+  const cap = coldCap();
+  if (c.load + COLD_TOP > cap + 1e-9) {
+    c.load = cap + COLD_TOP; c.over = true; c.stress = 0;
+    toast('nk-cold', ICON.items.deut, '过载！反应速率 ×' + COLD_OVER + '，' + fmt(coldTol()) + ' 秒后晶格崩坏', 0, 'info');
+  } else c.load += COLD_TOP;
+  update(); save();
+}
+function nkColdFix() {
+  const c = S.nk.cold;
+  if (busy || !c.broken || !nkCan(COLD_FIX)) return;
+  nkPay(COLD_FIX); c.broken = false; c.load = 0; c.over = false; c.stress = 0;
+  toast('nk-cold', ICON.items.pd, '晶格修好了', 0, 'lvl');
+  update(); save();
+}
+function nkColdUp(k) {
+  const c = S.nk.cold, lv = c.lv[k];
+  if (busy || lv >= COLD_MAX || !nkCan({ [k]: coldCost(k, lv) })) return;
+  nkPay({ [k]: coldCost(k, lv) }); c.lv[k]++;
+  toast('nk-cold-' + k, ICON.items[k], COLD_LINES[k].name + '升到 Lv.' + c.lv[k], 0, 'lvl');
+  update(); save();
+}
+// 钯晶格示意图：25 × 8 = 200 格，一格是 1% 负载率。亮的是装了氘的空位，暗的是空着的，更暗的是被镧上限挡住用不了的，过载多出来的画成红色
+function drawLattice(c, cap) {
+  const vac = Math.round(coldVal('pd')), capN = Math.round(cap * 100), fill = Math.round(c.load * 100);
+  const key = [vac, capN, fill, c.over, c.broken].join('|');
+  if (E.nkLattice._k === key) return;
+  E.nkLattice._k = key;
+  const ctx = E.nkLattice.getContext('2d');
+  ctx.clearRect(0, 0, 176, 57);
+  for (let i = 0; i < 200; i++) {
+    const x = 1 + (i % 25) * 7, y = 1 + (i / 25 | 0) * 7;
+    ctx.fillStyle = c.broken ? (i < vac ? '#3a1a1a' : '#12151c')
+      : i < fill ? (i >= capN ? '#ff5a3a' : '#5fe8ff')
+      : i < capN ? '#1f4456' : i < vac ? '#3a3320' : '#12151c';
+    ctx.fillRect(x, y, 6, 6);
+    if (!c.broken && i < fill && i < capN) { ctx.fillStyle = '#d8fbff'; ctx.fillRect(x + 1, y + 1, 2, 2); }
+  }
+}
 function buildNk() {
   $('nkIcoNuke').src = ICON.items.nuke; $('nkIcoPower').src = ICON.items.power; $('nkIcoNeutron').src = ICON.items.neutron;
   const mk = (kind, i, box) => {
@@ -2557,6 +2903,17 @@ function buildNk() {
     $('nkUps').appendChild(d);
     nkRefs.up[k] = { nm: d.querySelector('b'), ds: d.querySelector('small'), btn };
   }
+  for (const k in COLD_LINES) {
+    const d = el('div', 'nk-up', '<span><b></b><small></small></span><button type="button" class="btn sm green"></button>');
+    const btn = d.querySelector('button');
+    btn.addEventListener('click', () => nkColdUp(k));
+    $('nkColdUps').appendChild(d);
+    nkRefs.cold[k] = { nm: d.querySelector('b'), ds: d.querySelector('small'), btn };
+  }
+  E.nkAutoB.addEventListener('click', () => { if (busy) return; const f = S.nk.fis; f.autoB = !f.autoB; update(); save(); });
+  E.nkColdOn.addEventListener('click', nkColdToggle);
+  E.nkColdTop.addEventListener('click', nkColdTop);
+  E.nkColdFix.addEventListener('click', nkColdFix);
   document.querySelectorAll('#nkTabs .tab').forEach(b => {
     nkRefs.tabs[b.dataset.nk] = { el: b, st: b.querySelector('small') };
     b.addEventListener('click', () => { S.nk.tab = b.dataset.nk; update(); });
@@ -2573,14 +2930,14 @@ function nkSlot(r, o) {   // o：{ icon, name, bar, sub, cls }
 }
 function renderNk() {
   const show = S.reach >= 3;
-  E.nkPanel.hidden = !show; E.bfNukeRow.hidden = !show;
+  E.nkPanel.hidden = !show;
   if (!show) return;
   const it = S.items, nk = S.nk, f = nk.fis, u = nk.fus, b = nk.brd, auto = S.auto, sp = nkSpd();
   const nb = nukeBuff();
   setText(E.bfNuke, '×' + fmt(nb));
   setText(E.bfNukeNote, '1 + 核能^' + NUKE_EXP + '，开方之后再乘');
   setText(E.nkMode, auto ? '自动运行中：自动控温、点火、补料' : '手动模式：开启自动挖掘后全自动运行');
-  setText(E.nkNuke, fmt(it.nuke)); setText(E.nkNukeLbl, '核能 · 增益 ×' + fmt(nb)); setText(E.nkNukeSub, nkPerSec(NKRT.dNuke));
+  setText(E.nkNuke, fmt(it.nuke)); setText(E.nkNukeLbl, S.seen.nuke ? '核能 · 增益 ×' + fmt(nb) : '核能'); setText(E.nkNukeSub, nkPerSec(NKRT.dNuke));
   setText(E.nkPower, fmt(it.power)); setText(E.nkPowerSub, nkPerSec(NKRT.dPower));
   setText(E.nkNeutron, fmt(it.neutron)); setText(E.nkNeutronSub, nkPerSec(NKRT.dNeutron));
   // 标签页与三个堆的状态
@@ -2588,13 +2945,17 @@ function renderNk() {
   const fisOn = f.melt <= 0 && f.slots.some(s => s && s.dur > 0);
   const fusOn = u.slots.some(s => s && s.st === 2);
   const brdOn = b.slots.some((s, i) => i < nSlots && s && s.has);
-  const st = { fis: f.melt > 0 ? ['熔毁冷却', 'bad'] : fisOn ? ['运行中', 'run'] : ['未运行', ''], fus: fusOn ? ['运行中', 'run'] : ['未运行', ''], brd: brdOn ? ['转化中', 'run'] : ['空闲', ''] };
+  const cf = nk.cold, hasCold = S.reach >= 4;
+  if (nk.tab === 'cold' && !hasCold) nk.tab = 'fis';
+  nkRefs.tabs.cold.el.hidden = !hasCold;
+  const st = { fis: f.melt > 0 ? ['熔毁冷却', 'bad'] : fisOn ? ['运行中', 'run'] : ['未运行', ''], fus: fusOn ? ['运行中', 'run'] : ['未运行', ''], brd: brdOn ? ['转化中', 'run'] : ['空闲', ''],
+    cold: cf.broken ? ['晶格崩坏', 'bad'] : cf.over ? ['过载', 'bad'] : cf.load > 0 ? ['运行中', 'run'] : ['未运行', ''] };
   for (const k in nkRefs.tabs) {
     const t = nkRefs.tabs[k], on = nk.tab === k;
     setCls(t.el, 'tab' + (on ? ' on' : '')); t.el.setAttribute('aria-selected', on ? 'true' : 'false');
     setText(t.st, st[k][0]); setCls(t.st, st[k][1]);
   }
-  E.nkFis.hidden = nk.tab !== 'fis'; E.nkFus.hidden = nk.tab !== 'fus'; E.nkBrd.hidden = nk.tab !== 'brd';
+  E.nkFis.hidden = nk.tab !== 'fis'; E.nkFus.hidden = nk.tab !== 'fus'; E.nkBrd.hidden = nk.tab !== 'brd'; E.nkCold.hidden = nk.tab !== 'cold';
 
   if (nk.tab === 'fis') {
     const cap = fisCap(), cool = fisCool(), boron = it.boron || 0;
@@ -2605,7 +2966,7 @@ function renderNk() {
       setCls(r.el, 'nk-rod' + (!built ? ' none' : on ? ' in' : dead ? ' dead' : ''));
       setText(r.nm, '控制棒 ' + (i + 1) + (built ? ' · Lv.' + rod.lv : ''));
       setWidth(r.bar, built ? rod.dur / ROD_DUR * 100 : 0);
-      setText(r.sub, !built ? '还没制造，插不了' : dead ? '耐久耗尽，已失效' : '插入降速 ' + pct(ROD_RED[rod.lv]) + '% · 耐久 ' + Math.ceil(rod.dur) + '/' + ROD_DUR);
+      setText(r.sub, !built ? '还没制造，插不了' : dead ? (f.autoB ? '已失效，没有硼可补' : '耐久耗尽，已失效') : '插入降速 ' + pct(ROD_RED[rod.lv]) + '% · 耐久 ' + Math.ceil(rod.dur) + '/' + ROD_DUR);
       r.tog.hidden = !built; r.fix.hidden = !built; r.up.hidden = max;
       setText(r.tog, on ? '已插入' : '已拔出'); setCls(r.tog, 'btn sm tog' + (on ? ' on' : ''));
       r.tog.disabled = dead || busy; r.tog.setAttribute('aria-pressed', on ? 'true' : 'false');
@@ -2619,15 +2980,18 @@ function renderNk() {
       r.fix.disabled = rod.dur >= ROD_DUR || boron < ROD_FIX || busy;
       r.fix.title = '花 ' + ROD_FIX + ' 个硼补满耐久';
     });
+    setText(E.nkAutoB, '自动补硼：' + (f.autoB ? '开' : '关') + '（硼 ' + fmt(boron) + '）'); setCls(E.nkAutoB, 'btn sm' + (f.autoB ? ' on' : ''));
+    E.nkAutoB.setAttribute('aria-pressed', f.autoB ? 'true' : 'false');
+    E.nkAutoB.title = '控制棒耐久用完时自动花 ' + ROD_FIX + ' 个硼补满，已经失效的也补；自动挖掘关着也生效';
     let info;
     if (f.melt > 0) info = `<b class="bad">熔毁冷却中</b>，还要 <b>${Math.ceil(f.melt / sp)}</b> 秒才能重新装燃料`;
     else if (f.slots.every(s => !s)) info = '点空槽选燃料棒。燃料棒要用钚-239、铀-235 或钚-241 来做，挖矿能掉，也能在增殖堆里用中子转化出来。发热比冷却快时要靠控制棒压住，否则热量涨到上限就会熔毁。';
     else {
-      const flux = 1 + (it.neutron || 0) / FLUX_DIV;
+      const flux = fluxOf(it);
       let gen1 = 0;
       for (const s of f.slots) if (s && s.dur > 0) gen1 += flux * FIS_RODS[s.t].heat;
       const genMin = gen1 * Math.max(ROD_MIN, 1 - f.rods.reduce((sum, r) => sum + (rodOk(r) ? ROD_RED[r.lv] : 0), 0));
-      info = `每根燃料棒每秒裂变 <b>${fmt(NKRT.rate * sp)}</b> 次（控制棒 ×${fmt(rodMult())} · 中子 ×${fmt(flux)}），中子利用率 ${pct(fisUtil())}%`;
+      info = `每根燃料棒每秒裂变 <b>${fmt(NKRT.rate * sp)}</b> 次（控制棒 ×${fmt(rodMult())} · 中子 ×${fmt(flux)}${flux >= FLUX_CAP ? '（已达上限）' : ''}），中子利用率 ${pct(fisUtil())}%`;
       if (gen1 > cool) info += genMin >= cool
         ? `。<b class="bad">压不住</b>：控制棒全拔出时每秒发热 ${fmt(gen1 * sp)}，全插上也有 ${fmt(genMin * sp)}，冷却只有 ${fmt(cool * sp)}，热量会一直涨到熔毁。少装几根燃料棒，或者造、升级控制棒和结构。`
         : auto ? '' : `。<b class="bad">手动模式</b>：控制棒全拔出时每秒发热 ${fmt(gen1 * sp)}，大于冷却 ${fmt(cool * sp)}，记得插控制棒。`;
@@ -2668,7 +3032,7 @@ function renderNk() {
       else if (s.st === 3) nkSlot(r, { icon, name: F.name, cls: 'wait', bar: s.left / F.time * 100, sub: '能量不足，已暂停' });
       else nkSlot(r, { icon, name: F.name, cls: 'wait', sub: auto ? '缺材料，等待补充' : '燃料用完，点击重新放' });
     });
-  } else {
+  } else if (nk.tab === 'brd') {
     const eff = 1 - BRD_EFF * b.up.eff;
     setHtml(E.nkBrdInfo, `中子 <b>${fmt(it.neutron)}</b> · 每秒流入增殖堆 <b>${fmt(NKRT.brdFlow * sp)}</b>` + (eff < 1 ? ` · 中子需求 ×${fmt(eff)}` : '') + (b.up.rec ? ' · 完成返还 15%' : '') + '。中子按槽位顺序流入，先喂饱前面的槽。');
     nkRefs.brd.forEach((r, i) => {
@@ -2686,6 +3050,42 @@ function renderNk() {
       setText(r.btn, lv >= max ? '已满级' : '升级 · ' + fmt(U.cost[lv]) + ' 能量');
       r.btn.disabled = lv >= max || !nkCan({ power: U.cost[lv] }) || busy;
     }
+  } else {
+    // ---- 冷聚变 ----
+    const c = cf, cap = coldCap(), tol = coldTol(), deut = it.deut || 0;
+    // 负载条满格是 200%，黄线是当前上限
+    setWidth(E.nkColdFill, Math.min(100, c.load / 2 * 100)); setCls(E.nkColdFill, c.over ? 'o' : 'c');
+    const capPos = Math.min(100, cap / 2 * 100) + '%';
+    if (E.nkColdCap._l !== capPos) { E.nkColdCap._l = capPos; E.nkColdCap.style.left = capPos; }
+    setText(E.nkColdText, c.broken ? '晶格已崩坏' : '负载 ' + Math.round(c.load * 1000) / 10 + '% / 上限 ' + pct(cap) + '% · 速率 ×' + fmt(coldRate(c)) + ' · ' + (c.over ? '过载' : c.load > 0 ? '稳定' : '空载'));
+    let info;
+    if (c.broken) info = `<b class="bad">晶格崩坏</b>，负载清零，修好才能继续。修复要钯 <b>${fmt(it.pd || 0)}/${COLD_FIX.pd}</b>、钛 <b>${fmt(it.ti || 0)}/${COLD_FIX.ti}</b>。`;
+    else if (c.over) info = `<b class="bad">过载中</b>：反应速率再 ×${COLD_OVER}，还能撑 <b>${Math.max(0, Math.ceil((tol - c.stress) / sp))}</b> 秒，之后晶格崩坏。<b class="bad">过载会消耗钯和钛</b>（修复要钯 ${COLD_FIX.pd} + 钛 ${COLD_FIX.ti}）。`;
+    else info = `上限 = min(钯硬顶 ${pct(coldVal('pd') / 100)}%，镧软顶 ${pct(coldVal('la'))}%) · 爬升 +${fmt(coldVal('vn') * sp)}%/秒 · 氘消耗 <b>${fmt(NKRT.coldD * sp)}</b>/秒（现有 ${fmt(deut)}）`
+      + (c.on ? (auto ? '' : '。<b class="bad">自动挖掘没开</b>，不会自动加氘，负载率每秒 −0.5%') : '。现在是停止状态，不会自动加氘，负载率每秒 −0.5%');
+    setHtml(E.nkColdInfo, info);
+    drawLattice(c, cap);
+    setText(E.nkColdOn, c.on ? '自动加氘：开' : '自动加氘：关'); setCls(E.nkColdOn, 'btn sm' + (c.on ? ' on' : ''));
+    E.nkColdOn.title = '开着自动挖掘时才会自动加氘：没到上限每秒 ' + COLD_FEED + ' 个，到了上限每秒 ' + COLD_KEEP + ' 个';
+    const willOver = c.load + COLD_TOP > cap + 1e-9;
+    setText(E.nkColdTop, (willOver ? '过载加注' : '手动加注') + ' · 氘 ' + COLD_TOP_D);
+    setCls(E.nkColdTop, 'btn sm' + (willOver ? ' red' : ''));
+    E.nkColdTop.disabled = c.broken || c.over || deut < COLD_TOP_D || busy;
+    E.nkColdTop.title = willOver ? '负载率会超过上限进入过载：反应速率 ×' + COLD_OVER + '，' + fmt(tol) + ' 秒后晶格崩坏，修复要钯 ' + COLD_FIX.pd + ' + 钛 ' + COLD_FIX.ti : '负载率 +20%';
+    E.nkColdFix.hidden = !c.broken;
+    setText(E.nkColdFix, '修复 · 钯 ' + COLD_FIX.pd + ' + 钛 ' + COLD_FIX.ti); E.nkColdFix.disabled = !nkCan(COLD_FIX) || busy;
+    const nps = (c.load > 0 ? coldNukeRate(c) : 0) * sp;
+    setHtml(E.nkColdOut, `每秒产出：核能 <b>+${fmt(nps)}</b> · 能量 <b>+${fmt(nps * COLD_OUT.power)}</b> · 氦3 <b>+${fmt(nps * COLD_OUT.he3)}</b> · 氚 <b>+${fmt(nps * COLD_OUT.trit)}</b> · 中子 <b>+${fmt(nps * COLD_OUT.neutron * coldVal('zr'))}</b>`
+      + (willOver && !c.over && !c.broken ? `<br>再加注就会过载（过载耐受 ${fmt(tol)} 秒）：<b class="bad">过载会消耗钯和钛</b>` : ''));
+    for (const k in COLD_LINES) {
+      const r = nkRefs.cold[k], Lk = COLD_LINES[k], lv = c.lv[k], have = it[k] || 0;
+      setText(r.nm, Lk.name + ' ' + lv + '/' + COLD_MAX);
+      setHtml(r.ds, Lk.dim + ' ' + Lk.show(Lk.val[lv]) + (lv < COLD_MAX ? ' → ' + Lk.show(Lk.val[lv + 1]) : '')
+        + (lv ? ' · 维护每分钟 ' + fmt(Lk.maint * lv / COLD_MAX * sp) + ' ' + ITEMS[k].name : '')
+        + (NKRT.coldLack[k] ? ` · <b class="bad">缺${ITEMS[k].name}，${Lk.lack}</b>` : ''));
+      setText(r.btn, lv >= COLD_MAX ? '已满级' : '升级 · ' + ITEMS[k].name + ' ' + fmt(have) + '/' + fmt(coldCost(k, lv)));
+      r.btn.disabled = lv >= COLD_MAX || have < coldCost(k, lv) || busy;
+    }
   }
 }
 
@@ -2696,7 +3096,7 @@ function applyBlock() {
   // 区域 2 换成深色岩石背景和偏蓝紫的光
   if (E.stage._z !== S.zone) {
     E.stage._z = S.zone; E.stage.dataset.zone = S.zone;
-    const tile = S.zone === 2 ? ICON.stone2 : S.zone === 3 ? ICON.stone3 : ICON.stone;
+    const tile = S.zone === 2 ? ICON.stone2 : S.zone === 3 ? ICON.stone3 : S.zone === 4 ? ICON.stone4 : ICON.stone;
     E.stage.style.backgroundImage = `linear-gradient(rgba(12,10,8,.74),rgba(12,10,8,.9)),url(${tile})`;
   }
   const dks = b.drop ? dropKeys(b.drop) : [];
@@ -2735,6 +3135,17 @@ function update() {
     E.bLv.title = `方块等级 ${bLvl}，再挖掉 ${fmt(bNeed - bHave)} 块升级`;
   }
   setText(E.bfBlv, 'Lv.' + bLvl);
+  // 会转化材料的方块：舞台上写清楚挖掉时变什么、材料够不够；能切换模式的再给一排按钮
+  const cvNow = blkConv(b);
+  if (cvNow) {
+    const have = S.items[cvNow.from] || 0, ok = have >= cvNow.n;
+    setHtml(E.bConv, `<span class="droptag conv${ok ? '' : ' no'}"><img class="pix" src="${ICON.items[cvNow.to]}" alt="">每挖掉一块，${fmt(cvNow.n)} ${ITEMS[cvNow.from].name} → 1 ${ITEMS[cvNow.to].name}（现有 ${fmt(Math.floor(have))}${ok ? '' : '，不够'}）</span>`);
+  } else setHtml(E.bConv, '');
+  E.modeRow.hidden = !b.modes;
+  if (b.modes) {
+    const cur = S.bmode[b.id] || 0;
+    setHtml(E.modeRow, b.modes.map((c, i) => `<button type="button" class="btn sm${i === cur ? ' on' : ''}" data-i="${i}" aria-pressed="${i === cur}">模式 ${i + 1}：${fmt(c.n)} ${ITEMS[c.from].name} → 1 ${ITEMS[c.to].name}</button>`).join(''));
+  }
   setText(E.bfBlvNote, (b.wealth ? '' : '金币 ×' + fmt(Math.pow(BLV_COIN, bLvl - 1)) + '，') + '血量 ×' + fmt(Math.pow(BLV_HP, bLvl - 1)) + '，再挖掉 ' + fmt(bNeed - bHave) + ' 块升级');
   if (stage !== lastCrack) { lastCrack = stage; E.cube.style.setProperty('--crack', stage < 0 ? 'none' : `url(${ICON.cracks[stage]})`); }
   const rw = rewardOf(b, p);
@@ -2776,6 +3187,22 @@ function update() {
   setText(E.bfWlNote, S.wealth > 0 ? '总转化金币^0.24，已转化 ' + fmt(S.wealth) : '总转化金币^0.24，挖巨额财富获得');
   setText(E.bfZoneNote, '区域 ' + S.zone + '：伤害开 ' + S.zone + ' 次方');
   setText(E.bfRuin, '×' + fmt(ruinBuff()));
+  // 还是 ×1、也从没获得过的增益不显示；奖杯和核能会被花掉，所以另外记着有没有获得过
+  if (S.items.trophy > 0) S.seen.trophy = true;
+  if (S.items.nuke > 0) S.seen.nuke = true;
+  if (S.items.degen > 0) S.seen.degen = true;
+  if (S.items.mbh > 0) S.seen.mbh = true;
+  E.bfDgRow.hidden = !S.seen.degen; E.bfBhRow.hidden = !S.seen.mbh;
+  setText(E.bfDg, '×' + fmt(degenBuff())); setText(E.bfBh, '×' + fmt(mbhBuff()));
+  const hasRoot = S.reach >= 2, hasRuin = S.ruin > 0 || S.energy > 0, hasNuke = S.seen.nuke;
+  E.bfLvRow.hidden = S.level <= 1;
+  E.bfTrRow.hidden = !S.seen.trophy;
+  E.bfWlRow.hidden = !(S.wealth > 0);
+  E.bfZoneRow.hidden = !hasRoot;
+  E.bfRuinRow.hidden = !hasRuin;
+  E.bfNukeRow.hidden = !hasNuke;
+  // 公式也只写已经有的部分
+  setText(E.bfFormula, '伤害 =' + (hasRoot ? '（镐子伤害 × 增益）开方后' : ' 镐子伤害 × 增益') + (hasRuin ? ' × 毁灭增益' : '') + (hasNuke ? ' × 核能增益' : ''));
   // 毁灭能量面板：区域 2 解锁后出现
   E.ruinPanel.hidden = S.reach < 2;
   if (!E.ruinPanel.hidden) {
@@ -2820,7 +3247,7 @@ function update() {
   // 方块列表
   const zinfo = ZONES.find(z => z.n === S.zone), sinfo = ZONES.find(z => z.n === shopZone);
   E.blockSoon.hidden = !zinfo.more;
-  E.shopSoon.hidden = !sinfo.more || !zoneOpen(sinfo);
+  E.shopSoon.hidden = !zoneOpen(sinfo) || PICKS.some(pp => pp.zone === shopZone);
   for (const bb of BLOCKS) {
     const r = blockRefs[bb.id];
     r.el.hidden = bb.zone !== S.zone;
@@ -2832,6 +3259,7 @@ function update() {
     setText(r.hp, '血量 ' + fmt(m));
     if (r.coin) setText(r.coin, fmt(blvCoinOf(bb, lv)));
     setText(r.nx, fmt(n - blvTotal(lv)) + '/' + fmt(blvTotal(lv + 1) - blvTotal(lv)));
+    if (r.cv) setHtml(r.cv, (bb.modes ? '模式 ' + ((S.bmode[bb.id] || 0) + 1) + '：' : '挖掉后 ') + convHtml(blkConv(bb)));
   }
   // 商店
   const pdmg = ps.dmg;
@@ -2993,7 +3421,7 @@ $('modalBack').addEventListener('click', e => { if (e.target.id === 'modalBack' 
 
 /* ---------- 修改版：设置 ---------- */
 function setSpeed(v) {
-  v = Math.max(1, Math.min(SPEED_MAX, Math.round(v)));
+  v = Math.max(1, Math.min(speedMax(), Math.round(v)));
   if (v === S.speed) return;
   S.speed = v; acc = 0; lastTick = Date.now();
   update(); save(); renderSpeed();
@@ -3007,14 +3435,21 @@ function renderSpeed() {
   $('spdNote').innerHTML = `现在在线每秒挖 <b>${fmt(1000 / digMs())}</b> 次，离线每秒 <b>${fmt(1000 / offMs())}</b> 次；毁灭能量产出和反应堆也是 <b>×${v}</b>。`;
 }
 function openSettings() {
-  const ticks = Array.from({ length: SPEED_MAX }, (_, i) => `<span>${i + 1}</span>`).join('');
+  const max = speedMax(), tier = SPEED_TIERS.indexOf(max);
+  // 刻度：×10 以内每档都标，更高时只标五个位置
+  const ticks = (max <= 10 ? Array.from({ length: max }, (_, i) => i + 1) : [1, max / 4, max / 2, max * 3 / 4, max]).map(v => `<span>${v}</span>`).join('');
+  const quick = (max <= 10 ? [1, 2, 3, 5, 10] : [1, 5, 10, 20, 40, 80]).filter(v => v <= max);
+  const next = tier < SPEED_TIERS.length - 1
+    ? `现在最高 <b>×${max}</b>。` + SPEED_TIERS.slice(tier + 1).map((v, i) => `到达区域 ${tier + 2 + i} 后最高 ×${v}`).join('，') + '。'
+    : `已经到达区域 ${SPEED_TIERS.length}，最高 <b>×${max}</b>。`;
   openModal('设置', `
     <div class="setting">
       <div class="set-row"><span class="set-name">游戏速度</span><b class="set-val" id="spdVal"></b></div>
-      <input type="range" id="spdRange" min="1" max="${SPEED_MAX}" step="1" aria-label="游戏速度">
+      <input type="range" id="spdRange" min="1" max="${max}" step="1" aria-label="游戏速度">
       <div class="set-ticks">${ticks}</div>
-      <div class="set-quick">${[1, 2, 3, 5, 10].map(v => `<button type="button" class="btn sm" data-v="${v}">×${v}</button>`).join('')}</div>
+      <div class="set-quick">${quick.map(v => `<button type="button" class="btn sm" data-v="${v}">×${v}</button>`).join('')}</div>
       <p class="hint" id="spdNote"></p>
+      <p class="hint">${next}</p>
       <p class="hint">挖掘、后台、离线挖掘、毁灭能量产出和区域 3 的反应堆都会按这个倍数加快，改完立刻生效。</p>
     </div>
     <div class="setting">
@@ -3036,7 +3471,7 @@ function importOriginal() {
     { label: '导入', cls: 'green', fn: () => {
       try {
         const keep = spd();
-        S = sanitize(JSON.parse(raw)); S.speed = keep; S.lastSeen = Date.now();
+        S = sanitize(JSON.parse(raw)); S.speed = Math.min(keep, speedMax()); S.lastSeen = Date.now();   // 导入的进度区域更靠前时，速度跟着降到它的上限
         shopZone = S.zone; endHold(); acc = 0; lastTick = Date.now(); lastEq = null;
         applyBlock(); update(); save();
         toast('import', null, '已导入原版存档', 0, 'lvl');
@@ -3083,25 +3518,30 @@ function showReport(kind, ms, snap) {
 }
 
 const HELP = `
-<p><b>伤害</b> = <code>(镐子伤害 × 使用增益 × 等级增益 × 奖杯增益 × 财富增益)^(1/N) × 毁灭增益 × 核能增益</code>，N 是所在区域（区域 1 不开方）。毁灭增益和核能增益在开方之后才乘，不受区域影响。</p>
+<p><b>伤害</b> = <code>(镐子伤害 × 使用增益 × 等级增益 × 奖杯增益 × 财富增益 × 压缩增益 × 黑洞增益)^(1/N) × 毁灭增益 × 核能增益</code>，N 是所在区域（区域 1 不开方）。毁灭增益和核能增益在开方之后才乘，不受区域影响。</p>
 <p><b>使用增益</b>初始为 0.1，每挖一下增加当前镐子的「使用」值，越挖越强。</p>
-<p><b>等级增益</b> = <code>等级^0.5</code>；<b>奖杯增益</b> = <code>1 + 奖杯数量^0.36</code>；<b>财富增益</b> = <code>总转化金币^0.24</code>（还没转化过时为 1）。</p>
+<p><b>等级增益</b> = <code>等级^0.5</code>；<b>奖杯增益</b> = <code>1 + 奖杯数量^0.36</code>；<b>财富增益</b> = <code>总转化金币^0.24</code>（还没转化过时为 1）；<b>压缩增益</b> = <code>1 + 简并态中子簇^0.84</code>；<b>黑洞增益</b> = <code>1 + 微型黑洞^1.26</code>。后两个看的是手上现有的数量，合成镐子或拿去坍缩用掉后增益会变小。</p>
 <p><b>巨额财富</b>不给金币和经验，挖掉的那一下会把身上的金币全部清空，计入总转化金币。</p>
 <p><b>挖掉方块</b>获得金币 = <code>方块金币（含方块等级加成）× 镐子金币倍率</code>，经验 = <code>金币 × log₂(金币)</code>。注意金币正好为 1 时 log₂(1) = 0，没有经验，去挖普通方块 II 吧。</p>
 <p><b>升级</b>所需经验 = <code>等级³ × lg(等级 + 1)</code>，从 1 级开始。</p>
 <p><b>方块等级</b>：每种方块各自从 Lv.1 开始，累计挖掉 10 块升到 Lv.2，再挖 20 块升 Lv.3，再挖 40 块升 Lv.4……每级所需翻倍，没有上限。每升一级，这种方块的金币 ×1.2、血量 ×0.9（巨额财富本来就不给金币，升级只降血量）。等级跟着方块走，换去挖别的方块再回来也不会丢。</p>
 <p>奖杯方块、各种锭、紫水晶、基岩、棱镜碎片、七色光、棱镜、神秘之核、宝石、五行、阴阳和灰烬<b>每挖掉一块</b>都有概率掉落对应材料（挖的过程中不掉），用来合成高级镐子。拿到的材料显示在「材料」栏里，点「全部材料」能看到每种材料从哪来、能合成什么。</p>
-<p><b>修改版</b>：点顶栏的「速度」可以把游戏速度调到 1–10 倍，挖掘、后台、离线挖掘、毁灭能量产出和区域 3 的反应堆都会一起加快。下面写的每秒次数是 1 倍速时的数值。修改版的存档和原版分开保存，可以在设置里导入原版进度。</p>
+<p><b>修改版</b>：点顶栏的「速度」可以调游戏速度：一开始最高 10 倍，到达区域 2 后最高 20 倍，区域 3 最高 40 倍，区域 4 最高 80 倍。挖掘、后台、离线挖掘、毁灭能量产出和区域 3 的反应堆都会一起加快。下面写的每秒次数是 1 倍速时的数值。修改版的存档和原版分开保存，可以在设置里导入原版进度。</p>
 <p>长按挖掘和自动挖掘都是每秒 10 次，同时开启也不会叠加。进度每 5 秒自动保存在这个浏览器里。</p>
 <p><b>后台运行</b>：开着自动挖掘时，切到别的标签页或最小化窗口，照常每秒 10 次。浏览器在后台放慢或暂停页面也没关系，回来时会按实际经过的时间补齐。</p>
 <p><b>离线挖掘</b>：开着自动挖掘关掉页面，离开期间按每秒 4 次继续挖当前方块，规则和在线完全一样，掉落、升级、巨额财富转化都照算，下次打开时结算。自动挖掘关着时离线不挖。</p>
 <p><b>区域 2</b>：合成极光镐后解锁（之后极光镐用掉也不会再锁上），方块和商店都按区域分开。在区域 2 挖矿，伤害要开 2 次方。</p>
-<p><b>区域 3</b>：合成末日镐后解锁（之后末日镐用掉也不会再锁上），伤害要开 3 次方。这里除了三个奖杯方块（VIII、IX、X），方块掉的都是核原料：铀-238、钍-232、氘、氚、氦3、钚-239、硼、铍、钨、铀-235、钚-241，核反应在材料栏下面的<b>反应堆</b>里进行。反应堆产出三样东西：<b>核能</b>提供核能增益，<b>能量</b>用来点火、升级，<b>中子</b>能加快裂变、喂增殖堆；三样都算材料，合成区域 3 的镐子要用。<b>核能增益</b> = <code>1 + 核能^0.5</code>，花掉核能后增益会跟着变小。硼、铍、钨用来造和升级裂变堆的硬件。铀矿、钍矿除了主掉落，还有小概率直接掉铀-235、铀-233。</p>
-<p><b>裂变</b>：铀-235、钚-239 这样的重核吸收中子后分裂成两个中等质量的核，放出能量和 2～3 个中子，中子再去轰击别的重核，形成链式反应。裂变堆有 6 个燃料槽，点槽位选燃料棒（消耗对应材料）。每根燃料棒每秒裂变的次数 = <code>控制棒系数 × (1 + 中子 / 1000)</code>，每次裂变产出能量、核能、中子，同时发热。热量每秒自然冷却，涨到上限就<b>熔毁</b>：燃料棒全部损失，燃料槽清空，60 秒内不能装燃料，核能不清零。发热比冷却快、又没有够用的控制棒时，只能少装几根燃料棒。</p>
-<p><b>裂变堆硬件</b>：<b>控制棒</b>用硼制造，每根 50，之后可以各自升级（硼 200 / 800 / 3200）。插入时反应速率降低 30% / 40% / 50% / 60%，几根的效果相加，加起来达到 100% 就几乎停堆（只剩 1% 的速率）；拔出时不影响速率。控制棒耐久 600，插着并且堆在裂变时每秒 −1，耗尽就失效弹出，花 10 个硼补满。<b>中子反射层</b>用铍升级：裂变产出的中子起初只留得住 60%，每级 +5%，8 级到 100%。<b>反应堆结构</b>用钨升级：每级热量上限 +20、冷却 +2/秒，满 6 级时上限 220、冷却 23/秒。</p>
+<p><b>区域 3</b>：合成末日镐后解锁（之后末日镐用掉也不会再锁上），伤害要开 3 次方。这里除了三个奖杯方块（VIII、IX、X），方块掉的都是核原料：铀-238、钍-232、氘、氚、氦3、钚-239、硼、铍、钨、铀-235、钚-241，核反应在材料栏下面的<b>反应堆</b>里进行。反应堆产出三样东西：<b>核能</b>提供核能增益，<b>能量</b>用来点火、升级，<b>中子</b>能加快裂变、喂增殖堆；三样都算材料，合成区域 3 的镐子要用。<b>核能增益</b> = <code>1 + 核能^0.64</code>，花掉核能后增益会跟着变小。硼、铍、钨用来造和升级裂变堆的硬件。铀矿、钍矿除了主掉落，还有小概率直接掉铀-235、铀-233。</p>
+<p><b>裂变</b>：铀-235、钚-239 这样的重核吸收中子后分裂成两个中等质量的核，放出能量和 2～3 个中子，中子再去轰击别的重核，形成链式反应。裂变堆有 6 个燃料槽，点槽位选燃料棒（消耗对应材料）。每根燃料棒每秒裂变的次数 = <code>控制棒系数 × min(100, 1 + 中子 / 1000)</code>（中子裂变指数有硬上限，最多 ×100，中子到 99000 就到顶，再堆中子也不会更快），每次裂变产出能量、核能、中子，同时发热。热量每秒自然冷却，涨到上限就<b>熔毁</b>：燃料棒全部损失，燃料槽清空，60 秒内不能装燃料，核能不清零。发热比冷却快、又没有够用的控制棒时，只能少装几根燃料棒。</p>
+<p><b>裂变堆硬件</b>：<b>控制棒</b>用硼制造，每根 50，之后可以各自升级（硼 200 / 800 / 3200）。插入时反应速率降低 30% / 40% / 50% / 60%，几根的效果相加，加起来达到 100% 就几乎停堆（只剩 1% 的速率）；拔出时不影响速率。控制棒耐久 600，插着并且堆在裂变时每秒 −1，耗尽就失效弹出，花 10 个硼补满。开着<b>自动补硼</b>（默认开，自动挖掘关着也生效）时，耐久用完的那一刻会自动花 10 个硼补满、控制棒不用退出来，之前已经失效的控制棒有硼了也会自动补好；硼不够才会失效。<b>中子反射层</b>用铍升级：裂变产出的中子起初只留得住 60%，每级 +5%，8 级到 100%。<b>反应堆结构</b>用钨升级：每级热量上限 +20、冷却 +2/秒，满 6 级时上限 220、冷却 23/秒。</p>
 <p><b>聚变</b>：氘、氚这样的轻核在极高温高压下结合成氦，放出巨大能量，但要先投入能量点火。聚变堆有 3 个燃料槽，放入燃料后花能量点火（另要留 10 点能量维持起步），聚变期间燃料槽锁定，每槽每秒消耗 5 能量维持。等离子体温度点火后每秒 +10，没到 100 时产出按 <code>温度 / 100</code> 打折；到 100 进入最佳状态：能量和核能 ×1.5，持续时间 +50%。聚变不会熔毁，没有槽在烧时温度每秒 −5。氘-氚每秒还产 2 个中子，氘-氘产 1 个。</p>
 <p><b>增殖</b>：铀-238、钍-232 这类贫燃料本身不易裂变，俘获中子后会变成易裂变的富燃料：铀-238 → 钚-239，钍-232 → 铀-233，钚-239 → 钚-241，铀-233 → 铀-235。增殖堆起始 4 个槽，每个槽放 1 个贫燃料，中子按槽位顺序自动流入，攒够需求就产出 1 个富燃料；每条链有最短转化时间。可以花能量升级：增加槽位（最多 8 个）、转化效率（中子需求每级 −20%）、中子回收（完成时返还 15%）。</p>
-<p><b>反应堆的自动与手动</b>：开着自动挖掘时三个堆自动运行。裂变堆在热量到上限的 88% 时自动插控制棒，降到 72% 再拔出，失效的控制棒自动补硼；但<b>控制棒没造、不够强，或者耐久耗尽又没硼可补时，自动运行也会熔毁</b>。聚变有能量就自动点火，能量不够自动暂停；燃料用完自动从材料栏补同种燃料，材料不够的槽位空着等。关着自动挖掘时要自己插拔控制棒、点火、装料，聚变能量不够会中断并损失燃料；关掉自动挖掘的那一下，能用的控制棒会全部插入。切到后台时反应堆照常运行；关掉页面后，开着自动挖掘就按在线 40% 的速度继续运行，没开则暂停。</p>
+<p><b>反应堆的自动与手动</b>：开着自动挖掘时三个堆自动运行。裂变堆在热量到上限的 88% 时自动插控制棒，降到 72% 再拔出；但<b>控制棒没造、不够强，或者耐久耗尽又没硼可补（或关了自动补硼）时，自动运行也会熔毁</b>。聚变有能量就自动点火，能量不够自动暂停；燃料用完自动从材料栏补同种燃料，材料不够的槽位空着等。关着自动挖掘时要自己插拔控制棒、点火、装料，聚变能量不够会中断并损失燃料；关掉自动挖掘的那一下，能用的控制棒会全部插入。切到后台时反应堆照常运行；关掉页面后，开着自动挖掘就按在线 40% 的速度继续运行，没开则暂停。</p>
+<p><b>区域 4</b>：合成中子镐 U 后解锁（之后用掉也不会再锁上），伤害要开 4 次方。第一个方块是奖杯方块 XI（0.5% 掉 10亿奖杯），中间还有奖杯方块 XII（必掉 1万亿奖杯），后面 8 种矿各掉 1 种主材料（10%）和 2 种副材料（各 5%）：钯、钛、镍、锆、镧、铂、银、钒，每种材料都有 3 个来源。这 8 种材料全部用在<b>冷聚变</b>上。</p>
+<p><b>区域 4 的中子物质</b>：「中子」方块 10% 给 100 个中子。<b>中子压缩机</b>每挖掉一块，把 1万 中子压成 1 个简并态中子簇，另有 0.1% 掉 1 个中子态素尘埃。<b>中子合成器</b>有两种模式：10 尘埃 → 1 中子态素颗粒，或 10 颗粒 → 1 中子锭。<b>胶球</b>（1%）和<b>胶球群</b>（10%）掉胶球。<b>坍缩器</b>也有两种模式：100 简并态中子簇 → 1 奇异物质，或 100 奇异物质 → 1 微型黑洞；<b>黑洞</b>方块 0.5% 直接掉微型黑洞。转化类的方块每挖掉一块转化一次，材料不够时照样能挖、只是不转化；模式在舞台下面切换。这些材料用来合成区域 4 的镐子。</p>
+<p><b>冷聚变</b>：区域 4 解锁后，反应堆多出「冷聚变」一页。它不用点火，也没有温度：氘核被吸进钯晶格的空位，靠得极近，靠量子隧穿在室温下聚变。晶格装得越满反应越快，<b>反应速率</b> = <code>exp(负载率 × 5)</code>，每秒核能 = <code>25 × 反应速率 / 148.4 × 铂倍率</code>，同时产出能量（核能 ×40）、氦3 和氚（各 ×1）、中子（×6，再乘锆的保留率）。负载率上限 = <code>min(钯的硬顶, 镧的软顶)</code>。打开「自动加氘」并开着自动挖掘时，没到上限每秒吃 10 个氘、负载率每秒 +1% × 钒系数，到了上限每秒吃 2 个氘维持；没有氘喂时负载率每秒 −0.5%。也可以<b>手动加注</b>：100 个氘换 +20% 负载率。</p>
+<p><b>过载</b>：手动加注后负载率超过上限就会过载，负载率钉在「上限 + 20%」，反应速率再 ×10，一直烧到耐受时间（钛的秒数 × 银的倍率）用完，然后<b>晶格崩坏</b>、负载清零，要花钯 50 + 钛 20 修复。过载是拿钯和钛换爆发，不是常态。</p>
+<p><b>冷聚变升级</b>：8 条线各用一种材料，各 5 级——钯晶格（空位 100 → 180）、钛容器（过载耐受 10 → 60 秒）、镍催化层（氘消耗最多 −50%）、锆包壳（中子保留 80% → 98%）、镧储氘层（最大负载率 100% → 180%）、铂催化网（反应速率 ×1 → ×1.5）、银导热层（过载耐受 ×1 → ×2）、钒储氘合金（爬升速度 ×1 → ×2）。晶格里有氘时，升过级的线会按等级慢慢消耗对应材料做维护（满级每分钟：钯 7、钛 4、镍 3、锆 2、镧 2、铂 / 银 / 钒各 1.5）；哪种材料断了，哪条线就暂时按 Lv.0 生效，补上后恢复。</p>
 <p><b>毁灭能量</b>：用 10 个灰烬解锁，每秒产出 1 点。升级第一次要 100 灰烬，之后每次花费 ×10，每升一级产速翻倍。<b>毁灭增益</b> = <code>毁灭能量^0.12</code>（不足 1 时按 1 算）。不管在哪个区域、开没开自动挖掘都会产出；关掉页面后按在线 40% 的速度继续产出。毁灭镐要花掉 100万 毁灭能量，花掉后增益会跟着变小。</p>
 <p><b>神秘之镐</b>的属性随身上的宝石变化，宝石不会被消耗：伤害 = <code>50万 × log₄(蓝宝石 + 4)</code>，使用 = <code>30 × lg(红宝石 + 10)</code>，金币 = <code>4 × log₄₀(绿宝石 + 40)</code>。</p>
 <p><b>数字单位</b>：万、亿、兆、京、垓、秭、穰……每一级是上一级的平方（万万得亿，亿亿得兆，兆兆得京）。中间的数组合着念，比如万亿 = 10¹²，万兆 = 10²⁰，亿兆 = 10²⁴，万亿兆 = 10²⁸。</p>
@@ -3163,6 +3603,7 @@ buildZones();
 buildBlocks();
 buildShop();
 buildNk();
+E.modeRow.addEventListener('click', e => { const t = e.target.closest('button[data-i]'); if (t) setMode(curBlock(), +t.dataset.i); });
 applyBlock();
 bindEvents();
 update();
